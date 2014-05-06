@@ -1,0 +1,76 @@
+* Live coding with Clojure and Emacs
+  Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
+
+  modified by walter p babic
+  
+** dev profile
+   dev/user.clj
+
+   add dev profile to  project.clj
+   #+BEGIN_SRC clojure
+   :profiles {:dev {:source-paths ["dev"]
+                    :dependencies [[org.clojure/tools.namespace "0.2.4"]
+                                   [org.clojure/java.classpath "0.2.0"]
+                                   [org.clojure/test.check "0.5.7"]]}}
+   #+END_SRC
+
+** references
+*** css
+**** flexbox specification
+     http://www.w3.org/TR/css3-flexbox/
+
+**** smashing magazine tutorial
+     http://www.smashingmagazine.com/2013/05/22/centering-elements-with-flexbox/
+
+**** MDN
+     using CSS flexible boxes
+     https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Flexible_boxes
+
+**** CSS Tricks
+     A domplete guide to flexbox
+     http://css-tricks.com/snippets/css/a-guide-to-flexbox/
+
+     screencast
+     https://www.youtube.com/watch?v=tge9YQDAasc
+
+
+**** Sean Floritto
+     Sketching with CSS
+     screencast
+
+     https://www.youtube.com/watch?v=t6GoK1yGcFM
+
+     http://www.sketchingwithcss.com/
+     
+**** Live Coding with lojure and Emacs
+     http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
+
+**** reset.css
+     http://meyerweb.com/eric/tools/css/reset/
+
+*** secretary
+    clojurescript client side routing
+    https://github.com/gf3/secretary
+*** goog history
+    http://docs.closure-library.googlecode.com/git/class_goog_History.html
+*** om todo ex with undo
+
+** notes
+   project notes
+*** om-async
+    add clojurescript, cljsbuild and om
+    lein cljsbuild auto dev
+*** modern webapp
+    yeoman
+    live reload
+    grunt tasks
+    bower dependencies
+*** om todo with undo
+    add secretary
+    
+    goog.History
+    
+    undo ability
+    redo ability
+    rivendell:file:///Users/wbabic/dev/clojurescript/om/om-todomvc/todomvc/labs/architecture-examples/om-undo/index.html
+    
