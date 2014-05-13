@@ -1,18 +1,97 @@
-* Live coding with Clojure and Emacs
-  Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
+* the Triangulator
+  definition viewer
+  with examples and theorems
 
-  modified by walter p babic
+** overview
+   using the triangle to illuminate geometric ideas
+   telling a story, the story of the triangle
+   illustrating ideas of symmetry
+
+   interactive movies
+   animated definitions, examples, theorems
+   text equations and symbols along with graphics, coordinated wtih
+   color in time
+   with sound
+
+   map progress through the territory
+
+   current definition, example, theorem
+   text box
+   graphics box
+   definition box
+
+   a sequence of steps
+   text and graphics
+   play, step through, replay
+   like a debugger
+   color coordinated
+   symbols and graphics
+   mouse over, or touch, to higlight a graphical element
+
+   using the language of geometry and symmetry
+
+   click a definition
+   walk through or let it run
+   replay forward and backward
+   edit the general objects, like points, that are used in the
+   definition, example or theorem
+
+   walk through the steps of a proof
+   expand, collapse a proof
+   see the overview
+   see the details
+
+   ability to add and edit items
+   abiility to test
+   ability to create challenge exercises based on user history
+   store user activity
   
-** dev profile
-   dev/user.clj
+** workflow
+   interactive design
+   interactive programming
 
-   add dev profile to  project.clj
-   #+BEGIN_SRC clojure
-   :profiles {:dev {:source-paths ["dev"]
-                    :dependencies [[org.clojure/tools.namespace "0.2.4"]
-                                   [org.clojure/java.classpath "0.2.0"]
-                                   [org.clojure/test.check "0.5.7"]]}}
-   #+END_SRC
+   browser -> google chrome
+   develop prototype that works on chrome first
+   first with html and css then using hiccup and garden
+
+   use garden to generate other browser prefixs
+   treat css and javascript as targets generated from clojure
+   targeted to the browser env
+   also run on node, possibly
+
+   clojure repl
+   clojurescript repl, connected to browser
+
+*** live coding with clojure and Emacs
+   Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
+
+   modified by walter p babic
+
+   bring together ideas from other projects:
+   om-async
+   infinate-diamonds geometry.clj
+   modern
+   sketching - this one
+   om todo mvc with undo
+   om tutorial, intermediate - datomic, ajax
+
+   session
+   om components
+   svg
+   canvas
+
+   closure-play on numenor - google closure library, css
+   
+*** dev profile
+    dev/user.clj
+
+    add dev profile to  project.clj
+    #+BEGIN_SRC clojure
+    :profiles {:dev {:source-paths ["dev"]
+                     :dependencies [[org.clojure/tools.namespace "0.2.4"]
+                                    [org.clojure/java.classpath "0.2.0"]
+                                    [org.clojure/test.check "0.5.7"]]}}
+    #+END_SRC
 
 ** references
 *** css
@@ -55,16 +134,37 @@
     http://docs.closure-library.googlecode.com/git/class_goog_History.html
 *** om todo ex with undo
 
+*** session yantra merchant
+    graphics represented as data
+**** session
+     https://github.com/kovasb/session
+     https://github.com/kovasb/session/blob/master/src/clj/session/user.clj
+
+**** yantra
+     https://github.com/kovasb/yantra/blob/master/src/cljs/yantra/graphics.cljs
+     https://github.com/kovasb/yantra/blob/master/src/cljs/yantra/datatypes.cljs
+
+**** merchant
+     https://github.com/kovasb/merchant
+     https://github.com/kovasb/merchant/blob/master/src/clj/merchant/common.clj
+     
 ** notes
    project notes
+   ideas borrowed form other projects
 *** om-async
-    add clojurescript, cljsbuild and om
+    triangle maker
+
+    borrowed clojurescript, cljsbuild and om setup
     lein cljsbuild auto dev
+
 *** modern webapp
     yeoman
     live reload
     grunt tasks
     bower dependencies
+
+    notes and ideas on a web page
+    
 *** om todo with undo
     add secretary
     
@@ -74,3 +174,45 @@
     redo ability
     rivendell:file:///Users/wbabic/dev/clojurescript/om/om-todomvc/todomvc/labs/architecture-examples/om-undo/index.html
     
+*** infinite diamonds
+    loop for rendering to canvas
+    geometry.clj
+    canvas
+    tilings
+    symmetry
+** goal
+   ideas on how to build this thing
+
+   see om-async -> triangle.org
+   see modern
+   on rivendell:
+   http://127.0.0.1:9000/index.html
+
+   ssh://wbabic@Numenor.local/usr/local/git_root/modern.git
+
+   rivendell:~/dev/html5/modern
+
+   graphcs represented as data
+   ideas from yantra, session
+   react-page art
+   see journal.org entry
+
+   view definition
+
+   #/centroid
+   #/perp-bisector
+
+   view definition
+   step through or play
+
+   graphics coordinated with text
+
+   app-state: current definition
+   local state: current step
+
+   mouseover or tap on symbol
+   highlight graphical element
+
+
+   (point x y)
+

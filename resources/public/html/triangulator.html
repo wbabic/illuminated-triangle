@@ -7,9 +7,11 @@
     <link rel="stylesheet" href="../css/reset.css">
   </head>
   <body>
-
+    
     <div class="wrapper">
+
       <header class="header"><h1>Geometric Ideas Illuminated with Triangles</h1></header>
+
       <nav class="nav">
         <ul>
           <li>definitions</li> 
@@ -21,44 +23,26 @@
 
       <article class="main">
         <h2>Canvas</h2>
-        <canvas class="canvas" width="300" height="300">
+        <canvas class="canvas" width="300" height="600">
         </canvas>
       </article>
+
       <aside class="aside aside-1">
-        <h2>Text</h2>
-        <p>points A B</p>
-        <p>line AB</p>
-        <p>midpoint of AB = C'</p>
-      </aside>
-      <aside class="aside aside-2">
-        <h2>Basic Definitions</h2>
-        <div>point</div>
-        <div>line</div>
-        <div>midpoint</div>
-        <div>perpendicular bisector</div>
-        <div>angular bisector</div>
-        <div>circle</div>
-        <div>triangle</div>
+        <h2>Definition Box</h2>
         <br>
-        <h2>Special triangles</h2>
-        <div>equilateral triangle</div>
-        <div>right triangle</div>
-        <div>isosceles triangle</div>
-        <div>golden triangle</div>
-        <br>
-        <h2>Properties of triangles</h2>
-        <div>median</div>
-        <div><a href="#/centroid">centroid</a></div>
-        <div>circumcircle</div>
-        <div>altitude</div>
-        <div>orthocenter</div>
-        <div>incircle</div>
-        <div>excircles</div>
-        <div>eulor line</div>
-        <div>nine point circle</div>
+        <div id="definition-box"></div>
       </aside>
+
+      <aside id="list" class="aside aside-2">
+        <h2>Definition List</h2>
+        <br>
+        <div id="definition-list"></div>
+      </aside>
+
       <footer class="footer">Walter P Babic</footer>
+
     </div>
+    <script src="http://fb.me/react-0.9.0.js"></script>
     <script src="../js/out/goog/base.js" type="text/javascript"></script>
     <script src="../js/main.js" type="text/javascript"></script>
     <script type="text/javascript">goog.require("triangulator.routes");</script>
