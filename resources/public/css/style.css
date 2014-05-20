@@ -49,24 +49,33 @@ a:active {
 .main {
     background: deepskyblue;
     display: -webkit-flex;
-    -webkit-flex-flow: column wrap;
-    -webkit-justify-content: space-around;
-    -webkit-flex: 0 0 33.3333%;
+    -webkit-flex-flow: column;
+    -webkit-justify-content: center;
+    -webkit-flex: 0 0 50%;
 }
 
 .canvas {
     border: 2px solid rgba(156, 80, 172, 0.75);
     border-radius: 5px;
+    margin: auto;
 }
 
 .aside-1 {
     background: gold;
-    -webkit-flex: 0 0 33.3333%;
+    -webkit-flex: 0 0 25%;
 }
 
 .aside-2 {
     background: hotpink;
-    -webkit-flex: 0 0 33.3333%;
+    -webkit-flex: 0 0 25%;
+}
+
+#definition-box {
+    margin: 10px;
+}
+
+#definition-list {
+    margin: 10px;
 }
 
 @media all and (min-width: 600px) {

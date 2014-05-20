@@ -1,6 +1,11 @@
 (ns triangulator.definitions
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [om.dom :as dom :include-macros true]
+            [cljs.core.async :as async :refer [>! <! put! chan alts! sliding-buffer]]
+            [triangulator.events :as events]
+            [triangulator.draw :as draw]
+            [triangulator.datatypes :as dt]))
 
 (enable-console-print!)
 
@@ -82,15 +87,54 @@
     om/IRender
     (render [this]
       (apply dom/div nil 
-               (om/build-all section ui)))))
+             (om/build-all section ui)))))
+
+(defn toggle [state]
+  (if (= :up state)
+    :down
+    :up))
+
+(defn mouse-handler [click-chan mouse-move-chan draw-chan]
+  (go (loop [state :up point nil]
+        (let [[mouse-point channel] (alts! [click-chan
+                                            mouse-move-chan
+                                           ])]
+          (condp = channel
+            click-chan
+            (do
+              (>! draw-chan [(dt/style {:fill :red}) (dt/point mouse-point)])
+              (recur (toggle state) mouse-point))
+
+            mouse-move-chan
+            (do
+              (when (= state :down)
+                (>! draw-chan [(dt/style {:fill :green}) (dt/point mouse-point)]))
+              (recur state point))
+
+            )))))
 
 (defn item-view [app owner]
   (reify
+    om/IInitState
+    (init-state [_]
+      (let [{:keys [canvas width height] :as surface} (draw/surface "graphics-box")
+            click-chan (events/mouse-chan canvas :mouse-down)
+            mouse-move-chan (events/mouse-chan canvas :mouse-move)
+            draw-chan (draw/drawing-loop canvas width height)]
+        {:surface surface
+         :click-chan click-chan
+         :mouse-move-chan mouse-move-chan
+         :draw-chan draw-chan}))
+    om/IWillMount
+    (will-mount [_]
+      (let [{:keys [:surface click-chan mouse-move-chan draw-chan]}
+            (om/get-state owner)]
+        (mouse-handler click-chan mouse-move-chan draw-chan)))
     om/IRender
     (render [this]
-      (dom/h1 #js {:className "definition"}
+      (dom/h1 #js {:className "definition-heading"}
               (if-let [item (:current-item app)]
                 (dom/div nil
                          (dom/h3 nil (first (item definition-text)))
                          (dom/p nil (second (item definition-text))))
-                "no selection")))))
+                "No currently selected item. Select from item list.")))))
