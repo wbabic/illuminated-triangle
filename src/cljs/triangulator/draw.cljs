@@ -14,7 +14,7 @@
    :lt-blue  "rgba(0,   0,   255, 0.1)"
    :grey     "rgba(200, 200, 200, 0.1)"
    :lt-grey  "rgba(100, 100, 100, 0.3)"
-   :grey-2   "rgba(120,120,120,120)"
+   :grey-2   "rgb(200,200,200)"
    :pink     "#EF0BEE"
    :cyan     "#02E6FB"
    :orange   "#FF8108"
@@ -28,7 +28,6 @@
   (render [point context]
     (let [p (:point point)
           radius 5]
-      (println "rendering: " (p 0) (p 1))
       (.beginPath context)
       (.arc context (p 0) (p 1) radius 0 (* 2 Math/PI) false)
       (.stroke context)
@@ -39,11 +38,32 @@
   IRender
   (render [style context]
     (let [s (:style style)]
-      (println "rendering: " s)
       (doseq [[k v] s]
         (case k
           :fill (set! (. context -fillStyle) (color-lookup v))
-          :stroke (set! (. context -strokeStyle) (color-lookup v)))))))
+          :stroke (set! (. context -strokeStyle) (color-lookup v))
+          :lineDash (set! (. context -setLineDash) v)
+          :lineWidth (set! (. context -lineWidth) v))))))
+
+(extend-type dt/Rectangle
+  IRender
+  (render [rect context]
+    (let [p1 (:point (:p1 rect))
+          p2 (:point (:p2 rect))]
+      (comment (.fillRect context (0 p1) (1 p1) (0 p2) (1 p2)))
+      (.fillRect context 0 0 600 600))))
+
+(extend-type dt/Line
+  IRender
+  (render [line context]
+    (let [points (:points line)
+          p1 (points 0)
+          p2 (points 1)]
+      (.beginPath context)
+      (.moveTo context (p1 0) (p1 1))
+      (.lineTo context (p2 0) (p2 1))
+      (.stroke context)
+      (. context (closePath)))))
 
 (defn surface [id]
   (let [canvas (.getElementById js/document id)]
@@ -57,21 +77,7 @@
     (go (loop []
           (let [draw-msgs (<! draw-chan)]
             (doseq [draw-obj draw-msgs]
-              (println "drawing-loop: " draw-obj)
               (render draw-obj context))
             (recur))))
     draw-chan))
 
-(defn clear [context width height]
-  (set! (. context -fillStyle) "rgb(255,255,255)")
-  (set! (. context -strokeStyle) "rgb(255,255,255)")
-  (.fillRect context 0 0 width height))
-
-(defn line
-  ([P Q context] (line P Q :grey-2 context))
-  ([P Q color context]
-     (.beginPath context)
-     (.moveTo context (P 0) (P 1))
-     (.lineTo context (Q 0) (Q 1))
-     (.stroke context)
-     (. context (closePath))))
