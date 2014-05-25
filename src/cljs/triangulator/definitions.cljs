@@ -226,22 +226,44 @@
                      " value: " value)
             (when (= channel ctr-chan)
               (do
+                ;; when different than current
                 (>! out (dt/point [20 20]))
                 (println "changing to state: " value)
                 (recur value state)))
+
             (condp = item
-              :none (do
-                      (println "item = :none state = " state)
-                      (recur item state))
-              :point (do
-                      (println "item = :point state = " state)
-                      (recur item state))
-              :line (do
-                      (println "item = :line state = " state)
-                      (recur item state))
-              :triangle (do
-                      (println "item = :triangle state = " state)
-                      (recur item state)))
+              :none
+              (do
+                (println "item = :none state = " state)
+                (recur item state))
+              :point
+              (do
+                (println "item = :point state = " state)
+                (condp = channel
+                  move
+                  (do ;; clear-screen draw-state draw-point-coords
+                    (>! draw-chan clear)
+                    (>! draw-chan [;; style
+                                   (dt/style {:stroke :lt-grey
+                                              :fill :red})
+                                   (dt/line [value (project-x value)])
+                                   (dt/line [value (project-y value)])
+                                   (dt/point value)])
+                    (recur :point state))
+                  click
+                  (do ;; add point to state; reset loop
+                    (>! out (dt/point value))
+                    (recur :point :none))))
+
+              :line
+              (do
+                (println "item = :line state = " state)
+                (recur item state))
+
+              :triangle
+              (do
+                (println "item = :triangle state = " state)
+                (recur item state)))
             (recur item state)
             )))
     out))
