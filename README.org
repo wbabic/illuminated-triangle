@@ -192,7 +192,7 @@
 
    rivendell:~/dev/html5/modern
 
-   graphcs represented as data
+   graphics represented as data
    ideas from yantra, session
    react-page art
    see journal.org entry
@@ -206,6 +206,7 @@
    step through or play
 
    graphics coordinated with text
+   in color in time
 
    app-state: current definition
    local state: current step
@@ -216,3 +217,12 @@
 
    (point x y)
 
+** ideas
+*** give Point some style
+*** change Line rendering to render its points also
+    using their style
+    give some style to the line as well
+*** add notation
+    optionally give items a name
+    that uses the items style
+    
