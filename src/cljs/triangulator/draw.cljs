@@ -58,11 +58,17 @@
   (render [line context]
     (let [points (:points line)
           p1 (points 0)
-          p2 (points 1)]
+          p2 (points 1)
+          radius 5]
       (.beginPath context)
       (.moveTo context (p1 0) (p1 1))
       (.lineTo context (p2 0) (p2 1))
       (.stroke context)
+      (. context (closePath))
+      (.beginPath context)
+      (.arc context (p1 0) (p1 1) radius 0 (* 2 Math/PI) false)
+      (.arc context (p2 0) (p2 1) radius 0 (* 2 Math/PI) false)
+      (.fill context)
       (. context (closePath)))))
 
 (defn surface [id]
