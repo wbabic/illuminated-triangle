@@ -64,12 +64,27 @@
       (.moveTo context (p1 0) (p1 1))
       (.lineTo context (p2 0) (p2 1))
       (.stroke context)
-      (. context (closePath))
-      (.beginPath context)
-      (.arc context (p1 0) (p1 1) radius 0 (* 2 Math/PI) false)
-      (.arc context (p2 0) (p2 1) radius 0 (* 2 Math/PI) false)
-      (.fill context)
       (. context (closePath)))))
+
+(comment (.beginPath context)
+               (.arc context (p1 0) (p1 1) radius 0 (* 2 Math/PI) false)
+               (.arc context (p2 0) (p2 1) radius 0 (* 2 Math/PI) false)
+               (.fill context)
+               (. context (closePath)))
+
+(extend-type dt/Triangle
+  IRender
+  (render [triangle context]
+    (let [p1 (:p1 triangle)
+          p2 (:p2 triangle)
+          p3 (:p3 triangle)]
+      ;; draw three vertices and three edges
+      (render (dt/line [p1 p2]) context)
+      (render (dt/line [p2 p3]) context)
+      (render (dt/line [p3 p1]) context)
+      (render (dt/point p1) context)
+      (render (dt/point p2) context)
+      (render (dt/point p3) context))))
 
 (defn surface [id]
   (let [canvas (.getElementById js/document id)]

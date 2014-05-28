@@ -53,6 +53,28 @@
                       (>! out (dt/line [p1 p2 value]))
                       (recur :line {:step 0}))))))
 
+(defn draw-point-coords
+  "clear-screen draw item draw point and coords of value"
+  [value item draw-chan out]
+  (go (>! draw-chan clear)
+      (>! out [:draw item draw-chan])
+      (>! draw-chan [(dt/style {:stroke :lt-grey
+                                :fill :red})
+                     (dt/line [value (project-x value)])
+                     (dt/line [value (project-y value)])
+                     (dt/point value)])))
+
+(defn draw-line
+  "clear screen draw item draw line between p1 and p2"
+  [p1 p2 item draw-chan out clear?]
+  (go (when clear? (>! draw-chan clear))
+      (>! out [:draw item draw-chan])
+      (>! draw-chan [(dt/style {:stroke :red
+                                :fill :grey-2})
+                     (dt/point p1)
+                     (dt/point p2)
+                     (dt/line [p1 p2])])))
+
 (defn point-state-transitioner
   "handle event by using current state and event to transition to new state
 send drawing events to draw-chan
@@ -62,16 +84,10 @@ return new state"
   (condp = type
     :move
     (do ;; clear-screen draw-state draw-point-coords
-      (go (>! draw-chan clear)
-          (>! out [:draw :point draw-chan])
-          (>! draw-chan [(dt/style {:stroke :lt-grey
-                                    :fill :red})
-                         (dt/line [value (project-x value)])
-                         (dt/line [value (project-y value)])
-                         (dt/point value)]))
+      (draw-point-coords value :point draw-chan out)
       current-state)
     :click
-    (do ;; add point to state; reset loop
+    (do ;; add point to state; reset state
       (go (>! out (dt/point value))
           (>! out [:draw :point draw-chan]))
       {:step 0})))
@@ -82,21 +98,11 @@ return new state"
   (case type
     :move
     (condp = (:step current-state)
-      0 (do ;; clear-screen draw- draw-point-coords
-          (go (>! draw-chan clear)
-              (>! out [:draw :line draw-chan])
-              (>! draw-chan [(dt/style {:stroke :lt-grey
-                                        :fill :red})
-                             (dt/line [value (project-x value)])
-                             (dt/line [value (project-y value)])]))
+      0 (do
+          (draw-point-coords value :line draw-chan out)
           current-state)
       1 (let [p1 (:p1 current-state)]
-          (go (>! draw-chan clear)
-              (>! out [:draw :line draw-chan])
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point p1)
-                             (dt/line [p1 value])]))
+          (draw-line p1 value :line draw-chan out true)
           current-state))
     :click
     (condp = (:step current-state)
@@ -111,13 +117,49 @@ return new state"
               line (dt/line [p1 value])
               _ (println "line: " line)]
           (go (>! out line)
+              (>! draw-chan clear)
               (>! out [:draw :line draw-chan]))
           {:step 0}))))
 
 (defn tri-state-transitioner
   "see point-state-transitioner"
   [[type value] current-state out draw-chan]
-  current-state)
+  (case type
+    :move
+    (condp = (:step current-state)
+      0 (do
+          (draw-point-coords value :triangle draw-chan out)
+          current-state)
+      1 (let [p1 (:p1 current-state)]
+          (draw-line p1 value :triangle draw-chan out true)
+          current-state)
+      2 (let [p1 (:p1 current-state)
+              p2 (:p2 current-state)]
+          (draw-line p1 p2 :triangle draw-chan out true)
+          (draw-line p2 value :triangle draw-chan out false)
+          (draw-line value p1 :triangle draw-chan out false)
+          current-state))
+    :click
+    (condp = (:step current-state)
+      0 (do
+          (go (>! draw-chan clear)
+              (>! out [:draw :triangle draw-chan])
+              (>! draw-chan [(dt/style {:stroke :red
+                                        :fill :grey-2})
+                             (dt/point value)]))
+          {:step 1 :p1 value}) 
+      1 (let [p1 (:p1 current-state)
+              line (dt/line [p1 value])
+              _ (println "line: " line)]
+          (go (>! out [:draw :triangle draw-chan]))
+          {:step 2 :p1 p1 :p2 value})
+      2 (let [p1 (:p1 current-state)
+              p2 (:p2 current-state)
+              triangle (dt/triangle p1 p2 value)
+              _ (println "triangle: " triangle)]
+          (go (>! out triangle)
+              (>! out [:draw :triangle draw-chan]))
+          {:step 0}))))
 
 (defn mouse-handler [click move ctr-chan draw-chan]
   (let [out (chan)]
@@ -128,7 +170,7 @@ return new state"
                        move :move
                        ctr-chan :ctr-chan)]
             (println item " : " state)
-            (println type " : " value)
+            (when (= type :click) (println type " : " value))
             (when (= channel ctr-chan)
               (do
                 (println "new item: " value)

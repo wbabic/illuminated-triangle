@@ -53,7 +53,11 @@
               (condp instance? p
                 dt/Point (str (:point p))
                 dt/Line (str (:points p))
-                (str "new value: " (type p)))))))
+                dt/Triangle (let [p1 (:p1 p)
+                                  p2 (:p2 p)
+                                  p3 (:p3 p)]
+                              (str "[" p1 " " p2 " " p3 "]"))
+                (str "new value: " p))))))
 
 (defn item-controller [app owner]
   (reify
@@ -89,6 +93,10 @@
                   (do
                     (om/update-state! owner :line #(conj % h))
                     (recur))
+                  dt/Triangle
+                  (do
+                    (om/update-state! owner :triangle #(conj % h))
+                    (recur))
                   (do
                     (let [[command item d-chan] h]
                       (case item
@@ -105,8 +113,10 @@
                             (>! d-chan [(dt/style {:fill :green
                                                    :stroke :red})])
                             (doseq [line lines]
-                              (println "drawing line: " line)
-                              (>! d-chan [line]))))
+                              (let [[p1 p2] (:points line)]
+                                (println "drawing line: " line)
+                                (println "p1: " p1 "p2: " p2)
+                                (>! d-chan [line (dt/point p1) (dt/point p2)])))))
                         :triangle
                         (do
                           (let [triangles (om/get-state owner :triangle)]

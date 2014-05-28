@@ -226,3 +226,7 @@
     optionally give items a name
     that uses the items style
     
+*** add hilightibility
+    mouse over to highlight
+    symbol and graphic
+    
