@@ -230,3 +230,84 @@
     mouse over to highlight
     symbol and graphic
     
+** csp
+
+   http://www.cs.cmu.edu/~crary/819-f09/
+
+   http://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf
+
+   in the go lang:
+   http://godoc.org/github.com/thomas11/csp
+
+   in core.async:
+   https://github.com/nodename/async-plgd/blob/master/src/hoare/coroutines.clj
+
+   an axiomatic basis for computer programming
+   http://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf
+
+   gaurded commands, non determinacy, and formal derivation of
+   programs
+   http://www.cs.cmu.edu/~crary/819-f09/Dijkstra75.pdf
+
+   X :: *[c:character; west?c -> east!c]
+
+   #+BEGIN_SRC clojure
+     (ns hoare.coroutines
+       (:require [clojure.core.async :refer :all]))
+     
+     (defn copier
+       "A process that copies values from the source channel"
+       [source]
+       (let [c (chan)]
+         (go
+          (loop []
+            (let [value (<! source)]
+              ;; this value will be nil if close! has been called on the channel.
+              ;; we cannot copy nil to c because explicitly putting a nil is not allowed.
+              (if (nil? value)
+                (close! c)
+                (do
+                  (>! c value)
+                  (recur))))))
+         c))
+          
+     (defn test-copy
+       "Print out all the numbers from 0 to 9,
+          then after two seconds print out the numbers from 10 to 19"
+       []
+       (let [west (chan)
+             ;; this process will remain ready to copy...
+             east (copier west)
+             ;; a channel that will close after 2000 ms:
+             timeout (timeout 2000)]
+         
+         (go
+          (dotimes [i 10]
+            (>! west i))
+          ;; the only value that will come from the timeout is the nil when it closes:
+          (<! timeout)
+          (dotimes [i 10]
+            (>! west (+ 10 i))))
+         
+         ;; this process will remain ready to print...
+         (go
+          (loop []
+            (println (<! east))
+            (recur))))
+       
+       ;; until all the processes go away when they go out of scope:
+       nil)
+   #+END_SRC
+
+
+X :: *[c:character; west?c ->
+  [c != asterisk -> east!c 
+  |c = asterisk -> west?c; 
+       [c != asterisk -> east!asterisk; east!c 
+       |c = asterisk ~ east!upward arrow 
+  ]]   ]
+
+| is separator in a gaurded statement
+
+
+

@@ -53,5 +53,5 @@
    :ang-bisector ["Angular Bisector"
                   "Angle between two intersecting lines. Line that divides angle into equal parts. Loci of points equidistant from two lines."]
    :circle ["Circle" "Center and radius. Loci of points equidistant from one point."]
-   :triangle ["Triangle" "Three non collinear points. Three vertces. Three edges. Click three times in the canvas to make a triangle."]})
+   :triangle ["Triangle" "Three non collinear points. Three vertices. Three edges. Click three times in the canvas to make a triangle."]})
 

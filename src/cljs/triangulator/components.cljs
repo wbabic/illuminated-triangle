@@ -104,7 +104,7 @@
                         (do
                           (let [points (om/get-state owner :point)]
                             (>! d-chan [(dt/style {:fill :green
-                                                   :stroke :grey-2})])
+                                                   :stroke :red})])
                             (doseq [point points]
                               (>! d-chan [point]))))
                         :line
@@ -114,8 +114,6 @@
                                                    :stroke :red})])
                             (doseq [line lines]
                               (let [[p1 p2] (:points line)]
-                                (println "drawing line: " line)
-                                (println "p1: " p1 "p2: " p2)
                                 (>! d-chan [line (dt/point p1) (dt/point p2)])))))
                         :triangle
                         (do
@@ -123,9 +121,10 @@
                             (>! d-chan [(dt/style {:fill :green
                                                    :stroke :red})])
                             (doseq [triangle triangles]
-                              (println "drawing triangle: " triangle)
-                              (>! d-chan [triangle]))))))
-                    (recur))))))))
+                              (>! d-chan [triangle]))))
+                        (do
+                          (println "warning: item not handled: " item))))))
+                (recur))))))
     om/IWillUnmount
     (will-unmount [_]
       (println "unmounting ..."))
