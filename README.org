@@ -229,7 +229,37 @@
 *** add hilightibility
     mouse over to highlight
     symbol and graphic
-    
+
+*** add interacive guides
+**** line
+     two points
+     show midpoint when drawing a line, along with perpendicular
+     bisector
+
+     show circles centered at endpoints as well as centered at radius
+
+     extend line in both directions
+**** two lines
+     find the intersection of two lines
+     or if they are paalell
+
+     find the angles between them
+     bisect the angles between them
+     
+**** triangle
+     illuminate special triangles and snap to exact spot
+     equilateral
+     isosceles
+     right
+     golden
+     
+**** geometric concepts
+     distance from a point
+     distance between two points
+     distance bewteen a point and a line
+     distance between two lines
+     angle between two lines
+     
 ** csp
 
    http://www.cs.cmu.edu/~crary/819-f09/

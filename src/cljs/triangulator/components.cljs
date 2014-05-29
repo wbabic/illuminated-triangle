@@ -6,7 +6,8 @@
             [triangulator.handlers :as handlers]
             [triangulator.draw :as draw]
             [triangulator.definitions :as d]
-            [triangulator.datatypes :as dt]))
+            [triangulator.datatypes :as dt]
+            [triangulator.geometry :as geom]))
 
 ;; app state is the currently selected definition or none
 
@@ -57,6 +58,8 @@
                                   p2 (:p2 p)
                                   p3 (:p3 p)]
                               (str "[" p1 " " p2 " " p3 "]"))
+                dt/Disk (let [{:keys [center radius]} p]
+                          (str "center: " center " radius:" radius))
                 (str "new value: " p))))))
 
 (defn item-controller [app owner]
@@ -97,6 +100,10 @@
                   (do
                     (om/update-state! owner :triangle #(conj % h))
                     (recur))
+                  dt/Disk
+                  (do
+                    (om/update-state! owner :circle #(conj % h))
+                    (recur))
                   (do
                     (let [[command item d-chan] h]
                       (case item
@@ -109,12 +116,16 @@
                               (>! d-chan [point]))))
                         :line
                         (do
-                          (let [lines (om/get-state owner :line)]
-                            (>! d-chan [(dt/style {:fill :green
-                                                   :stroke :red})])
+                          (let [lines (om/get-state owner :line)
+                                s1 (dt/style {:fill :green
+                                              :stroke :red})
+                                s2 (dt/style {:fill :blue
+                                              :stroke :red})]
                             (doseq [line lines]
-                              (let [[p1 p2] (:points line)]
-                                (>! d-chan [line (dt/point p1) (dt/point p2)])))))
+                              (let [[p1 p2] (:points line)
+                                    m (geom/midpoint p1 p2)]
+                                (>! d-chan [s1 line (dt/point p1) (dt/point p2)
+                                            s2 (dt/point m)])))))
                         :triangle
                         (do
                           (let [triangles (om/get-state owner :triangle)]
@@ -122,8 +133,15 @@
                                                    :stroke :red})])
                             (doseq [triangle triangles]
                               (>! d-chan [triangle]))))
+                        :circle
                         (do
-                          (println "warning: item not handled: " item))))))
+                          (let [circles (om/get-state owner :circle)]
+                            (>! d-chan [(dt/style {:fill :green
+                                                   :stroke :red})])
+                            (doseq [circle circles]
+                              (>! d-chan [circle]))))
+                        (do
+                          (println "item-comtroller: warning: item not handled: " item))))))
                 (recur))))))
     om/IWillUnmount
     (will-unmount [_]

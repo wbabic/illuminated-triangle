@@ -27,7 +27,7 @@
   IRender
   (render [point context]
     (let [p (:point point)
-          radius 5]
+          radius 3]
       (.beginPath context)
       (.arc context (p 0) (p 1) radius 0 (* 2 Math/PI) false)
       (.stroke context)
@@ -66,12 +66,6 @@
       (.stroke context)
       (. context (closePath)))))
 
-(comment (.beginPath context)
-               (.arc context (p1 0) (p1 1) radius 0 (* 2 Math/PI) false)
-               (.arc context (p2 0) (p2 1) radius 0 (* 2 Math/PI) false)
-               (.fill context)
-               (. context (closePath)))
-
 (extend-type dt/Triangle
   IRender
   (render [triangle context]
@@ -85,6 +79,18 @@
       (render (dt/point p1) context)
       (render (dt/point p2) context)
       (render (dt/point p3) context))))
+
+(extend-type dt/Disk
+  IRender
+  (render [circle context]
+    (let [center (:center circle)
+          radius (:radius circle)]
+      (.beginPath context)
+      (.arc context (center 0) (center 1) radius 0 (* 2 Math/PI) false)
+      (.stroke context)
+      (.fill context)
+      (.closePath context)
+      (render (dt/point center) context))))
 
 (defn surface [id]
   (let [canvas (.getElementById js/document id)]
