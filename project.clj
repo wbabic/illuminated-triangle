@@ -15,13 +15,13 @@
 
   :plugins [[lein-cljsbuild "1.0.3"]]
 
-  :source-paths ["src"]
+  :source-paths ["src/clj" "src/cljs"]
   
   :resource-paths ["resources"]
 
   :profiles
   {:dev
-   {:source-paths ["src" "dev"]
+   {:source-paths [ "test/clj" "dev"]
     :dependencies [[org.clojure/tools.namespace "0.2.4"]
                    [org.clojure/java.classpath "0.2.0"]
                    [org.clojure/test.check "0.5.7"]]
@@ -29,7 +29,7 @@
 
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src/clj" "src/cljs"]
+              :source-paths ["src/cljs"]
               :compiler {
                 :output-to "resources/public/js/main.js"
                 :output-dir "resources/public/js/out"
