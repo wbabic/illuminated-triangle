@@ -1,3 +1,28 @@
 * Introduction to sketching
-
+  Sketching with css and clojure ... in the canvas
+  making geometrical objects
+  with visual representation and
+  represented by data
   
+** a five hundred square pixel canvas
+   screen coordinates
+   bit map
+
+   represent as a matrix in core.matrix
+   
+** create geometric data with your fingers
+   mouse
+   touch
+   
+** finger painting with geometric objects
+   point line circle triangle
+   with effects and guides
+   in color and time
+   
+** make triangles
+   create point triples
+   each point with a pair of coordinates
+
+** analyze
+   save data in a file
+   send to server
