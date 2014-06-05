@@ -34,6 +34,16 @@
   [u v]
   (o/+ u v))
 
+(defn sub
+  "difference of two vectors"
+  [P Q]
+  (add P (scal-mult (- 1) Q)))
+
+(defn distance
+  "distance between two points"
+  [P Q]
+  (length (sub P Q)))
+
 (defn mult
   "multiply a natrix and a vector (or matrix)"
   [m v]

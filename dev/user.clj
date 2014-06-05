@@ -5,13 +5,14 @@
             [garden.repl]
             [clojure.test :refer :all]
             [triangulator.geometry :as geom]
-            [triangulator.geometry-test]))
-
+            [triangulator.geometry-test]
+            [triangulator.transforms :as trans]
+            [triangulator.transforms-test]))
 
 (defn quick-test []
   (run-tests 'triangulator.geometry-test))
 
-(defn transforms--test []
+(defn transforms-test []
   (run-tests 'triangulator.transforms-test))
 
 (def system nil)

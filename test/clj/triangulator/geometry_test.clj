@@ -36,3 +36,9 @@
         m [v w]]
     (is (equals [5 11] (mult m v)))
     (is (equals [[7 10] [15 22]] (mult m m)))))
+
+(deftest test-distance
+  (let [e1 [1 0]
+        e2 [0 1]
+        root2 (Math/sqrt 2)]
+    (is (== root2 (distance e1 e2)))))
