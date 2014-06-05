@@ -45,3 +45,6 @@
   (m/inverse m))
 
 (defn equals [m n] (o/== m n))
+
+(defn almost-equals [x y epsilon]
+  (< (Math/abs (- x y)) epsilon))

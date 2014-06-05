@@ -3,7 +3,8 @@
   (:use [triangulator.geometry]))
 
 (deftest test-equals
-  (is (equals [1 0] [1.0 0.0])))
+  (is (equals [1 0] [1.0 0.0]))
+  (is (equals [[1 0] [0 1]] [[1.0 0.0] [0.0 1.0]])))
 
 (deftest test-dot
   (let [v [2 3]

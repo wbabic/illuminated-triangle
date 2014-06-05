@@ -11,6 +11,9 @@
 (defn quick-test []
   (run-tests 'triangulator.geometry-test))
 
+(defn transforms--test []
+  (run-tests 'triangulator.transforms-test))
+
 (def system nil)
 
 (comment
