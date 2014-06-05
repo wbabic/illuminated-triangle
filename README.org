@@ -341,3 +341,8 @@ X :: *[c:character; west?c ->
 
 
 
+** geometry
+   in clojure first
+   then to clojure script
+
+   with tests
