@@ -4,7 +4,7 @@
             [triangulator.sketch :as sketch]
             [garden.repl]
             [clojure.test :refer :all]
-            [triangulator.geometry]
+            [triangulator.geometry :as geom]
             [triangulator.geometry-test]))
 
 
