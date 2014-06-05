@@ -59,5 +59,5 @@
   (rotation (/ geom/tau 4))
   (geom/mult (rotation (/ geom/tau 4)) [1 0])
   ;;=> [6.123233995736766E-17 -1.0]
-  
+
   )
