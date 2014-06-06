@@ -154,7 +154,7 @@ of parameteriezed line"
      (p-line -2)])
   ;;=> [true true true [-1 2] [3 -2]]
 
-    (let [e1 [0 0]
+  (let [e1 [0 0]
         e2 [1 0]
         p-line (param-line [e1 e2])
         m (midpoint e1 e2)]
