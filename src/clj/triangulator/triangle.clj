@@ -2,7 +2,7 @@
   (:use [triangulator.geometry]))
 
 (defn midpoint [P Q]
-  (scal-mult (/ 2) (add m n)))
+  (scal-mult (/ 2) (add P Q)))
 
 (defn centroid [[A B C]]
   (scal-mult
@@ -95,8 +95,74 @@ return equation string of the form ax + by = c"
    (take 3
          (partition 2 1 (drop 1 (cycle t))))))
 
-(comments
+(comment
  (segments [[0 0] [1 0] [0 1]])
  ;;=> [[[1 0] [0 1]] [[0 1] [0 0]] [[0 0] [1 0]]]
  )
 
+(defn perp-bisector
+  "return new line same distance as given line,
+passing through midpoint of and perpendicular to
+the given line"
+  [[P Q]]
+  (let [M (midpoint P Q)
+        l (distance P Q)
+        R (sub P M)
+        Rp (perp R)]
+    [(add M Rp) (sub M Rp)]))
+
+(comment
+  (perp-bisector [[0 0] [1 0]])
+  ;;=> [[1/2 -1/2] [1/2 1/2]]
+
+  (perp-bisector [[-1 0] [1 0]])
+  ;;=> [[0N -1N] [0N 1N]]
+
+  (perp-bisector [[1 0] [0 1]])
+  ;;=> [[1N 1N] [0N 0N]]
+
+  (distance [1 0] [0 1])
+  ;;=> 1.4142135623730951
+
+  ;;=> perp-bisector preserves distance and midpoints
+  (let [p1 [1 0]
+        p2 [0 1]
+        [q1 q2] (perp-bisector [p1 p2])]
+    [(== (distance p1 p2)
+         (distance q1 q2))
+     (equals (midpoint p1 p2)
+             (midpoint q1 q2))])
+  )
+
+(defn param-line
+  "given two endpoints return function
+of parameteriezed line"
+  [[P Q]]
+  (let []
+    (fn [t]
+      (add P (scal-mult t (sub Q P))))))
+
+(comment
+  (let [e1 [1 0]
+        e2 [0 1]
+        p-line (param-line [e1 e2])
+        m (midpoint e1 e2)]
+    [(equals e1 (p-line 0))
+     (equals e2 (p-line 1))
+     (equals m (p-line (/ 2)))
+     (p-line 2)
+     (p-line -2)])
+  ;;=> [true true true [-1 2] [3 -2]]
+
+    (let [e1 [0 0]
+        e2 [1 0]
+        p-line (param-line [e1 e2])
+        m (midpoint e1 e2)]
+    [(equals e1 (p-line 0))
+     (equals e2 (p-line 1))
+     (equals m (p-line (/ 2)))
+     (p-line 2)
+     (p-line -2)])
+    ;;=> [true true true [2 0] [-2 0]]
+    
+  )
