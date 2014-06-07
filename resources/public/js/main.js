@@ -20,4 +20,3 @@ goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
 goog.addDependency("../clojure/string.js", ['clojure.string'], ['cljs.core', 'goog.string', 'goog.string.StringBuffer']);
 goog.addDependency("../secretary/core.js", ['secretary.core'], ['cljs.core', 'clojure.walk', 'clojure.string']);
 goog.addDependency("../triangulator/routes.js", ['triangulator.routes'], ['goog.history.EventType', 'triangulator.events', 'triangulator.draw', 'triangulator.components', 'cljs.core', 'secretary.core', 'om.core', 'goog.History', 'triangulator.definitions', 'om.dom', 'goog.events']);
-goog.addDependency("../triangulator/core.js", ['triangulator.core'], ['cljs.core']);

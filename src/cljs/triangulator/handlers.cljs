@@ -36,19 +36,31 @@
   "clear screen draw item draw line between p1 and p2"
   [p1 p2 item draw-chan out clear?]
   (let [m (geom/midpoint p1 p2)
-        l (geom/distance p1 p2)]
+        l (geom/distance p1 p2)
+        [q1 q2 s1 s2] (geom/perp-bisector [p1 p2])]
     (go (when clear? (>! draw-chan clear))
         (>! out [:draw item draw-chan])
-        (>! draw-chan [(dt/style {:stroke :red
-                                  :fill :lt-blue})
-                       (dt/circle p1 l)
-                       (dt/circle p2 l)
-                       (dt/circle m (/ l 2))
-                       (dt/style {:fill :grey-2})
-                       (dt/point p1)
-                       (dt/point p2)
-                       (dt/line [p1 p2])
-                       (dt/point m)]))))
+        (>! draw-chan
+            [(dt/style {:stroke :red
+                        :fill :lt-blue})
+             (dt/circle p1 l)
+             (dt/circle p2 l)
+             (dt/circle m (/ l 2))
+             (dt/style {:fill :grey-2})
+             (dt/point p1)
+             (dt/point p2)
+             (dt/line [p1 p2])
+             (dt/point m)
+             ;; draw perpendicular bisector
+             ;; and points on the perp-bisector
+             ;; at +- 1 root3 units from the midpoint
+             ;;(dt/style {:stroke :lt-green})
+             (dt/line [s1 s2])
+             (dt/point q1)
+             (dt/point q2)
+             (dt/point s1)
+             (dt/point s2)
+             ]))))
 
 (defn draw-circle
   "clear-screen draw item draw point and coords of value"
