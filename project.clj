@@ -11,7 +11,9 @@
                  [om "0.6.2"]
                  [secretary "1.1.0"]
                  [net.mikera/core.matrix "0.18.0"]
-                 [org.clojure/math.numeric-tower "0.0.4"]]
+                 [org.clojure/math.numeric-tower "0.0.4"]
+                 [org.clojure/core.match "0.2.1"]
+                 [expresso "0.2.0"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]]
 

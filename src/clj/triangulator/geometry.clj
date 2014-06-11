@@ -4,6 +4,12 @@
 
 (def pi Math/PI)
 (def tau (* 2 pi))
+(def origin [0 0])
+(def e1 [1 0])
+(def e2 [0 1])
+
+(def root2 (Math/sqrt 2))
+(def root3 (Math/sqrt 3))
 
 ;; implementation using PersistentVector
 ;; and core.matrix array programming
@@ -18,6 +24,9 @@
 
 (defn perp [[x y]]
   [(- y) x])
+
+(defn degrees [rad]
+  (* (/ 180 pi) rad))
 
 (defn scal-mult
   "scalar multiplication of scalar and vector"
@@ -58,3 +67,6 @@
 
 (defn almost-equals [x y epsilon]
   (< (Math/abs (- x y)) epsilon))
+
+(defn det [t]
+  (m/det t))

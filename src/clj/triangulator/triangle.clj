@@ -1,5 +1,6 @@
 (ns triangulator.triangle
-  (:use [triangulator.geometry]))
+  (:use [triangulator.geometry])
+  (:use [triangulator.transforms]))
 
 (defn midpoint [P Q]
   (scal-mult (/ 2) (add P Q)))
@@ -9,13 +10,10 @@
    (/ 3)
    (add A (add B C))))
 
-(comment
-  (midpoint [1 0] [0 1])
-  ;;=> [1/2 1/2]
-  (centroid [[0 0] [1 0] [0 1]])
-  ;;=> [1/3 1/3]
-  
-  )
+(defn area
+  "Return the area of a triangle"
+  [t]
+  (* 0.5 (det (mapv #(conj % 1) t))))
 
 (defn line-coords
   "given 2 points return [a b c]
@@ -40,7 +38,7 @@ return equation string of the form ax + by = c"
               1 ch
               -1 (str "-" ch)
               (str p ch)))
-        p (fn [a b ch]
+        p (fn [a b]
             (if (or (== 0 a) (== 0 b))
               ""
               " + "))
@@ -48,43 +46,9 @@ return equation string of the form ax + by = c"
     (str (t a "x") (p a b) (t b "y") " = " c)))
 
 (comment
-  ;; [a b c]
-  ;; ax + by = c
-  
-  (line-coords [[1 0] [0 0]])
-  ;;=> [0 1 0]
-  (line-eq [0 1 0])
-  ;;=> "y = 0"
-  
-  (line-coords [0 0] [1 0])
-  ;;=> [0 -1 0]
-  (line-eq [0 -1 0])
-  ;;=> "-y = 0"
-  
-  (line-coords [[0 0] [0 1]])
-  ;;=> [1 0 0]
-  (line-eq [1 0 0])
-  ;;=> "x = 0"
-
-  (line-coords [[0 0] [1 1]])
-  ;;=> [1 -1 0]
-  (line-eq [1 -1 0])
-  ;;=> "x + -y = 0"
-  
-  (line-coords [[1 0] [1 1]])
-  ;;=> [1 0 1]
-  (line-eq [1 0 1])
-  ;;=> "x = 1"
-
-  (line-coords [[1 0] [0 1]])
-  ;;=> [1 1 1]
-  (line-eq [1 1 1])
-  ;;=> "x + y = 1"
-
-  (line-coords [[0 1] [1 0]])
-  ;;=> [-1 -1 -1]
-  (line-eq [-1 -1 -1])
-  ;;=> "-x + -y = -1"
+  (let [lcs [[1 0 0] [0 1 0] [1 0 1] [1 1 1]]]
+    (map line-eq lcs))
+  ;;=> ("x = 0" "y = 0" "x = 1" "x + y = 1")
   )
 
 (defn segments
@@ -94,11 +58,6 @@ return equation string of the form ax + by = c"
    vec
    (take 3
          (partition 2 1 (drop 1 (cycle t))))))
-
-(comment
- (segments [[0 0] [1 0] [0 1]])
- ;;=> [[[1 0] [0 1]] [[0 1] [0 0]] [[0 0] [1 0]]]
- )
 
 (defn perp-bisector
   "return new line same distance as given line,
@@ -111,29 +70,6 @@ the given line"
         Rp (perp R)]
     [(add M Rp) (sub M Rp)]))
 
-(comment
-  (perp-bisector [[0 0] [1 0]])
-  ;;=> [[1/2 -1/2] [1/2 1/2]]
-
-  (perp-bisector [[-1 0] [1 0]])
-  ;;=> [[0N -1N] [0N 1N]]
-
-  (perp-bisector [[1 0] [0 1]])
-  ;;=> [[1N 1N] [0N 0N]]
-
-  (distance [1 0] [0 1])
-  ;;=> 1.4142135623730951
-
-  ;;=> perp-bisector preserves distance and midpoints
-  (let [p1 [1 0]
-        p2 [0 1]
-        [q1 q2] (perp-bisector [p1 p2])]
-    [(== (distance p1 p2)
-         (distance q1 q2))
-     (equals (midpoint p1 p2)
-             (midpoint q1 q2))])
-  )
-
 (defn param-line
   "given two endpoints return function
 of parameteriezed line"
@@ -142,27 +78,74 @@ of parameteriezed line"
     (fn [t]
       (add P (scal-mult t (sub Q P))))))
 
-(comment
-  (let [e1 [1 0]
-        e2 [0 1]
-        p-line (param-line [e1 e2])
-        m (midpoint e1 e2)]
-    [(equals e1 (p-line 0))
-     (equals e2 (p-line 1))
-     (equals m (p-line (/ 2)))
-     (p-line 2)
-     (p-line -2)])
-  ;;=> [true true true [-1 2] [3 -2]]
+(defn altitude [[A B C]]
+  (let [b (sub B A)
+        c (sub C A)
+        t (/ (dot b c) (dot c c))]
+    (add A (scal-mult t c))))
 
-  (let [e1 [0 0]
-        e2 [1 0]
-        p-line (param-line [e1 e2])
-        m (midpoint e1 e2)]
-    [(equals e1 (p-line 0))
-     (equals e2 (p-line 1))
-     (equals m (p-line (/ 2)))
-     (p-line 2)
-     (p-line -2)])
-    ;;=> [true true true [2 0] [-2 0]]
-    
+(defn altitudes [coords]
+  (let [[A B C] coords
+        a1 (altitude [A B C])
+        a2 (altitude [B C A])
+        a3 (altitude [C A B])]
+    [[B a1]
+     [C a2]
+     [A a3]]))
+
+;; special triangle makers
+;; lets make an equilateral triangle
+;; by placing the centroid at given position
+;; tilting to given orientation
+;; and exanding axis to given radius
+(def v1 (scal-mult (/ 2) [-1 root3]))
+(def v2 (scal-mult (/ -2) [1 root3]))
+
+(def right-isoc [origin e1 e2])
+(def eq-tri [e1 v1 v2])
+(def isoc-eq [origin e1 v1])
+(def scalene-eq [origin e1 (scal-mult (/ -2) v2)])
+
+(defn eq-tri-make [position radius orientation]
+  (let [[x y] position
+        rot (rotation orientation)]
+    (mapv (fn [p] (add position (scal-mult radius (mult rot p))))
+          eq-tri)))
+
+(defn make-tri [tri position radius orientation]
+  (let [[x y] position
+        rot (rotation orientation)]
+    (mapv (fn [p] (add position (scal-mult radius (mult rot p))))
+          tri)))
+
+(comment
+  (eq-tri-make [100 100] 100 0)
+  ;;=> [[200.0 100.0] [50.0 186.60254037844385] [50.0 13.397459621556138]]
+  (eq-tri-make [100 100] 100 (/ tau 6))
+  ;;=> [[150.0 13.397459621556138] [150.0 186.60254037844388] [0.0 99.99999999999999]]
+  (< (- (area (eq-tri-make [100 100] 100 (/ tau 6)))
+        (* 100 100 (area eq-tri)))
+     (/ 100000000))
+  
+  (equals (centroid (eq-tri-make [100 100] 100 0)) [100 100])
+
+  right-isoc
+  ;;=> [[0 0] [1 0] [0 1]]
+  (make-tri right-isoc [100 100] 100 0)
+  ;;=> [[100.0 100.0] [200.0 100.0] [100.0 200.0]]
+  (area (make-tri right-isoc [100 100] 100 0))
+  ;;=> 5000.000000000001
+  (centroid (make-tri right-isoc [100 100] 100 0))
+  (equals [(/ 3) (/ 3)] (centroid right-isoc))
+
   )
+
+(comment
+  (area eq-tri)
+  ;;=> 1.299038105676658
+  (equals (/ 2) (area right-isoc))
+  (altitudes eq-tri)
+  (altitudes right-isoc)
+  [[[1 0] [0 0]] [[0 1] [0 0]] [[0 0] [1/2 1/2]]]
+  )
+

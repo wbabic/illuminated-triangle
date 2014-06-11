@@ -7,13 +7,18 @@
             [triangulator.geometry :as geom]
             [triangulator.geometry-test]
             [triangulator.transforms :as trans]
-            [triangulator.transforms-test]))
+            [triangulator.transforms-test]
+            [triangulator.triangle :as tri]
+            [triangulator.triangle-test]))
 
 (defn quick-test []
   (run-tests 'triangulator.geometry-test))
 
 (defn transforms-test []
   (run-tests 'triangulator.transforms-test))
+
+(defn triangle-test []
+  (run-tests 'triangulator.triangle-test))
 
 (def system nil)
 
