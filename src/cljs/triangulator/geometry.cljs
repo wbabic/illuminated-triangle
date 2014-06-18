@@ -45,3 +45,4 @@ the given line"
         Rp (perp R)
         Sp (scal-mul root3 Rp)]
     [(plus M Rp) (minus M Rp) (plus M Sp) (minus M Sp)]))
+

@@ -196,11 +196,9 @@ return new state"
                        click :click
                        move :move
                        ctr-chan :ctr-chan)]
-            (println item " " state)
-            (when (= type :click) (println type " : " value))
             (when (= channel ctr-chan)
               (do
-                (println "new item: " value)
+                (println "ctr-chan item: " value)
                 (when-not (= item value)
                   (>! draw-chan clear)
                   (>! out [:draw value draw-chan]))

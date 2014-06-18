@@ -3,17 +3,15 @@
   with examples and theorems
 
 ** overview
-   using the triangle to illuminate geometric ideas
-   telling a story, the story of the triangle
-   illustrating ideas of symmetry
+   use the triangle to illuminate geometric ideas
+   tel a story, the story of the triangle
+   illustrate ideas of symmetry
 
-   interactive movies
+   an interactive movie with
    animated definitions, examples, theorems
-   text equations and symbols along with graphics, coordinated wtih
-   color in time
-   with sound
-
-   map progress through the territory
+   mouse over, or touch, to higlight a graphical element
+   color coordinated
+   symbols and graphics abd sounds   
 
    current definition, example, theorem
    text box
@@ -24,11 +22,9 @@
    text and graphics
    play, step through, replay
    like a debugger
-   color coordinated
-   symbols and graphics
-   mouse over, or touch, to higlight a graphical element
 
-   using the language of geometry and symmetry
+   use the language of geometry and symmetry
+   the transforms which preserves distance, isometries
 
    click a definition
    walk through or let it run
@@ -132,8 +128,6 @@
     https://github.com/gf3/secretary
 *** goog history
     http://docs.closure-library.googlecode.com/git/class_goog_History.html
-*** om todo ex with undo
-
 *** session yantra merchant
     graphics represented as data
 **** session
@@ -261,26 +255,26 @@
      angle between two lines
      
 ** csp
+*** references
+    http://www.cs.cmu.edu/~crary/819-f09/
 
-   http://www.cs.cmu.edu/~crary/819-f09/
+    http://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf
 
-   http://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf
+    in the go lang:
+    http://godoc.org/github.com/thomas11/csp
 
-   in the go lang:
-   http://godoc.org/github.com/thomas11/csp
+    in core.async:
+    https://github.com/nodename/async-plgd/blob/master/src/hoare/coroutines.clj
 
-   in core.async:
-   https://github.com/nodename/async-plgd/blob/master/src/hoare/coroutines.clj
+    an axiomatic basis for computer programming
+    http://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf
 
-   an axiomatic basis for computer programming
-   http://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf
+    gaurded commands, non determinacy, and formal derivation of
+    programs
+    http://www.cs.cmu.edu/~crary/819-f09/Dijkstra75.pdf
 
-   gaurded commands, non determinacy, and formal derivation of
-   programs
-   http://www.cs.cmu.edu/~crary/819-f09/Dijkstra75.pdf
-
-   X :: *[c:character; west?c -> east!c]
-
+*** ex 1
+    X :: *[c:character; west?c -> east!c]
    #+BEGIN_SRC clojure
      (ns hoare.coroutines
        (:require [clojure.core.async :refer :all]))
@@ -329,7 +323,7 @@
        nil)
    #+END_SRC
 
-
+*** ex 2
 X :: *[c:character; west?c ->
   [c != asterisk -> east!c 
   |c = asterisk -> west?c; 
@@ -339,10 +333,37 @@ X :: *[c:character; west?c ->
 
 | is separator in a gaurded statement
 
-
-
 ** geometry
    in clojure first
-   then to clojure script
-
    with tests
+   then to clojure script
+ 
+** unit-complex
+   a closed system
+   integral multiples of a twentyfourth
+   dividing a line
+   wrapped around the unit circle
+   exact multiplication
+   which is rotation
+   in the plane
+   about an origin
+
+   a twentyfour step cycle
+
+   halves thirds fourths 8ths sixths and twelths
+   1/2 1/3 1/4 1/8 1/6 1/12
+   Cn Dn
+   group representaions
+
+   addition modulo 24 with integers 0 .. 23
+   addition modulo 1 with multiples of a 1/24
+   
+   an other system:
+   fifths tenths twentieths hundredths
+   1/5 1/10 1/20 1/100
+   pentagon golden triangle golden ratio
+   five fold with bilateral symmetry
+
+** unit-quaternions
+   {1 i j k}
+   Q 

@@ -30,6 +30,7 @@
      :else
      [(Math/cos angle) (Math/sin angle)])))
 
+;; integral multiples of a twenty foutrh
 (def ratio->point-map (zipmap (range 24) (map ratio->point ratios)))
 
 (comment
@@ -51,7 +52,7 @@
   (geom/equals [0 1] (ratio->point-map 6))
 
   (geom/almost-equals 0 (first (ratio->point-map 6)) (/ 10e15))
-
+  ;; this now works -> by using exactly zero for ratios of 1/4 1/2 3/4
   (geom/almost-equals 0 (* (first (ratio->point-map 6)) 100) (/ 10e15)) 
 
   (ratio->point-map 0) 
@@ -87,10 +88,11 @@
 
 (defprotocol Complex
   "A protocol for complex numbers"
-  (length [x])
-  (angle [x])
-  (coords [x])
-  (multiply [z w]))
+  (length [z])
+  (angle [z])
+  (coords [z])
+  (multiply [z w])
+  (inverse [z]))
 
 (declare unit-complex-map)
 
@@ -122,6 +124,7 @@
   (== 90 (geom/degrees (angle z2)))
 
   (:ratio z1)
+  ;;=> 1/8
   ;;  (geom/equals [(/ geom/root2 2) (/ geom/root2 2)] (coords z1) (/ 10e5))
 
   (:ratio (multiply z1 z2))
@@ -133,5 +136,9 @@
 
   (angle z1)
   (length z1)
+
+  (second
+   (for [i (range 24) j (range 24)]
+     (map unit-complex-map (map int->ratio [i j (plus-24 i j)]))))
   )
 
