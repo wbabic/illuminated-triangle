@@ -27,3 +27,8 @@
         epsilon (/ 1e10)]
     (is (almost-equals x 1 epsilon))
     (is (almost-equals y 0 epsilon))))
+
+(comment
+  (let [e1 [1 0]
+        e2 [0 1]
+        [e1 e2]]))

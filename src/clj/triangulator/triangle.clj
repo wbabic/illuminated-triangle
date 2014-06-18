@@ -149,3 +149,27 @@ of parameteriezed line"
   [[[1 0] [0 0]] [[0 1] [0 0]] [[0 0] [1/2 1/2]]]
   )
 
+
+;; is point on line?
+;; how far is point from line?
+
+(comment
+  ;; aax + by = c, [a b c]
+  ;; line equation: x + y = 1
+  ;; line between two points [p1 p2]
+  ;; [p1 p2] = [e1 e2]
+  ;; line triple: [1 1 1]
+  ;; p1 = [1 0] p2 = [0 1]
+  
+  (defn is-on-line [line-triple]
+    (fn [point]
+      (let [[x y] point
+            [a b c] line-triple]
+        (== (+ (* a x) (* b y)) c))))
+
+  (let [m (param-line [e1 e2])
+        chk-fn (is-on-line [1 1 1])
+        ts [0 1 (/ 2) 2 -2]
+        test-points (map m ts)]
+    (every? true? (map chk-fn test-points)))
+  )

@@ -11,19 +11,16 @@
   (is (equals [(/ 3) (/ 3)] (centroid [[0 0] [1 0] [0 1]]))))
 
 (deftest test-line-coords
-  (let [e1 [1 0]
-        e2 [0 1]
-        origin [0 0]]
-    (is (equals [0 1 0] (line-coords [e1 origin]))
-        "line through [0 0] [1 0] has coords [0 1 0]")
-    (is (= "y = 0" (line-eq [0 1 0]))
-        "line through [0 0] [1 0] has eq 'y = x' ")
-    (is (equals [1 0 0] (line-coords [origin e2]))
-        "line through [0 0] [0 1] has coords [1 0 0]")
-    (is (equals [1 1 1] (line-coords [e1 e2]))
-        "line through [1 0] [0 1] has coords [1 1 1]")
-    (is (equals [1 0 1] (line-coords [e1 [1 1]]))
-        "line through [1 0] [1 1] has coords [1 0 1]")))
+  (is (equals [0 1 0] (line-coords [e1 origin]))
+      "line through [0 0] [1 0] has coords [0 1 0]")
+  (is (= "y = 0" (line-eq [0 1 0]))
+      "line through [0 0] [1 0] has eq 'y = x' ")
+  (is (equals [1 0 0] (line-coords [origin e2]))
+      "line through [0 0] [0 1] has coords [1 0 0]")
+  (is (equals [1 1 1] (line-coords [e1 e2]))
+      "line through [1 0] [0 1] has coords [1 1 1]")
+  (is (equals [1 0 1] (line-coords [e1 [1 1]]))
+      "line through [1 0] [1 1] has coords [1 0 1]"))
 
 (deftest test-segments
   (is (equals
