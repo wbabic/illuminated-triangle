@@ -38,6 +38,17 @@
   [v]
   (Math/sqrt (dot v v)))
 
+(defn angle [v]
+  (let [[x y] v]
+    (Math/atan2 y x)))
+
+(defn from-polar[r a]
+  [(* r (Math/cos a)) (* r (Math/sin a))])
+
+(defn normalize [v]
+  (let [l (length v)]
+    (scal-mult (/ l) v)))
+
 (defn add
   "add two matrices"
   [u v]
@@ -72,3 +83,54 @@
 
 (defn det [t]
   (m/det t))
+
+(comment
+  (let [deg->rad (fn [deg] (* deg (/ tau 360)))
+        u (from-polar 4 (deg->rad 82))
+        v (from-polar 6 (deg->rad 62))]
+    [u v (sub u v)])
+  ;;=> [[0.5566924038402619 3.9610722749662814] [2.8168293767153454 5.297685557153561] [-2.2601369728750837 -1.3366132821872796]]
+
+  (let [deg->rad (fn [deg] (* deg (/ tau 360)))
+        u (from-polar 6 (deg->rad 310))
+        v (from-polar 2 (deg->rad 45))]
+    [u v (sub u v)])
+  ;;=> [[3.8567256581192355 -4.596266658713869] [1.4142135623730951 1.414213562373095] [2.4425120957461406 -6.010480221086964]]
+
+
+  (let [deg->rad (fn [deg] (* deg (/ tau 360)))
+        u (from-polar 8 (deg->rad 44))
+        v (from-polar 7 (deg->rad 200))
+        w (from-polar 6 (deg->rad 20))
+        lu (length u)
+        lv (length v)
+        lw (length w)]
+    [[lu lv lw]
+     [(+ lv lw) (length (sub w v)) (length (sub v w))]
+     [(+ lu lv) (length (add (scal-mult -1 u) (scal-mult -1 v)))]
+     [(+ lw lu) (length (sub w v))]])
+  
+  (defn deg->rad [deg] (* deg (/ tau 360)))
+  (degrees (deg->rad 82))
+
+  (let [v [4 1]
+        w [0 3]
+        wv (add v w)]
+    [[v w wv]
+     [(length wv) (angle wv) (degrees (angle wv))]]
+    )
+
+  (let [u (from-polar 8 269)
+        v (from-polar 13 89)
+        w (from-polar 6 224)
+        uv (add u v)
+        upv (add u v)
+        wpv (add w v)
+        wpu (add w u)
+        wmu (sub w u)
+        lu (length u)
+        lv (length v)
+        lw (length w)]
+    [[u v w]
+     [lu lv lw]])
+  )

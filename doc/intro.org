@@ -26,3 +26,63 @@
 ** analyze
    save data in a file
    send to server
+** isometry
+   congruent transformation
+   
+   from Coxeter
+
+   Regular Polygons
+   Isometry
+
+   a length preserving transformation
+   if (P, P') and (Q, Q') are two pairs of corresponding points then
+   PQ = P'Q'
+   that is, PQ and P'Q' are congruent segments
+
+   transformation
+   a one-to-one correspondence
+   P -> P'
+   amoung all points in the plane (or space)
+
+   a rule for associating points
+   each pair has a first point P and a second member P'
+   every point occurs as the first member of just one pair
+
+   when P' coincides with P we have what is called an invariant point
+
+   product of transformations
+   identiy and inverse
+   
+   rotation
+   about a point in the plane, a line in space
+   has a an invariant point ot invariant line
+
+   halfturn
+   rotation by 180 degrees
+   
+   translation has no invariant points
+   or parallel displacement
+
+   reflection
+   invariant mirror line or plane in 2d 3d
+   
+*** 2.31
+    If an isometry has more than one invariant point, it must be
+    either the identity or a reflection
+
+**** proof
+     Let A and B be two invariant points, and P not on any point on
+     the line AB.
+
+     diagram
+     AP BP
+
+     Let P' be the image of P by an isometry, then we know
+     AP = AP' and BP = BP'
+
+     two circles
+     center at A radius AP
+     center at B radius BP
+
+** symmetry
+   
