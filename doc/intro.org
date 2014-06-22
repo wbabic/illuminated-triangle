@@ -27,62 +27,81 @@
    save data in a file
    send to server
 ** isometry
-   congruent transformation
+   a congruent transformation
    
    from Coxeter
 
-   Regular Polygons
-   Isometry
+*** Regular Polygons
+*** transformation
+    transformation
+    a one-to-one correspondence
+    P -> P'
+    amoung all points in the plane (or space)
 
-   a length preserving transformation
-   if (P, P') and (Q, Q') are two pairs of corresponding points then
-   PQ = P'Q'
-   that is, PQ and P'Q' are congruent segments
+    a rule for associating points
+    each pair has a first point P and a second member P'
+    every point occurs as the first member of just one pair
 
-   transformation
-   a one-to-one correspondence
-   P -> P'
-   amoung all points in the plane (or space)
+    when P' coincides with P we have what is called an invariant point
 
-   a rule for associating points
-   each pair has a first point P and a second member P'
-   every point occurs as the first member of just one pair
+    product of transformations
+    identiy and inverse
 
-   when P' coincides with P we have what is called an invariant point
+*** Isometry
+    a length preserving transformation
+    if (P, P') and (Q, Q') are two pairs of corresponding points then
+    PQ = P'Q'
+    that is, PQ and P'Q' are congruent segments
 
-   product of transformations
-   identiy and inverse
+    rotation
+    about a point in the plane, a line in space
+    has a an invariant point ot invariant line
+
+    halfturn
+    rotation by 180 degrees
    
-   rotation
-   about a point in the plane, a line in space
-   has a an invariant point ot invariant line
+    translation
+    or parallel displacement
+    does not have an invariant point
 
-   halfturn
-   rotation by 180 degrees
+    reflection
+    invariant mirror line or plane in 2d 3d
    
-   translation has no invariant points
-   or parallel displacement
-
-   reflection
-   invariant mirror line or plane in 2d 3d
-   
-*** 2.31
+*** 2.31 an isometry wtih 2 invariant points (or more)
     If an isometry has more than one invariant point, it must be
     either the identity or a reflection
 
 **** proof
-     Let A and B be two invariant points, and P not on any point on
-     the line AB.
-
-     diagram
-     AP BP
+     Let A and B be two invariant points, and P be any point not on AB
 
      Let P' be the image of P by an isometry, then we know
      AP = AP' and BP = BP'
 
-     two circles
+     intersection of two circles
      center at A radius AP
      center at B radius BP
+     when P is not on AB
+     has two points
 
+     it would have just one point if P were on AB
+     a tangent point
+     
 ** symmetry
-   
+*** symmetry of a triangle
+
+    one line of reflection in the plane
+    isosceles
+
+    three lines of reflection
+    equilateral
+
+    reflection along edge
+    altitude base point
+    line through vertex
+    perpendicular to opposite edge
+
+*** regular polygon
+    the dihedral group
+    
+*** regular polyhedron
+    platonic solids
