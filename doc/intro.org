@@ -26,12 +26,12 @@
 ** analyze
    save data in a file
    send to server
+
 ** isometry
    a congruent transformation
    
    from Coxeter
 
-*** Regular Polygons
 *** transformation
     transformation
     a one-to-one correspondence
@@ -55,10 +55,11 @@
 
     rotation
     about a point in the plane, a line in space
-    has a an invariant point ot invariant line
+    has an invariant point or invariant line
 
     halfturn
     rotation by 180 degrees
+    involution
    
     translation
     or parallel displacement
@@ -67,7 +68,7 @@
     reflection
     invariant mirror line or plane in 2d 3d
    
-*** 2.31 an isometry wtih 2 invariant points (or more)
+*** 2.31 an isometry with 2 invariant points (or more)
     If an isometry has more than one invariant point, it must be
     either the identity or a reflection
 
