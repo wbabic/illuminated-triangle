@@ -1,6 +1,28 @@
 * coordinate systems
-** Earth centered coordinates
 ** being centered coordinates
+   front back left right up down
+
+   on the surface of the Earth
+   rotating on an axis of rotation
+   revolving about the Sun
+   within a galaxy
+   in the universe
+
+   inside of the surface
+   
+** Earth centered coordinates
+   center of the Earth is the origin
+   noth pole south pole
+   equator
+   prime meridean, the meridean of Greenwhich
+   
+   flat land coordinates
+   lattitude longitude height above sea level
+
+   lava being coordinates
+   distance from center
+   distance below sea level
+   
 ** flat landers
    beings that, due to gravity, are mostly restricted to a plane existence
    living in a mostly flat world
@@ -54,10 +76,21 @@
    whereas the equilaterals possessed three
 
    so I should say,
-   they though him even crazier than before,
+   they thought him even crazier than before,
    when he told them infinity is within
    their very own circumcenter
   
    what's that?
    oh, you haven't heard about the scalene incidence?
    okay, maybe we should start there first
+** Sun centered coordinates
+   with the Sun as the origin
+   the plane of the planets
+   path of rotaion about hte sun
+
+** galaxy centered coordinate
+   center of the galaxy
+   
+** universal coordinates
+   center of the universe
+   
