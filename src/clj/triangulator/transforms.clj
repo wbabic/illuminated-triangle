@@ -1,6 +1,7 @@
 (ns triangulator.transforms
   (:require [triangulator.geometry :as geom]))
 
+;; inspired from linear algebra through geometry
 ;; projection reflection
 ;; rotation dilation
 ;; conjugate

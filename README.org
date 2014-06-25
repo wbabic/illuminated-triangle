@@ -175,29 +175,17 @@
     tilings
     symmetry
 ** goal
-   ideas on how to build this thing
-
+   ideas on what to build
    see om-async -> triangle.org
-   see modern
-   on rivendell:
-   http://127.0.0.1:9000/index.html
-
-   ssh://wbabic@Numenor.local/usr/local/git_root/modern.git
-
-   rivendell:~/dev/html5/modern
 
    graphics represented as data
    ideas from yantra, session
    react-page art
-   see journal.org entry
 
    view definition
 
    #/centroid
    #/perp-bisector
-
-   view definition
-   step through or play
 
    graphics coordinated with text
    in color in time
@@ -207,9 +195,6 @@
 
    mouseover or tap on symbol
    highlight graphical element
-
-
-   (point x y)
 
 ** ideas
 *** give Point some style
@@ -336,7 +321,7 @@ X :: *[c:character; west?c ->
 ** geometry
    in clojure first
    with tests
-   then to clojure script
+   then to clojurescript
  
 ** unit-complex
    a closed system
@@ -367,3 +352,25 @@ X :: *[c:character; west?c ->
 ** unit-quaternions
    {1 i j k}
    Q 
+** geometry of complex number
+   Deaux
+   Complex protocol
+*** Fundamental Operations
+    vector addition scalar multiplication
+    complex multiplication division
+    polar form, exponential
+    scalar product
+    vector product
+*** Fundamental Transformations
+    translation
+    rotation
+    symmetry wrt a line
+    inversion
+    point at infinity
+    
+*** Anharmonic Ratio
+    
+*** Analytic Geometry
+*** Circular Transformations
+
+   

@@ -94,3 +94,25 @@
 ** universal coordinates
    center of the universe
    
+** expansion
+   zero dimension
+   a point
+
+   one dimension
+   a line
+   a circle
+
+   two dimension
+   a plane
+   a sphere
+
+   three dimension
+   a space
+   a three sphere
+
+   a three sphere in four dimensional space
+   R4
+   C2 by C2
+
+   SU(2)
+   quaternion algebra
