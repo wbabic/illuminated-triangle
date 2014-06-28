@@ -41,7 +41,10 @@
               :mouse-move-chan mouse-move-chan
               :draw-chan draw-chan})})
 
-(om/root c/nav-box d/ui {:target (. js/document (getElementById "definition-list"))})
+(om/root
+ c/nav-box
+ d/ui
+ {:target (. js/document (getElementById "definition-list"))})
 
 (comment
   (secretary/dispatch! "/perp-bisector"))
