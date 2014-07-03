@@ -358,6 +358,66 @@ return new state"
       2 (assoc current-state :step 3 :p2 value)
       3 (assoc (dissoc current-state :p1 :p2) :step 1))))
 
+(defn rotation-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go (>! draw-chan clear))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan)
+            current-state)
+        1 (let [center (:center current-state)
+                rotation (:rotation current-state)
+                image (rotation value)]
+            (draw-line center image draw-chan nil)
+            (draw-point value draw-chan)
+            current-state)
+        2 (let [center (:center current-state)
+                p1 (:p1 current-state)
+                rotation (:rotation current-state)
+                image1 (rotation p1)
+                image2 (rotation value)]
+            (draw-line center image1 draw-chan nil)
+            (draw-line center image2 draw-chan nil)
+            (draw-point p1 draw-chan)
+            (draw-point value draw-chan)
+            (draw-line p1 value draw-chan nil)
+            (draw-line image1 image2 draw-chan nil)
+            current-state)
+        3 (let [center (:center current-state)
+                p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value
+                rotation (:rotation current-state)
+                image1 (rotation p1)
+                image2 (rotation p2)
+                image3 (rotation value)]
+            (draw-line center image1 draw-chan nil)
+            (draw-line center image2 draw-chan nil)
+            (draw-line center image3 draw-chan nil)
+            (draw-point p1 draw-chan)
+            (draw-point p2 draw-chan)
+            (draw-point value draw-chan)
+            (draw-line p1 p2 draw-chan nil)
+            (draw-line p2 p3 draw-chan nil)
+            (draw-line p3 p1 draw-chan nil)
+            (draw-line image1 image2 draw-chan nil)
+            (draw-line image2 image3 draw-chan nil)
+            (draw-line image3 image1 draw-chan nil)
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (let [angle  (/ geom/tau 24)
+              ;; angle defaults to a twenty fourth of a tau
+              rotation (complex/rotation value angle)]
+          (assoc current-state :step 1 :center value :rotation rotation))
+      1 (assoc current-state :step 2 :p1 value)
+      2 (assoc current-state :step 3 :p2 value)
+      3 (assoc (dissoc current-state :p1 :p2) :step 1))))
+
 (defn mouse-handler [click move ctr-chan draw-chan]
   (let [return-message-chan (chan)]
     (go (loop [item :none state {:step 0}]
@@ -393,16 +453,16 @@ return new state"
               :reflection
               (recur item
                      (reflection-state-transitioner [type value] state return-message-chan draw-chan))
-              :rotation
-              (recur item
-                     state)
               :inversion
               (recur item
                      (inversion-state-transitioner [type value] state return-message-chan draw-chan))
               :homothety
               (recur item
                      (homothety-state-transitioner [type value] state return-message-chan draw-chan))
-
+              :rotation
+              (recur item
+                     (rotation-state-transitioner [type value] state return-message-chan draw-chan))
+              
               (do
                 (println "warning: iten not handled: " item)
                 (recur item state))))))

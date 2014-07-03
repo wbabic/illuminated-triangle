@@ -80,9 +80,7 @@
 (declare zero)
 
 (defn make-polar [r a]
-  (if (geom/almost-equals r 0 (/ 1e10))
-    zero
-    (polar. r a)))
+  (polar. r a))
 
 (defn scalar-product [z w]
   (let [p1 (p/coords z)
@@ -185,9 +183,10 @@ by given angle about given point"
   (fn [z]
     (let [r (make-polar 1 angle)
           a (make-rect point)
+          z (make-rect z)
           rz (p/multiply z r)
           res (p/add rz (p/multiply a (p/add one (p/minus r))))]
-      res)))
+      (p/coords res))))
 
 (comment
   (p/multiply (make-polar 1 0) (make-rect [0 0]))
