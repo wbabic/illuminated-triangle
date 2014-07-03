@@ -230,12 +230,13 @@ by given angle about given point"
   "return homothety about point by factor"
   [point k]
   (let [a (make-rect point)
-        ma (p/minus a)
-        _ (println ma)]
-    (fn [z] (p/add a
-                  (p/scale-mult
-                   (p/add z ma)
-                   k)))))
+        ma (p/minus a)]
+    (fn [z] (let [z (make-rect z)
+                 res (p/add a
+                            (p/scale-mult
+                             (p/add z ma)
+                             k))]
+             (p/coords res)))))
 
 (comment
   (let [h (homothety [0 0] 1)

@@ -22,6 +22,13 @@
   (let [[x y] p]
     [x 0]))
 
+(defn draw-point
+  "clear-screen draw item draw point and coords of value"
+  [value draw-chan]
+  (go (>! draw-chan [(dt/style {:stroke :lt-grey
+                                :fill :red})
+                     (dt/point value)])))
+
 (defn draw-point-coords
   "clear-screen draw item draw point and coords of value"
   [value draw-chan]
@@ -244,11 +251,9 @@ return new state"
     :click
     (condp = (:step current-state)
       0 (do
-          (go (>! draw-chan clear)
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
+          (go (>! draw-chan clear))
+          (draw-point value draw-chan)
+          {:step 1 :p1 value})
       1 (let [p1 (:p1 current-state)]
           {:step 2 :p1 p1 :p2 value})
       2 {:step 0})))
@@ -270,12 +275,10 @@ return new state"
         2 (let [center (:center current-state)
                 radius (:radius current-state)
                 inversion (:inversion current-state)
-                image (inversion value)
-                _ (println ":pre-image " value)
-                _ (println ":image " image)]
+                image (inversion value)]
             (draw-circle-2 center radius draw-chan)
             (draw-line center value draw-chan #{:extended})
-            (draw-point-coords image draw-chan)
+            (draw-point image draw-chan)
             current-state)))
     :click
     (condp = (:step current-state)
@@ -294,6 +297,66 @@ return new state"
            :radius radius
            :inversion inversion})
       2 {:step 0})))
+
+(defn homothety-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go (>! draw-chan clear))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan)
+            current-state)
+        1 (let [center (:center current-state)
+                homothety (:homothety current-state)
+                image (homothety value)]
+            (draw-line center image draw-chan nil)
+            (draw-point value draw-chan)
+            current-state)
+        2 (let [center (:center current-state)
+                p1 (:p1 current-state)
+                homothety (:homothety current-state)
+                image1 (homothety p1)
+                image2 (homothety value)]
+            (draw-line center image1 draw-chan nil)
+            (draw-line center image2 draw-chan nil)
+            (draw-point p1 draw-chan)
+            (draw-point value draw-chan)
+            (draw-line p1 value draw-chan nil)
+            (draw-line image1 image2 draw-chan nil)
+            current-state)
+        3 (let [center (:center current-state)
+                p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value
+                homothety (:homothety current-state)
+                image1 (homothety p1)
+                image2 (homothety p2)
+                image3 (homothety value)]
+            (draw-line center image1 draw-chan nil)
+            (draw-line center image2 draw-chan nil)
+            (draw-line center image3 draw-chan nil)
+            (draw-point p1 draw-chan)
+            (draw-point p2 draw-chan)
+            (draw-point value draw-chan)
+            (draw-line p1 p2 draw-chan nil)
+            (draw-line p2 p3 draw-chan nil)
+            (draw-line p3 p1 draw-chan nil)
+            (draw-line image1 image2 draw-chan nil)
+            (draw-line image2 image3 draw-chan nil)
+            (draw-line image3 image1 draw-chan nil)
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (let [k 2
+              ;; ratio k defaults to 2 for now
+              homothety (complex/homothety value k)]
+          (assoc current-state :step 1 :center value :homothety homothety))
+      1 (assoc current-state :step 2 :p1 value)
+      2 (assoc current-state :step 3 :p2 value)
+      3 (assoc (dissoc current-state :p1 :p2) :step 1))))
 
 (defn mouse-handler [click move ctr-chan draw-chan]
   (let [return-message-chan (chan)]
@@ -336,6 +399,10 @@ return new state"
               :inversion
               (recur item
                      (inversion-state-transitioner [type value] state return-message-chan draw-chan))
+              :homothety
+              (recur item
+                     (homothety-state-transitioner [type value] state return-message-chan draw-chan))
+
               (do
                 (println "warning: iten not handled: " item)
                 (recur item state))))))

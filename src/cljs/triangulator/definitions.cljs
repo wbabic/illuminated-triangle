@@ -32,7 +32,7 @@
   [{:id :reflection :label "reflection"}
    {:id :translation :label "translation"}
    {:id :rotation :label "rotation"}
-   {:id :dilation :label "dilation"}
+   {:id :homothety :label "homothety"}
    {:id :inversion :label "inversion"}
    {:id :mobius :label "mobius"}])
 
@@ -78,14 +78,22 @@
     "Angle between two intersecting lines. Line that divides angle into equal parts. Loci of points equidistant from two lines."]
 
    :reflection
-   ["A line of symmetry"
+   ["Reflection in a line of symmetry."
     "Two points to create a line. Then see the image of the reflection in that line."]
 
    :rotation
-   ["A point"
-    "One point to determine center. Default to a twentyfourth of a tau."]
+   ["Rotation about a point."
+    "One point to determine center. Default to a twentyfourth of a tau. See the twenty four images of current point."]
 
    :inversion
    ["Reflection in a circle."
     "Two points two create a circle. Then see the image of the inversion in that circle."]
+
+   :homothety
+   ["Homothety with center and ratio k."
+    "One point to determine center. Default to k = 2. Select values of k not equal to 1 ot -1. See the image of arbitrary line segments."]
+
+   :translation
+   ["Translation by a vector."
+    "Two points to determine vector. See the image of the current point under the translation defined by the selected translation vector."]
 })
