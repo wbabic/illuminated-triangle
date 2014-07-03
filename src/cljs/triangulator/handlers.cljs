@@ -493,7 +493,7 @@ return new state"
             :translation translation))
       2 (assoc current-state :step 3 :p1 value)
       3 (assoc current-state :step 4 :p2 value)
-      4 (assoc (dissoc current-state :p1 :p2) :step 1))))
+      4 (assoc (dissoc current-state :p1 :p2) :step 2))))
 
 (defn mouse-handler [click move ctr-chan draw-chan]
   (let [return-message-chan (chan)]
