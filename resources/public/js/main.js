@@ -13,7 +13,9 @@ goog.addDependency("../triangulator/draw.js", ['triangulator.draw'], ['cljs.core
 goog.addDependency("../triangulator/geometry.js", ['triangulator.geometry'], ['cljs.core']);
 goog.addDependency("../om/dom.js", ['om.dom'], ['cljs.core']);
 goog.addDependency("../om/core.js", ['om.core'], ['cljs.core', 'om.dom', 'goog.ui.IdGenerator']);
-goog.addDependency("../triangulator/handlers.js", ['triangulator.handlers'], ['cljs.core', 'triangulator.geometry', 'om.core', 'om.dom', 'cljs.core.async', 'triangulator.datatypes']);
+goog.addDependency("../triangulator/protocols.js", ['triangulator.protocols'], ['cljs.core']);
+goog.addDependency("../triangulator/complex.js", ['triangulator.complex'], ['cljs.core', 'triangulator.geometry', 'triangulator.protocols']);
+goog.addDependency("../triangulator/handlers.js", ['triangulator.handlers'], ['cljs.core', 'triangulator.geometry', 'om.core', 'triangulator.complex', 'om.dom', 'cljs.core.async', 'triangulator.datatypes']);
 goog.addDependency("../triangulator/definitions.js", ['triangulator.definitions'], ['cljs.core']);
 goog.addDependency("../triangulator/components.js", ['triangulator.components'], ['triangulator.draw', 'triangulator.handlers', 'cljs.core', 'triangulator.geometry', 'om.core', 'triangulator.definitions', 'om.dom', 'cljs.core.async', 'triangulator.datatypes']);
 goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);

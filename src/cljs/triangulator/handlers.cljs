@@ -4,7 +4,8 @@
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async :refer [>! <! put! chan alts! sliding-buffer]]
             [triangulator.datatypes :as dt]
-            [triangulator.geometry :as geom]))
+            [triangulator.geometry :as geom]
+            [triangulator.complex :as complex]))
 
 (enable-console-print!)
 
@@ -268,9 +269,12 @@ return new state"
             current-state)
         2 (let [center (:center current-state)
                 radius (:radius current-state)
-                _ (println ":radius " radius)]
+                inversion (:inversion current-state)
+                image (inversion value)
+                _ (println ":image " image)]
             (draw-circle-2 center radius draw-chan)
-            (draw-point-coords value draw-chan)
+            (draw-line center value draw-chan #{:extended})
+            (draw-point-coords image draw-chan)
             current-state)))
     :click
     (condp = (:step current-state)
@@ -280,9 +284,13 @@ return new state"
                                         :fill :grey-2})
                              (dt/point value)]))
           {:step 1 :center value}) 
-      1 (let [center (:center current-state)]
-          {:step 2 :center center :radius (geom/distance value center)})
-      2 current-state)))
+      1 (let [center (:center current-state)
+              radius (geom/distance value center)]
+          {:step 2
+           :center center
+           :radius radius
+           :inversion (complex/inversion center radius)})
+      2 {:step 0})))
 
 (defn mouse-handler [click move ctr-chan draw-chan]
   (let [return-message-chan (chan)]
