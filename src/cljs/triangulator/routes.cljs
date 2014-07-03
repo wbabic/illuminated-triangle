@@ -17,9 +17,11 @@
 (println "hello walter")
 
 (defroute "/:definition" {:as params}
-  (let [def (:definition params)]
-    (println (str "route definition: " (keyword def)))
-    (swap! app-state assoc :current-item (keyword def))))
+  (let [item (:definition params)]
+    (println "defroute: " item)
+    (when item
+      (println (str "route definition: " (keyword item)))
+      (swap! app-state assoc :current-item (keyword item)))))
 
 (def history (History.))
 

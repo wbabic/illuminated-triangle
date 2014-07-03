@@ -23,15 +23,14 @@
    create point triples
    each point with a pair of coordinates
 
-** analyze
-   save data in a file
-   send to server
-
+** transform triangles
+   create transforms and
+   apply them to triangles
+   and other things
+   
 ** isometry
    a congruent transformation
-   
    from Coxeter
-
 *** transformation
     transformation
     a one-to-one correspondence
@@ -87,6 +86,55 @@
      it would have just one point if P were on AB
      a tangent point
      
+*** reflection in a line
+   fix a line by choosing two points A and B
+   vary P and see the image P' under
+   the reflection in line AB
+
+   #+BEGIN_SRC clojure
+     (ns triangulator.reflection
+       (:require [triangulator.complex :as c]))
+     
+     (let [[A B] [[0 0] [0 1]]
+           ref (reflection A B)
+           pre-image [[1 0] [1 1] [0 1] [0 0]]
+           image (map ref pre-image)]
+       (zipmap pre-image image))
+   #+END_SRC
+
+** similarity
+   dilatation (or homothety)
+   transforms each line into a parallel line
+   given two parallel lines 
+   there exists a unique dilatation relating them
+   find it
+
+   includes halfturns and translations as special cases
+
+   O(lambda)
+   center O
+   factor (or power) lambda 
+
+   O(k)
+
+** center of similtude
+   of two circles
+   distinct centers
+   unequal radii
+   
+** nine point circle
+   G(-1/2)
+   H(1/2)
+** inversion in a circle
+   fixed circle
+   let point vary
+   see its image
+
+   see the image of an arbitrary triangle
+
+   see the image of a triangle
+   in its own circumcircle
+   
 ** symmetry
 *** symmetry of a triangle
 

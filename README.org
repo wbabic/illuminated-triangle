@@ -322,6 +322,8 @@ X :: *[c:character; west?c ->
    in clojure first
    with tests
    then to clojurescript
+
+   geometry.clj
  
 ** unit-complex
    a closed system
@@ -349,6 +351,26 @@ X :: *[c:character; west?c ->
    pentagon golden triangle golden ratio
    five fold with bilateral symmetry
 
+** complex
+   complex.clj
+   Complex protocol
+   rectangular polar
+   one zero infinity
+   
+   transformations of
+   translation
+   rotation
+   homothety
+   inversion
+
+   map center of inversion to infinity
+   what does it men to be close to zero
+   or close to infinity?
+
+   play a game to get to a
+   neighborhood of infinity
+   or, inversly, a neighborhood of zero
+
 ** unit-quaternions
    {1 i j k}
    Q 
@@ -369,8 +391,5 @@ X :: *[c:character; west?c ->
     point at infinity
     
 *** Anharmonic Ratio
-    
 *** Analytic Geometry
 *** Circular Transformations
-
-   

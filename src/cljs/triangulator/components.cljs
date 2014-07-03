@@ -140,6 +140,9 @@
                                                    :stroke :red})])
                             (doseq [circle circles]
                               (>! d-chan [circle]))))
+                        :reflection
+                        (do
+                          (println "item-controller will-mount go-loop handler-chan: " h))
                         (do
                           (println "item-comtroller: warning: item not handled: " item))))))
                 (recur))))))

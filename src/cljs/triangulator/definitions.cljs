@@ -76,4 +76,16 @@
    :ang-bisector
    ["Angular Bisector"
     "Angle between two intersecting lines. Line that divides angle into equal parts. Loci of points equidistant from two lines."]
+
+   :reflection
+   ["A line of symmetry"
+    "Two points to create a line. Then see the image of the reflection in that line."]
+
+   :rotation
+   ["A point"
+    "One point to determine center. Default to a twentyfourth of a tau."]
+
+   :inversion
+   ["Reflection in a circle."
+    "Two points two create a circle. Then see the image of the inversion in that circle."]
 })

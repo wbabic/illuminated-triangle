@@ -46,3 +46,34 @@ the given line"
         Sp (scal-mul root3 Rp)]
     [(plus M Rp) (minus M Rp) (plus M Sp) (minus M Sp)]))
 
+(defn dot [u v]
+  (+ (* (u 0) (v 0))
+     (* (u 1) (v 1))))
+
+(defn altitude [A B C]
+  (let [b (minus C A)
+        c (minus B A)
+        t (/ (dot b c) (dot c c))]
+    (plus A (scal-mul t c))))
+
+(defn reflection [A B]
+  (fn [C]
+    (let [D (altitude A B C)
+          E (minus (scal-mul 2 D) C)]
+      E)))
+
+(defn param-line
+  "given two endpoints return function
+of parameteriezed line"
+  [A B]
+  (let []
+    (fn [t]
+      (plus A (scal-mul t (minus B A))))))
+
+(defn extend-line
+  [p1 p2]
+  (let [l (param-line p1 p2)
+        p3 (l 2000)
+        p4 (l -1000)]
+    [p3 p4]))
+
