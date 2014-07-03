@@ -164,9 +164,12 @@
 ;; identity is already defined in clojure.core
 
 (defn translation
-  "returns the function tat translates by given vector"
+  "returns the function that translates by given vector"
   [a]
-  (fn [z] (p/add z a)))
+  (fn [z] (let [z (make-rect z)
+               a (make-rect a)
+               res (p/add z a)]
+           (p/coords res))))
 
 (comment
   (let [t (translation (make-rect [1 1]))

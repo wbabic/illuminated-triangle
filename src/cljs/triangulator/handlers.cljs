@@ -418,6 +418,83 @@ return new state"
       2 (assoc current-state :step 3 :p2 value)
       3 (assoc (dissoc current-state :p1 :p2) :step 1))))
 
+(defn translation-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go (>! draw-chan clear))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan)
+            current-state)
+        1 (let [pi (:pi current-state)]
+            (draw-line pi value draw-chan nil)
+            current-state)
+        2 (let [pi (:pi current-state)
+                pf (:pf current-state)
+                p1 value
+                translation (:translation current-state)
+                image (translation p1)]
+            (draw-line pi pf draw-chan nil)
+            (draw-point p1 draw-chan)
+            (draw-point image draw-chan)
+            current-state)
+        3 (let [pi (:pi current-state)
+                pf (:pf current-state)
+                p1 (:p1 current-state)
+                p2 value
+                translation (:translation current-state)
+                image1 (translation p1)
+                image2 (translation p2)]
+            (draw-line pi pf draw-chan nil)
+            (draw-point p1 draw-chan)
+            (draw-point image1 draw-chan)
+            (draw-point p2 draw-chan)
+            (draw-point image2 draw-chan)
+            (draw-line p1 p2 draw-chan nil)
+            (draw-line image1 image2 draw-chan nil)
+            current-state)
+        4 (let [pi (:pi current-state)
+                pf (:pf current-state)
+                p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value
+                translation (:translation current-state)
+                image1 (translation p1)
+                image2 (translation p2)
+                image3 (translation p3)]
+            (draw-line pi pf draw-chan nil)
+            (draw-point p1 draw-chan)
+            (draw-point image1 draw-chan)
+            (draw-point p2 draw-chan)
+            (draw-point image2 draw-chan)
+            (draw-point p3 draw-chan)
+            (draw-point image3 draw-chan)
+            (draw-line p1 p2 draw-chan nil)
+            (draw-line image1 image2 draw-chan nil)
+            (draw-line p2 p3 draw-chan nil)
+            (draw-line image2 image3 draw-chan nil)
+            (draw-line p3 p1 draw-chan nil)
+            (draw-line image3 image1 draw-chan nil)
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (assoc current-state :step 1 :pi value)
+      1 (let [pi (:pi current-state)
+              pf value
+              v (geom/minus pf pi)
+              translation (complex/translation v)]
+          (assoc current-state
+            :step 2
+            :pf pf
+            :vector v
+            :translation translation))
+      2 (assoc current-state :step 3 :p1 value)
+      3 (assoc current-state :step 4 :p2 value)
+      4 (assoc (dissoc current-state :p1 :p2) :step 1))))
+
 (defn mouse-handler [click move ctr-chan draw-chan]
   (let [return-message-chan (chan)]
     (go (loop [item :none state {:step 0}]
@@ -462,7 +539,9 @@ return new state"
               :rotation
               (recur item
                      (rotation-state-transitioner [type value] state return-message-chan draw-chan))
-              
+              :translation
+              (recur item
+                    (translation-state-transitioner [type value] state return-message-chan draw-chan))
               (do
                 (println "warning: iten not handled: " item)
                 (recur item state))))))
