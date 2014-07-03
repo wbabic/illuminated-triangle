@@ -131,8 +131,8 @@
     (length [_] 0)
     (coords [_] [0 0])
     (add [_ w] w)
-    (scale-mult [_ _] zero)
-    (multiply [_ _] zero)
+    (scale-mult [this _] this)
+    (multiply [this _] this)
     (div [_] infinity)
     (conjugate [_] zero)))
 
@@ -307,10 +307,10 @@ by given angle about given point"
   (fn [z] 
     (let [center (make-rect center)
           cbar (p/conjugate center)
-          zc (p/conjugate (make-rect z))
+          zbar (p/conjugate (make-rect z))
           ;; denom = one over (zbar minus mbar)
-          denom (p/div (p/add zc (p/minus cbar)))
-          term1 (p/scale-mult denom power)
+          denom (p/div (p/add zbar (p/minus cbar)))
+          term1 (p/scale-mult denom (* power power))
           res (p/add center term1)]
       (p/coords res))))
 

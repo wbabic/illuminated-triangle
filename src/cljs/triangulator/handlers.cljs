@@ -271,6 +271,7 @@ return new state"
                 radius (:radius current-state)
                 inversion (:inversion current-state)
                 image (inversion value)
+                _ (println ":pre-image " value)
                 _ (println ":image " image)]
             (draw-circle-2 center radius draw-chan)
             (draw-line center value draw-chan #{:extended})
@@ -285,11 +286,13 @@ return new state"
                              (dt/point value)]))
           {:step 1 :center value}) 
       1 (let [center (:center current-state)
-              radius (geom/distance value center)]
+              radius (geom/distance value center)
+              _ (println "center: " center " radius: " radius)
+              inversion (complex/inversion center radius)]
           {:step 2
            :center center
            :radius radius
-           :inversion (complex/inversion center radius)})
+           :inversion inversion})
       2 {:step 0})))
 
 (defn mouse-handler [click move ctr-chan draw-chan]

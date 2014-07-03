@@ -308,10 +308,10 @@ by given angle about given point"
   [center power]
   (fn [z] 
     (let [cbar (p/conjugate center)
-          zc (p/conjugate z)
+          zbar (p/conjugate z)
           ;; denom = one over (zbar minus mbar)
-          denom (p/div (p/add zc (p/minus cbar)))
-          term1 (p/scale-mult denom power)
+          denom (p/div (p/add zbar (p/minus cbar)))
+          term1 (p/scale-mult denom (* power power))
           res (p/add center term1)]
       res)))
 
@@ -324,7 +324,24 @@ by given angle about given point"
          pre-image [[1 -1] [1 (/ 2)] [1 0] [1 2] [2 2] [3 3] [0 0]]
          image (mapv f pre-image)]
      (zipmap pre-image image)))
+
+  (let [center (make-rect [152 129])
+        radius 135.76
+        inv (inversion center radius)
+        pre-image (map make-rect [[248 227] [136 150]])
+        image (map (comp p/coords inv) pre-image)]
+    (zipmap (map p/coords pre-image) image))
+  {[136 150] [-271.0881515064562 684.3031988522238],
+   [248 227] [246.01459349628055 224.9732308607864]}
   
+  {[136 150] [148.8835581061693 133.0903299856528],
+   [248 227] [152.6925058448459 129.70693304994685]}
+
+  {[136 150] [151.9770444763271 129.03012912482066],
+   [248 227] [152.00510095642932 129.00520722635494]}
+
+
+  ;;=> {[248 227] [152.6925058448459 129.70693304994685]}
   )
 
 
