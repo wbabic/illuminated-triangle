@@ -198,6 +198,9 @@
 
 ** ideas
 *** give Point some style
+    an ordered color set
+    1 2 3 4 5  ...
+    
 *** change Line rendering to render its points also
     using their style
     give some style to the line as well

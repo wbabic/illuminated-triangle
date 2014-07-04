@@ -310,22 +310,34 @@ return new state"
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [center (:center current-state)
-                homothety (:homothety current-state)
-                image (homothety value)]
-            (draw-line center image draw-chan nil)
-            (draw-point value draw-chan)
+                p1 value
+                homotheties (:homotheties current-state)
+                images (map (fn [f] (f p1)) homotheties)]
+            (draw-line (first images) (last images) draw-chan nil)
+            (doseq [pi images]
+              (draw-point pi draw-chan))
+            (draw-point p1 draw-chan)
+            (draw-point center draw-chan)
             current-state)
         2 (let [center (:center current-state)
                 p1 (:p1 current-state)
-                homothety (:homothety current-state)
-                image1 (homothety p1)
-                image2 (homothety value)]
-            (draw-line center image1 draw-chan nil)
-            (draw-line center image2 draw-chan nil)
+                p2 value
+                homotheties (:homotheties current-state)
+                images1 (map (fn [f] (f p1)) homotheties)
+                images2 (map (fn [f] (f p2)) homotheties)]
+
+            (draw-line (first images1) (last images1) draw-chan nil)
+            (draw-line (first images2) (last images2) draw-chan nil)
+            
+            (doseq [[i1 i2] (map vector images1 images2)]
+              (draw-line i1 i2 draw-chan nil))
+            
             (draw-point p1 draw-chan)
-            (draw-point value draw-chan)
-            (draw-line p1 value draw-chan nil)
-            (draw-line image1 image2 draw-chan nil)
+            (draw-point p2 draw-chan)
+            (draw-line p1 p2 draw-chan nil)
+
+            (draw-point center draw-chan)
+            
             current-state)
         3 (let [center (:center current-state)
                 p1 (:p1 current-state)
@@ -352,8 +364,10 @@ return new state"
     (condp = (:step current-state)
       0 (let [k 2
               ;; ratio k defaults to 2 for now
+              ks [-2  -1 (/ -2) (/ 2) 2]
+              homotheties (mapv #(complex/homothety value %) ks)
               homothety (complex/homothety value k)]
-          (assoc current-state :step 1 :center value :homothety homothety))
+          (assoc current-state :step 1 :center value :homothety homothety :homotheties homotheties))
       1 (assoc current-state :step 2 :p1 value)
       2 (assoc current-state :step 3 :p2 value)
       3 (assoc (dissoc current-state :p1 :p2) :step 1))))
@@ -371,20 +385,25 @@ return new state"
             current-state)
         1 (let [center (:center current-state)
                 rotation (:rotation current-state)
-                image (rotation value)]
+                p1 value
+                image (rotation p1)]
             (draw-line center image draw-chan nil)
-            (draw-point value draw-chan)
+            (draw-line center p1 draw-chan nil)
+            (draw-point p1 draw-chan)
             current-state)
         2 (let [center (:center current-state)
                 p1 (:p1 current-state)
+                p2 value
                 rotation (:rotation current-state)
                 image1 (rotation p1)
-                image2 (rotation value)]
+                image2 (rotation p2)]
             (draw-line center image1 draw-chan nil)
             (draw-line center image2 draw-chan nil)
+            (draw-line center p1 draw-chan nil)
+            (draw-line center p2 draw-chan nil)
             (draw-point p1 draw-chan)
-            (draw-point value draw-chan)
-            (draw-line p1 value draw-chan nil)
+            (draw-point p2 draw-chan)
+            (draw-line p1 p2 draw-chan nil)
             (draw-line image1 image2 draw-chan nil)
             current-state)
         3 (let [center (:center current-state)
