@@ -338,27 +338,6 @@ return new state"
 
             (draw-point center draw-chan)
             
-            current-state)
-        3 (let [center (:center current-state)
-                p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value
-                homothety (:homothety current-state)
-                image1 (homothety p1)
-                image2 (homothety p2)
-                image3 (homothety value)]
-            (draw-line center image1 draw-chan nil)
-            (draw-line center image2 draw-chan nil)
-            (draw-line center image3 draw-chan nil)
-            (draw-point p1 draw-chan)
-            (draw-point p2 draw-chan)
-            (draw-point value draw-chan)
-            (draw-line p1 p2 draw-chan nil)
-            (draw-line p2 p3 draw-chan nil)
-            (draw-line p3 p1 draw-chan nil)
-            (draw-line image1 image2 draw-chan nil)
-            (draw-line image2 image3 draw-chan nil)
-            (draw-line image3 image1 draw-chan nil)
             current-state)))
     :click
     (condp = (:step current-state)
@@ -369,8 +348,7 @@ return new state"
               homothety (complex/homothety value k)]
           (assoc current-state :step 1 :center value :homothety homothety :homotheties homotheties))
       1 (assoc current-state :step 2 :p1 value)
-      2 (assoc current-state :step 3 :p2 value)
-      3 (assoc (dissoc current-state :p1 :p2) :step 1))))
+      2 (assoc (dissoc current-state :p1 :p2) :step 1))))
 
 (defn rotation-state-transitioner
   "see point-state-transitioner"
@@ -386,46 +364,10 @@ return new state"
         1 (let [center (:center current-state)
                 rotation (:rotation current-state)
                 p1 value
-                image (rotation p1)]
-            (draw-line center image draw-chan nil)
-            (draw-line center p1 draw-chan nil)
-            (draw-point p1 draw-chan)
-            current-state)
-        2 (let [center (:center current-state)
-                p1 (:p1 current-state)
-                p2 value
-                rotation (:rotation current-state)
-                image1 (rotation p1)
-                image2 (rotation p2)]
-            (draw-line center image1 draw-chan nil)
-            (draw-line center image2 draw-chan nil)
-            (draw-line center p1 draw-chan nil)
-            (draw-line center p2 draw-chan nil)
-            (draw-point p1 draw-chan)
-            (draw-point p2 draw-chan)
-            (draw-line p1 p2 draw-chan nil)
-            (draw-line image1 image2 draw-chan nil)
-            current-state)
-        3 (let [center (:center current-state)
-                p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value
-                rotation (:rotation current-state)
-                image1 (rotation p1)
-                image2 (rotation p2)
-                image3 (rotation value)]
-            (draw-line center image1 draw-chan nil)
-            (draw-line center image2 draw-chan nil)
-            (draw-line center image3 draw-chan nil)
-            (draw-point p1 draw-chan)
-            (draw-point p2 draw-chan)
-            (draw-point value draw-chan)
-            (draw-line p1 p2 draw-chan nil)
-            (draw-line p2 p3 draw-chan nil)
-            (draw-line p3 p1 draw-chan nil)
-            (draw-line image1 image2 draw-chan nil)
-            (draw-line image2 image3 draw-chan nil)
-            (draw-line image3 image1 draw-chan nil)
+                images (take 24 (iterate rotation p1))]
+            
+            (doseq [pi images]
+              (draw-point pi draw-chan))
             current-state)))
     :click
     (condp = (:step current-state)
@@ -433,9 +375,7 @@ return new state"
               ;; angle defaults to a twenty fourth of a tau
               rotation (complex/rotation value angle)]
           (assoc current-state :step 1 :center value :rotation rotation))
-      1 (assoc current-state :step 2 :p1 value)
-      2 (assoc current-state :step 3 :p2 value)
-      3 (assoc (dissoc current-state :p1 :p2) :step 1))))
+      1 (assoc current-state :step 0))))
 
 (defn translation-state-transitioner
   "see point-state-transitioner"

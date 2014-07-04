@@ -91,7 +91,7 @@
 
    :homothety
    ["Homothety with center and ratio k."
-    "One point to determine center. Default to k = 2. Select values of k not equal to 1 ot -1. See the image of arbitrary line segments."]
+    "One point to determine center. See the images of a line segment for k in [-2 -1 -1/2 1/2 2]. Notice that the images of a line segment are parallel and the ratio of lengths is k. "]
 
    :translation
    ["Translation by a vector."
