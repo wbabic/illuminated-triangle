@@ -168,7 +168,7 @@ return new state"
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 base (geom/altitude p1 p2 value)]
-            (draw-line p1 p2 draw-chan #{:circles})
+            (draw-line p1 p2 draw-chan #{:circles :extended})
             (draw-line p2 value draw-chan nil)
             (draw-line value p1 draw-chan nil)
             (draw-line value base draw-chan nil)

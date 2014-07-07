@@ -17,6 +17,24 @@
   (conjugate [z]))
 
 
+;; geometric data structures
+;; contain the info need to render itself
+;; in a canvas
+;; in a div
+;; as text
+;; as svg
+
+;; able to be composed
+(defrecord Point [geom style label])
+
+(defrecord Line [geom style label])
+
+(def p1 (Point. [1 0] {:color :red} "A"))
+(def p2 (Point. [0 1] {:color :green} "B"))
+
+(def l (Line. [p1 p2] {:color :blue} "l"))
+(map :label (:geom l))
+
 ;; a vector space
 ;; a set with
 ;; addition, scalar multiplication
