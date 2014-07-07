@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [hiccup "1.0.4"]
                  [garden "1.1.6"]
-                 [org.clojure/clojurescript "0.0-2202"]
+                 [org.clojure/clojurescript "0.0-2197"]
                  [org.clojure/core.async "0.1.298.0-2a82a1-alpha"]
                  [om "0.6.2"]
                  [secretary "1.1.0"]
@@ -26,8 +26,9 @@
    {:source-paths [ "test/clj" "dev"]
     :dependencies [[org.clojure/tools.namespace "0.2.4"]
                    [org.clojure/java.classpath "0.2.0"]
-                   [org.clojure/test.check "0.5.7"]]
-    :plugins [[com.cemerick/austin "0.1.3"]]}}
+                   [org.clojure/test.check "0.5.7"]
+                   [com.cemerick/piggieback "0.1.3"]
+                   [criterium "0.4.1"]]}}
 
   :cljsbuild {
     :builds [{:id "dev"
