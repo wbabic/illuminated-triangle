@@ -62,13 +62,14 @@ the given line"
           E (minus (scal-mul 2 D) C)]
       E)))
 
+(defn parts [n] (map (fn [i] (/ i n)) (range 24)))
+
 (defn param-line
   "given two endpoints return function
 of parameteriezed line"
   [A B]
-  (let []
-    (fn [t]
-      (plus A (scal-mul t (minus B A))))))
+  (fn [t]
+    (plus A (scal-mul t (minus B A)))))
 
 (defn extend-line
   [p1 p2]

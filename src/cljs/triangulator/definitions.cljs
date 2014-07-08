@@ -79,7 +79,7 @@
 
    :reflection
    ["Reflection in a line of symmetry."
-    "Two points to create a line. Then see the image of the reflection in that line."]
+    "Two points to create a line. Then see the image of the reflection in that line, of a point, a line and a triangle."]
 
    :rotation
    ["Rotation about a point."
@@ -87,7 +87,7 @@
 
    :inversion
    ["Reflection in a circle."
-    "Two points two create a circle. Then see the image of the inversion in that circle."]
+    "Two points two create a circle. Then see the image of the inversion in that circle of a point, a line and a tringle."]
 
    :homothety
    ["Homothety with center and ratio k."

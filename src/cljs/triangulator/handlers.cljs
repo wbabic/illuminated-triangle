@@ -97,6 +97,7 @@
            (dt/circle center radius)
            (dt/point center)])))
 
+
 (defn point-state-transitioner
   "handle event by using current state and event to transition to new state
 send drawing events to draw-chan
@@ -247,6 +248,36 @@ return new state"
                 image (ref value)]
             (draw-line p1 p2 draw-chan #{:extended})
             (draw-line value image draw-chan #{:midpoint})
+            current-state)
+        3 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                A (:A current-state)
+                B value
+                ref (geom/reflection p1 p2)
+                image1 (ref A)
+                image2 (ref B)]
+            (draw-line p1 p2 draw-chan #{:extended})
+            (draw-line A image1 draw-chan #{:midpoint})
+            (draw-line B image2 draw-chan #{:midpoint})
+            (draw-line A B draw-chan #{:extended})
+            (draw-line image1 image2 draw-chan #{:extended})
+            current-state)
+        4 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                A (:A current-state)
+                B (:B current-state)
+                C value
+                ref (geom/reflection p1 p2)
+                image1 (ref A)
+                image2 (ref B)
+                image3 (ref C)]
+            (draw-line p1 p2 draw-chan #{:extended})
+            (draw-line A B draw-chan #{})
+            (draw-line B C draw-chan #{})
+            (draw-line C A draw-chan #{})
+            (draw-line image1 image2 draw-chan #{})
+            (draw-line image2 image3 draw-chan #{})
+            (draw-line image3 image1 draw-chan #{})
             current-state)))
     :click
     (condp = (:step current-state)
@@ -254,9 +285,10 @@ return new state"
           (go (>! draw-chan clear))
           (draw-point value draw-chan)
           {:step 1 :p1 value})
-      1 (let [p1 (:p1 current-state)]
-          {:step 2 :p1 p1 :p2 value})
-      2 {:step 0})))
+      1 (assoc current-state :p2 value :step 2)
+      2 (assoc current-state :A value :step 3)
+      3 (assoc current-state :B value :step 4)
+      4 {:step 0})))
 
 (defn inversion-state-transitioner
   "see point-state-transitioner"
@@ -275,10 +307,65 @@ return new state"
         2 (let [center (:center current-state)
                 radius (:radius current-state)
                 inversion (:inversion current-state)
-                image (inversion value)]
+                A value
+                image (inversion A)]
             (draw-circle-2 center radius draw-chan)
-            (draw-line center value draw-chan #{:extended})
+            (draw-line center A draw-chan #{:extended})
             (draw-point image draw-chan)
+            current-state)
+        3 (let [center (:center current-state)
+                radius (:radius current-state)
+                inversion (:inversion current-state)
+                A (:A current-state)
+                B value
+                image1 (inversion A)
+                image2 (inversion B)
+                line (geom/param-line A B)
+                pre-image-points (map line (geom/parts 24))
+                image-points (map inversion pre-image-points)]
+            (draw-circle-2 center radius draw-chan)
+            (draw-line center A draw-chan #{:extended})
+            (draw-line center B draw-chan #{:extended})
+            (draw-point image1 draw-chan)
+            (draw-point image2 draw-chan)
+            (doseq [p image-points]
+              (draw-point p draw-chan))
+            (doseq [p pre-image-points]
+              (draw-point p draw-chan))
+            current-state)
+        4 (let [center (:center current-state)
+                radius (:radius current-state)
+                inversion (:inversion current-state)
+                A (:A current-state)
+                B (:B current-state)
+                C value
+                image1 (inversion A)
+                image2 (inversion B)
+                image3 (inversion C)
+                line1 (geom/param-line A B)
+                line2 (geom/param-line B C)
+                line3 (geom/param-line C A)
+                pre-image-points1 (map line1 (geom/parts 24))
+                pre-image-points2 (map line2 (geom/parts 24))
+                pre-image-points3 (map line3 (geom/parts 24))
+                image-points1 (map inversion pre-image-points1)
+                image-points2 (map inversion pre-image-points2)
+                image-points3 (map inversion pre-image-points3)]
+            (draw-circle-2 center radius draw-chan)
+            (draw-point image1 draw-chan)
+            (draw-point image2 draw-chan)
+            (doseq [p image-points1]
+              (draw-point p draw-chan))
+            (doseq [p pre-image-points1]
+              (draw-point p draw-chan))
+            (doseq [p image-points2]
+              (draw-point p draw-chan))
+            (doseq [p pre-image-points2]
+              (draw-point p draw-chan))
+            (doseq [p image-points3]
+              (draw-point p draw-chan))
+            (doseq [p pre-image-points3]
+              (draw-point p draw-chan))
             current-state)))
     :click
     (condp = (:step current-state)
@@ -296,7 +383,9 @@ return new state"
            :center center
            :radius radius
            :inversion inversion})
-      2 {:step 0})))
+      2 (assoc current-state :A value :step 3)
+      3 (assoc current-state :B value :step 4)
+      4 {:step 0})))
 
 (defn homothety-state-transitioner
   "see point-state-transitioner"
