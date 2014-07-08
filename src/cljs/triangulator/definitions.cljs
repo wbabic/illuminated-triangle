@@ -37,7 +37,7 @@
    {:id :mobius :label "mobius"}])
 
 (def ui
-  [{:section-name "Geometri Objects"
+  [{:section-name "Geometric Objects"
     :data geometric-objects}
    {:section-name "Geometric Concepts"
     :data geometric-concepts}
@@ -79,7 +79,7 @@
 
    :reflection
    ["Reflection in a line of symmetry."
-    "Two points to create a line. Then see the image of the reflection in that line, of a point, a line and a triangle."]
+    "Two taps to create a line of symmetry. Then see the image of the reflection in that line, of a point, a line and a triangle. Move mouse to see image move. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
    :rotation
    ["Rotation about a point."
@@ -87,7 +87,7 @@
 
    :inversion
    ["Reflection in a circle."
-    "Two points two create a circle. Then see the image of the inversion in that circle of a point, a line and a tringle."]
+    "Two taps to create a circle. Then see the image of the inversion in that circle of a point, a line and a tringle. Move mouse to see image move. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
    :homothety
    ["Homothety with center and ratio k."
@@ -95,5 +95,11 @@
 
    :translation
    ["Translation by a vector."
-    "Two points to determine vector. See the image of the current point under the translation defined by the selected translation vector."]
+    "Two points to determine a translation vector. See the image of the current point under the translation defined by the selected translation vector. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
+
+   :circumcircle
+   ["Circumcircle perspective of a triangle. Two taps to fix a line. Then move to see triangle with perpendicular bisectors, circumcenter and circumcircle."]
+
+   :altitude
+   ["Altitude perspective of a triangle. Two taps to fix a line. Then move to see the altitude from the current point to the fixed line."]
 })

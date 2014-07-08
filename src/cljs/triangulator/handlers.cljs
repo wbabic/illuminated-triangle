@@ -52,6 +52,10 @@
         (when (contains? options :midpoint)
           (>! draw-chan
             [(dt/point m)]))
+        (when (contains? options :perp-bisector)
+          (>! draw-chan
+            [(dt/line [s1 s2])
+             (dt/point m)]))
         (when (contains? options :circles)
           (>! draw-chan
               [(dt/style {:stroke :red
@@ -194,6 +198,91 @@ return new state"
               _ (println "triangle: " triangle)]
           (go (>! out triangle)
               (>! out [:draw :triangle draw-chan]))
+          {:step 0}))))
+
+(defn altitude-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go
+       (>! draw-chan clear)
+       (>! out [:draw :triangle draw-chan]))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan)
+            current-state)
+        1 (let [p1 (:p1 current-state)]
+            (draw-line p1 value draw-chan #{})
+            current-state)
+        2 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                base (geom/altitude p1 p2 value)]
+            (draw-line p1 p2 draw-chan #{:extended})
+            (draw-line p2 value draw-chan nil)
+            (draw-line value p1 draw-chan nil)
+            (draw-line value base draw-chan nil)
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (do
+          (go (>! draw-chan clear)
+              (>! out [:draw :triangle draw-chan])
+              (>! draw-chan [(dt/style {:stroke :red
+                                        :fill :grey-2})
+                             (dt/point value)]))
+          {:step 1 :p1 value}) 
+      1 (let [p1 (:p1 current-state)
+              line (dt/line [p1 value])
+              _ (println "line: " line)]
+          (go (>! out [:draw :triangle draw-chan]))
+          {:step 2 :p1 p1 :p2 value})
+      2 (let [p1 (:p1 current-state)
+              p2 (:p2 current-state)
+              triangle (dt/triangle p1 p2 value)
+              _ (println "triangle: " triangle)]
+          (go (>! out triangle)
+              (>! out [:draw :triangle draw-chan]))
+          {:step 0}))))
+
+(defn circumcircle-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go
+       (>! draw-chan clear)
+       (>! out [:draw :triangle draw-chan]))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan)
+            current-state)
+        1 (let [p1 (:p1 current-state)]
+            (draw-line p1 value draw-chan #{:perp-bisector})
+            current-state)
+        2 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value
+                base (geom/altitude p1 p2 p3)]
+            (draw-line p1 p2 draw-chan #{:perp-bisector})
+            (draw-line p2 p3 draw-chan #{:perp-bisector})
+            (draw-line p3 p1 draw-chan #{:perp-bisector})
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (do
+          (go (>! draw-chan clear)
+              (>! draw-chan [(dt/style {:stroke :red
+                                        :fill :grey-2})
+                             (dt/point value)]))
+          {:step 1 :p1 value}) 
+      1 (let [p1 (:p1 current-state)
+              line (dt/line [p1 value])]
+          {:step 2 :p1 p1 :p2 value})
+      2 (let [p1 (:p1 current-state)
+              p2 (:p2 current-state)]
           {:step 0}))))
 
 (defn circle-state-transitioner
@@ -572,6 +661,15 @@ return new state"
               :triangle
               (recur item
                      (tri-state-transitioner [type value] state return-message-chan draw-chan))
+
+              :circumcircle
+              (recur item
+                     (circumcircle-state-transitioner [type value] state return-message-chan draw-chan))
+
+              :altitude
+              (recur item
+                     (altitude-state-transitioner [type value] state return-message-chan draw-chan))
+
               :circle
               (recur item
                      (circle-state-transitioner [type value] state return-message-chan draw-chan))
