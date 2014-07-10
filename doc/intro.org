@@ -11,8 +11,8 @@
    represent as a matrix in core.matrix
    
 ** create geometric data with your fingers
-   mouse
-   touch
+   mouse move click
+   touch tap drag
    
 ** finger painting with geometric objects
    point line circle triangle
