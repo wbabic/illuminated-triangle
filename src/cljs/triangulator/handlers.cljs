@@ -39,7 +39,7 @@
                      (dt/point value)])))
 
 (defn draw-line
-  "clear screen draw item draw line between p1 and p2"
+  "draw line between p1 and p2"
   [p1 p2 draw-chan options]
   (let [m (geom/midpoint p1 p2)
         l (geom/distance p1 p2)
@@ -53,9 +53,12 @@
           (>! draw-chan
             [(dt/point m)]))
         (when (contains? options :perp-bisector)
-          (>! draw-chan
-            [(dt/line [s1 s2])
-             (dt/point m)]))
+          (let [[p3 p4] (geom/extend-line s1 s2)]
+            (>! draw-chan
+                [(dt/style {:stroke :lt-grey})
+                 (dt/line [p3 p4])
+                 (dt/style {:stroke :red})
+                 (dt/point m)])))
         (when (contains? options :circles)
           (>! draw-chan
               [(dt/style {:stroke :red
@@ -101,6 +104,21 @@
            (dt/circle center radius)
            (dt/point center)])))
 
+(defn draw-triangle
+  "draw triangle p1 p2 p3 in draw-chan with options"
+  [p1 p2 p3 draw-chan options]
+  (let [circumcenter (geom/circumcenter [p1 p2 p3])
+        _ (println "circumcenter: " circumcenter)]
+    (when (contains? options :circumcircle)
+      (draw-line p1 circumcenter draw-chan #{})
+      (draw-line p2 circumcenter draw-chan #{})
+      (draw-line p3 circumcenter draw-chan #{})
+      (draw-circle-2 circumcenter (geom/distance p1 circumcenter) draw-chan))
+    (draw-line p1 p2 draw-chan #{:perp-bisector})
+    (draw-line p2 p3 draw-chan #{:perp-bisector})
+    (draw-line p3 p1 draw-chan #{:perp-bisector})
+    (when (contains? options :circumcenter)
+      (draw-point circumcenter draw-chan))))
 
 (defn point-state-transitioner
   "handle event by using current state and event to transition to new state
@@ -260,15 +278,12 @@ return new state"
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [p1 (:p1 current-state)]
-            (draw-line p1 value draw-chan #{:perp-bisector})
+            (draw-line p1 value draw-chan #{})
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
-                p3 value
-                base (geom/altitude p1 p2 p3)]
-            (draw-line p1 p2 draw-chan #{:perp-bisector})
-            (draw-line p2 p3 draw-chan #{:perp-bisector})
-            (draw-line p3 p1 draw-chan #{:perp-bisector})
+                p3 value]
+            (draw-triangle p1 p2 p3 draw-chan #{:circumcenter :circumcircle})
             current-state)))
     :click
     (condp = (:step current-state)

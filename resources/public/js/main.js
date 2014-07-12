@@ -10,7 +10,7 @@ goog.addDependency("../cljs/core/async.js", ['cljs.core.async'], ['cljs.core.asy
 goog.addDependency("../triangulator/events.js", ['triangulator.events'], ['cljs.core', 'goog.dom', 'cljs.core.async', 'goog.events']);
 goog.addDependency("../triangulator/datatypes.js", ['triangulator.datatypes'], ['cljs.core']);
 goog.addDependency("../triangulator/draw.js", ['triangulator.draw'], ['cljs.core', 'cljs.core.async', 'triangulator.datatypes']);
-goog.addDependency("../triangulator/geometry.js", ['triangulator.geometry'], ['cljs.core']);
+goog.addDependency("../triangulator/geometry.js", ['triangulator.geometry'], ['cljs.core', 'goog.math.Vec2', 'goog.math.Matrix']);
 goog.addDependency("../om/dom.js", ['om.dom'], ['cljs.core']);
 goog.addDependency("../om/core.js", ['om.core'], ['cljs.core', 'om.dom', 'goog.ui.IdGenerator']);
 goog.addDependency("../triangulator/protocols.js", ['triangulator.protocols'], ['cljs.core']);
