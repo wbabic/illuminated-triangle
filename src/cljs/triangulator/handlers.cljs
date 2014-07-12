@@ -102,14 +102,13 @@
 (defn draw-triangle
   "draw triangle p1 p2 p3 in draw-chan with options"
   [p1 p2 p3 draw-chan options]
-  (let [circumcenter (geom/circumcenter [p1 p2 p3])
-        _ (println "circumcenter: " circumcenter)]
+  (let [circumcenter (geom/circumcenter [p1 p2 p3])]
     (when (contains? options :circumcircle)
       (draw-circle-2 circumcenter (geom/distance p1 circumcenter)
                      draw-chan {:stroke :blue :fill :lt-blue})
-      (draw-line p1 circumcenter draw-chan #{} :lt-blue)
-      (draw-line p2 circumcenter draw-chan #{} :lt-blue)
-      (draw-line p3 circumcenter draw-chan #{} :lt-blue))
+      (draw-line p1 circumcenter draw-chan #{} :yellow)
+      (draw-line p2 circumcenter draw-chan #{} :yellow)
+      (draw-line p3 circumcenter draw-chan #{} :yellow))
     (draw-line p1 p2 draw-chan #{:perp-bisector} :red)
     (draw-line p2 p3 draw-chan #{:perp-bisector} :red)
     (draw-line p3 p1 draw-chan #{:perp-bisector} :red)
@@ -161,8 +160,7 @@ return new state"
                              (dt/point value)]))
           {:step 1 :p1 value}) 
       1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])
-              _ (println "line: " line)]
+              line (dt/line [p1 value])]
           (go (>! out line)
               (>! draw-chan clear)
               (>! out [:draw :line draw-chan]))
@@ -202,14 +200,12 @@ return new state"
                              (dt/point value)]))
           {:step 1 :p1 value}) 
       1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])
-              _ (println "line: " line)]
+              line (dt/line [p1 value])]
           (go (>! out [:draw :triangle draw-chan]))
           {:step 2 :p1 p1 :p2 value})
       2 (let [p1 (:p1 current-state)
               p2 (:p2 current-state)
-              triangle (dt/triangle p1 p2 value)
-              _ (println "triangle: " triangle)]
+              triangle (dt/triangle p1 p2 value)]
           (go (>! out triangle)
               (>! out [:draw :triangle draw-chan]))
           {:step 0}))))
@@ -232,11 +228,12 @@ return new state"
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
+                p3 value
                 base (geom/altitude p1 p2 value)]
             (draw-line p1 p2 draw-chan #{:extended} :red)
-            (draw-line p2 value draw-chan nil :red)
-            (draw-line value p1 draw-chan nil :red)
-            (draw-line value base draw-chan nil :red)
+            (draw-line p2 p3 draw-chan nil :green)
+            (draw-line p3 p1 draw-chan nil :blue)
+            (draw-line p3 base draw-chan nil :yellow)
             current-state)))
     :click
     (condp = (:step current-state)
@@ -248,14 +245,12 @@ return new state"
                              (dt/point value)]))
           {:step 1 :p1 value}) 
       1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])
-              _ (println "line: " line)]
+              line (dt/line [p1 value])]
           (go (>! out [:draw :triangle draw-chan]))
           {:step 2 :p1 p1 :p2 value})
       2 (let [p1 (:p1 current-state)
               p2 (:p2 current-state)
-              triangle (dt/triangle p1 p2 value)
-              _ (println "triangle: " triangle)]
+              triangle (dt/triangle p1 p2 value)]
           (go (>! out triangle)
               (>! out [:draw :triangle draw-chan]))
           {:step 0}))))
@@ -321,8 +316,7 @@ return new state"
                              (dt/point value)]))
           {:step 1 :p1 value}) 
       1 (let [p1 (:p1 current-state)
-              circle (dt/circle p1 (geom/distance p1 value))
-              _ (println "circle: " circle)]
+              circle (dt/circle p1 (geom/distance p1 value))]
           (go (>! out circle)
               (>! out [:draw :circle draw-chan]))
           {:step 0}))))
@@ -479,7 +473,6 @@ return new state"
           {:step 1 :center value}) 
       1 (let [center (:center current-state)
               radius (geom/distance value center)
-              _ (println "center: " center " radius: " radius)
               inversion (complex/inversion center radius)]
           {:step 2
            :center center
