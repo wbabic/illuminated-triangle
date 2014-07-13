@@ -6,9 +6,9 @@
 (enable-console-print!)
 
 (def color-lookup
-  {:red      "rgba(255, 0,   0,   0.6)"
-   :green    "rgba(0,   255, 0,   0.6)"
-   :blue     "rgba(0,   0,   255, 0.6)"
+  {:red      "rgba(255, 0,   0,   0.8)"
+   :green    "rgba(0,   255, 0,   0.8)"
+   :blue     "rgba(0,   0,   255, 0.8)"
    :lt-red   "rgba(255, 0,   0,   0.1)"
    :lt-green "rgba(0,   255, 0,   0.1)"
    :lt-blue  "rgba(0,   0,   255, 0.1)"

@@ -18,11 +18,9 @@
    {:id :golden :label "golden"}])
 
 (def triangle-properties
-  [{:id :median :label "median"}
-   {:id :centroid :label "centroid"}
+  [{:id :median :label "medians and centroid"}
    {:id :circumcircle :label "circumcircle"}
-   {:id :altitude :label "altitude"}
-   {:id :orthocenter :label "orthocenter"}
+   {:id :altitude :label "altitudes and orthocenter"}
    {:id :incircle :label "incircle"}
    {:id :excircles :label "excircles"}
    {:id :eulor-line :label "eulor line"}
@@ -98,8 +96,11 @@
     "Two points to determine a translation vector. See the image of the current point under the translation defined by the selected translation vector. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
    :circumcircle
-   ["Circumcircle perspective of a triangle. Two taps to fix a line. Then move to see triangle with perpendicular bisectors, circumcenter and circumcircle."]
+   ["Circumcircle perspective of a triangle. Two taps to fix an edge. Then move to see triangle with perpendicular bisectors, circumcenter and circumcircle."]
+
+   :median
+   ["Median perspective of a triangle. Two taps to fix an edge. Then move to see triangle with medians and centroid."]
 
    :altitude
-   ["Altitude perspective of a triangle. Two taps to fix a line. Then move to see the altitude from the current point to the fixed line."]
+   ["Altitude perspective of a triangle. Two taps to fix an edge. Then move to see the altitude from the current point to the fixed line."]
 })

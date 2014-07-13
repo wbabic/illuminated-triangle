@@ -24,16 +24,14 @@
 
 (defn draw-point
   "clear-screen draw item draw point and coords of value"
-  [value draw-chan]
-  (go (>! draw-chan [(dt/style {:stroke :lt-grey
-                                :fill :red})
+  [value draw-chan style]
+  (go (>! draw-chan [(dt/style style)
                      (dt/point value)])))
 
 (defn draw-point-coords
   "clear-screen draw item draw point and coords of value"
-  [value draw-chan]
-  (go (>! draw-chan [(dt/style {:stroke :lt-grey
-                                :fill :red})
+  [value draw-chan style]
+  (go (>! draw-chan [(dt/style style)
                      (dt/line [value (project-x value)])
                      (dt/line [value (project-y value)])
                      (dt/point value)])))
@@ -105,15 +103,29 @@
   (let [circumcenter (geom/circumcenter [p1 p2 p3])]
     (when (contains? options :circumcircle)
       (draw-circle-2 circumcenter (geom/distance p1 circumcenter)
-                     draw-chan {:stroke :blue :fill :lt-blue})
+                     draw-chan {:stroke :yellow :fill :lt-grey})
       (draw-line p1 circumcenter draw-chan #{} :yellow)
       (draw-line p2 circumcenter draw-chan #{} :yellow)
       (draw-line p3 circumcenter draw-chan #{} :yellow))
-    (draw-line p1 p2 draw-chan #{:perp-bisector} :red)
-    (draw-line p2 p3 draw-chan #{:perp-bisector} :red)
-    (draw-line p3 p1 draw-chan #{:perp-bisector} :red)
+
+    (when (contains? options :median)
+      (let [centroid (geom/centroid [p1 p2 p3])
+            [m1 m2 m3] (geom/midpoints (geom/segments [p1 p2 p3]))]
+        (draw-line p1 m1 draw-chan #{} :yellow)
+        (draw-line p2 m2 draw-chan #{} :yellow)
+        (draw-line p3 m3 draw-chan #{} :yellow)
+        (draw-point centroid draw-chan {:stroke :grey-2 :fill :yellow})))
+
+    (let [line-options (cond->
+                        #{}
+                        (contains? options :perp-bisector) (conj :perp-bisector)
+                        (contains? options :median) (conj :midpoint))]
+      (draw-line p1 p2 draw-chan line-options :red)
+      (draw-line p2 p3 draw-chan line-options :blue)
+      (draw-line p3 p1 draw-chan line-options :green))
+
     (when (contains? options :circumcenter)
-      (draw-point circumcenter draw-chan))))
+      (draw-point circumcenter draw-chan {:stroke :grey-2 :fill :yellow}))))
 
 (defn point-state-transitioner
   "handle event by using current state and event to transition to new state
@@ -126,7 +138,7 @@ return new state"
     (do ;; clear-screen draw-state draw-point-coords
       (go (>! draw-chan clear)
           (>! out [:draw :point draw-chan]))
-      (draw-point-coords value draw-chan)
+      (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
       current-state)
     :click
     (do ;; add point to state; reset state
@@ -145,7 +157,7 @@ return new state"
        (>! out [:draw :line draw-chan]))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [p1 (:p1 current-state)]
             (draw-line p1 value draw-chan #{:circles :midpoint} :red)
@@ -177,18 +189,19 @@ return new state"
        (>! out [:draw :triangle draw-chan]))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [p1 (:p1 current-state)]
             (draw-line p1 value draw-chan #{:circles} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
-                base (geom/altitude p1 p2 value)]
+                p3 value
+                base (geom/altitude p1 p2 p3)]
             (draw-line p1 p2 draw-chan #{:circles :extended} :red)
-            (draw-line p2 value draw-chan nil :red)
-            (draw-line value p1 draw-chan nil :red)
-            (draw-line value base draw-chan nil :red)
+            (draw-line p2 p3 draw-chan nil :blue)
+            (draw-line p3 p1 draw-chan nil :green)
+            (draw-line p3 base draw-chan nil :yellow)
             current-state)))
     :click
     (condp = (:step current-state)
@@ -221,7 +234,7 @@ return new state"
        (>! out [:draw :triangle draw-chan]))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [p1 (:p1 current-state)]
             (draw-line p1 value draw-chan #{} :red)
@@ -229,11 +242,18 @@ return new state"
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value
-                base (geom/altitude p1 p2 value)]
+                b1 (geom/altitude p1 p2 p3)
+                b2 (geom/altitude p2 p3 p1)
+                b3 (geom/altitude p3 p1 p2)
+                orthocenter (first (geom/orthocenter [p1 p2 p3]))
+                _ (println orthocenter)]
             (draw-line p1 p2 draw-chan #{:extended} :red)
-            (draw-line p2 p3 draw-chan nil :green)
-            (draw-line p3 p1 draw-chan nil :blue)
-            (draw-line p3 base draw-chan nil :yellow)
+            (draw-line p2 p3 draw-chan #{:extended} :green)
+            (draw-line p3 p1 draw-chan #{:extended} :blue)
+            (draw-line p3 b1 draw-chan #{:extended} :yellow)
+            (draw-line p2 b3 draw-chan #{:extended} :yellow)
+            (draw-line p1 b2 draw-chan #{:extended} :yellow)
+            (draw-point orthocenter draw-chan {:stroke :lt-grey :fill :pink})
             current-state)))
     :click
     (condp = (:step current-state)
@@ -265,7 +285,7 @@ return new state"
        (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [p1 (:p1 current-state)]
             (draw-line p1 value draw-chan #{} :red)
@@ -273,7 +293,42 @@ return new state"
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
-            (draw-triangle p1 p2 p3 draw-chan #{:circumcenter :circumcircle})
+            (draw-triangle p1 p2 p3 draw-chan #{:circumcenter :circumcircle :perp-bisector})
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (do
+          (go (>! draw-chan clear)
+              (>! draw-chan [(dt/style {:stroke :red
+                                        :fill :grey-2})
+                             (dt/point value)]))
+          {:step 1 :p1 value}) 
+      1 (let [p1 (:p1 current-state)
+              line (dt/line [p1 value])]
+          {:step 2 :p1 p1 :p2 value})
+      2 (let [p1 (:p1 current-state)
+              p2 (:p2 current-state)]
+          {:step 0}))))
+
+(defn median-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go
+       (>! draw-chan clear))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
+            current-state)
+        1 (let [p1 (:p1 current-state)]
+            (draw-line p1 value draw-chan #{} :red)
+            current-state)
+        2 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value]
+            (draw-triangle p1 p2 p3 draw-chan #{:median})
             current-state)))
     :click
     (condp = (:step current-state)
@@ -301,7 +356,7 @@ return new state"
        (>! out [:draw :circle draw-chan]))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [p1 (:p1 current-state)]
             (draw-circle p1 value draw-chan)
@@ -330,7 +385,7 @@ return new state"
       (go (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [p1 (:p1 current-state)]
             (draw-line p1 value draw-chan nil :red)
@@ -376,7 +431,7 @@ return new state"
     (condp = (:step current-state)
       0 (do
           (go (>! draw-chan clear))
-          (draw-point value draw-chan)
+          (draw-point value draw-chan {:stroke :lt-grey :fill :red})
           {:step 1 :p1 value})
       1 (assoc current-state :p2 value :step 2)
       2 (assoc current-state :A value :step 3)
@@ -392,7 +447,7 @@ return new state"
       (go (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [center (:center current-state)]
             (draw-circle center value draw-chan)
@@ -405,7 +460,7 @@ return new state"
             (draw-circle-2 center radius draw-chan
                            {:stroke :red :fill :grey-2})
             (draw-line center A draw-chan #{:extended} :red)
-            (draw-point image draw-chan)
+            (draw-point image draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         3 (let [center (:center current-state)
                 radius (:radius current-state)
@@ -421,12 +476,12 @@ return new state"
                            {:stroke :red :fill :grey-2})
             (draw-line center A draw-chan #{:extended} :red)
             (draw-line center B draw-chan #{:extended} :red)
-            (draw-point image1 draw-chan)
-            (draw-point image2 draw-chan)
+            (draw-point image1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image2 draw-chan {:stroke :lt-grey :fill :red})
             (doseq [p image-points]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             (doseq [p pre-image-points]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             current-state)
         4 (let [center (:center current-state)
                 radius (:radius current-state)
@@ -448,20 +503,20 @@ return new state"
                 image-points3 (map inversion pre-image-points3)]
             (draw-circle-2 center radius draw-chan
                            {:stroke :red :fill :grey-2})
-            (draw-point image1 draw-chan)
-            (draw-point image2 draw-chan)
+            (draw-point image1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image2 draw-chan {:stroke :lt-grey :fill :red})
             (doseq [p image-points1]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             (doseq [p pre-image-points1]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             (doseq [p image-points2]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             (doseq [p pre-image-points2]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             (doseq [p image-points3]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             (doseq [p pre-image-points3]
-              (draw-point p draw-chan))
+              (draw-point p draw-chan {:stroke :lt-grey :fill :red}))
             current-state)))
     :click
     (condp = (:step current-state)
@@ -491,7 +546,7 @@ return new state"
       (go (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [center (:center current-state)
                 p1 value
@@ -499,9 +554,9 @@ return new state"
                 images (map (fn [f] (f p1)) homotheties)]
             (draw-line (first images) (last images) draw-chan nil :red)
             (doseq [pi images]
-              (draw-point pi draw-chan))
-            (draw-point p1 draw-chan)
-            (draw-point center draw-chan)
+              (draw-point pi draw-chan {:stroke :lt-grey :fill :red}))
+            (draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point center draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         2 (let [center (:center current-state)
                 p1 (:p1 current-state)
@@ -516,11 +571,11 @@ return new state"
             (doseq [[i1 i2] (map vector images1 images2)]
               (draw-line i1 i2 draw-chan nil :red))
             
-            (draw-point p1 draw-chan)
-            (draw-point p2 draw-chan)
+            (draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point p2 draw-chan {:stroke :lt-grey :fill :red})
             (draw-line p1 p2 draw-chan nil :red)
 
-            (draw-point center draw-chan)
+            (draw-point center draw-chan {:stroke :lt-grey :fill :red})
             
             current-state)))
     :click
@@ -543,7 +598,7 @@ return new state"
       (go (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [center (:center current-state)
                 rotation (:rotation current-state)
@@ -551,7 +606,7 @@ return new state"
                 images (take 24 (iterate rotation p1))]
             
             (doseq [pi images]
-              (draw-point pi draw-chan))
+              (draw-point pi draw-chan {:stroke :lt-grey :fill :red}))
             current-state)))
     :click
     (condp = (:step current-state)
@@ -570,7 +625,7 @@ return new state"
       (go (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
-            (draw-point-coords value draw-chan)
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         1 (let [pi (:pi current-state)]
             (draw-line pi value draw-chan nil :red)
@@ -581,8 +636,8 @@ return new state"
                 translation (:translation current-state)
                 image (translation p1)]
             (draw-line pi pf draw-chan nil :red)
-            (draw-point p1 draw-chan)
-            (draw-point image draw-chan)
+            (draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image draw-chan {:stroke :lt-grey :fill :red})
             current-state)
         3 (let [pi (:pi current-state)
                 pf (:pf current-state)
@@ -592,10 +647,10 @@ return new state"
                 image1 (translation p1)
                 image2 (translation p2)]
             (draw-line pi pf draw-chan nil :red)
-            (draw-point p1 draw-chan)
-            (draw-point image1 draw-chan)
-            (draw-point p2 draw-chan)
-            (draw-point image2 draw-chan)
+            (draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point p2 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image2 draw-chan {:stroke :lt-grey :fill :red})
             (draw-line p1 p2 draw-chan nil :red)
             (draw-line image1 image2 draw-chan nil :red)
             current-state)
@@ -609,12 +664,12 @@ return new state"
                 image2 (translation p2)
                 image3 (translation p3)]
             (draw-line pi pf draw-chan nil :red)
-            (draw-point p1 draw-chan)
-            (draw-point image1 draw-chan)
-            (draw-point p2 draw-chan)
-            (draw-point image2 draw-chan)
-            (draw-point p3 draw-chan)
-            (draw-point image3 draw-chan)
+            (draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image1 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point p2 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image2 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point p3 draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image3 draw-chan {:stroke :lt-grey :fill :red})
             (draw-line p1 p2 draw-chan nil :red)
             (draw-line image1 image2 draw-chan nil :red)
             (draw-line p2 p3 draw-chan nil :red)
@@ -675,6 +730,10 @@ return new state"
               :altitude
               (recur item
                      (altitude-state-transitioner [type value] state return-message-chan draw-chan))
+
+              :median
+              (recur item
+                     (median-state-transitioner [type value] state return-message-chan draw-chan))
 
               :circle
               (recur item

@@ -72,6 +72,15 @@ the given line"
         t (/ (dot b c) (dot c c))]
     (plus A (scal-mul t c))))
 
+(defn altitudes [coords]
+  (let [[A B C] coords
+        a1 (altitude A B C)
+        a2 (altitude B C A)
+        a3 (altitude C A B)]
+    [[B a1]
+     [C a2]
+     [A a3]]))
+
 (defn reflection [A B]
   (fn [C]
     (let [D (altitude A B C)
@@ -173,3 +182,29 @@ where equation of line is ax + by = c"
         circumcenter (first circumcenters)
         p (c->v circumcenter)]
     p))
+
+(defn centroid [[A B C]]
+  (scal-mul
+   (/ 3)
+   (plus A (plus B C))))
+
+(defn orthocenter
+  [coords]
+  (let [alts (altitudes coords)
+        line-coords (mapv (fn [[P Q]] (line-coords P Q)) alts)]
+    (let [[a b c] (line-coords 0)
+          [d e f] (line-coords 1)
+          [g h i] (line-coords 2)
+          m1 (inverse [[a b] [d e]])
+          c1 (column [c f])
+          m2 (inverse [[d e] [g h]])
+          c2 (column[f i])
+          m3 (inverse [[g h] [a b]])
+          c3 (column[i c])
+          columns (mapv
+                   (fn [[matrix column]]
+                     (multiply matrix column))
+                   [[m1 c1]
+                    [m2 c2]
+                    [m3 c3]])]
+      (mapv c->v columns))))
