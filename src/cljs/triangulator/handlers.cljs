@@ -97,6 +97,13 @@
            (dt/circle center radius)
            (dt/point center)])))
 
+(defn fill-tri
+  "fill given triangle with given color"
+  [p1 p2 p3 draw-chan color]
+  (go (>! draw-chan
+          [(dt/style {:fill color})
+           (dt/triangle p1 p2 p3)])))
+
 (defn draw-triangle
   "draw triangle p1 p2 p3 in draw-chan with options"
   [p1 p2 p3 draw-chan options]
@@ -111,6 +118,9 @@
     (when (contains? options :median)
       (let [centroid (geom/centroid [p1 p2 p3])
             [m1 m2 m3] (geom/midpoints (geom/segments [p1 p2 p3]))]
+        (fill-tri p1 centroid p2 draw-chan :lt-red)
+        (fill-tri p2 centroid p3 draw-chan :lt-blue)
+        (fill-tri p3 centroid p1 draw-chan :lt-green)
         (draw-line p1 m1 draw-chan #{} :yellow)
         (draw-line p2 m2 draw-chan #{} :yellow)
         (draw-line p3 m3 draw-chan #{} :yellow)
@@ -245,34 +255,32 @@ return new state"
                 b1 (geom/altitude p1 p2 p3)
                 b2 (geom/altitude p2 p3 p1)
                 b3 (geom/altitude p3 p1 p2)
-                orthocenter (first (geom/orthocenter [p1 p2 p3]))
-                _ (println orthocenter)]
+                ;;orthocenter (first (geom/orthocenter [p1 p2 p3]))
+                ;;_ (println orthocenter)
+                ]
+            (fill-tri p1 p2 p3 draw-chan :lt-red)
             (draw-line p1 p2 draw-chan #{:extended} :red)
             (draw-line p2 p3 draw-chan #{:extended} :green)
             (draw-line p3 p1 draw-chan #{:extended} :blue)
             (draw-line p3 b1 draw-chan #{:extended} :yellow)
             (draw-line p2 b3 draw-chan #{:extended} :yellow)
             (draw-line p1 b2 draw-chan #{:extended} :yellow)
-            (draw-point orthocenter draw-chan {:stroke :lt-grey :fill :pink})
+            ;;(draw-point orthocenter draw-chan {:stroke :lt-grey :fill :pink})
             current-state)))
     :click
     (condp = (:step current-state)
       0 (do
           (go (>! draw-chan clear)
-              (>! out [:draw :triangle draw-chan])
               (>! draw-chan [(dt/style {:stroke :red
                                         :fill :grey-2})
                              (dt/point value)]))
           {:step 1 :p1 value}) 
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
-          (go (>! out [:draw :triangle draw-chan]))
           {:step 2 :p1 p1 :p2 value})
       2 (let [p1 (:p1 current-state)
               p2 (:p2 current-state)
               triangle (dt/triangle p1 p2 value)]
-          (go (>! out triangle)
-              (>! out [:draw :triangle draw-chan]))
           {:step 0}))))
 
 (defn circumcircle-state-transitioner
@@ -293,6 +301,7 @@ return new state"
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
+            (fill-tri p1 p2 p3 draw-chan :lt-red)
             (draw-triangle p1 p2 p3 draw-chan #{:circumcenter :circumcircle :perp-bisector})
             current-state)))
     :click

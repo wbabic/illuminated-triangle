@@ -125,10 +125,12 @@
 ** nine point circle
    G(-1/2)
    H(1/2)
+   
 ** inversion in a circle
    fixed circle
    let point vary
    see its image
+   see images of lines and circles
 
    see the image of an arbitrary triangle
 
@@ -151,6 +153,11 @@
 
 *** regular polygon
     the dihedral group
+*** star polygon
+    notation from Coxeter
     
 *** regular polyhedron
     platonic solids
+    archimedan solids
+    cylinders prisms and antiprisms
+    

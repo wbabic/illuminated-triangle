@@ -19,7 +19,7 @@
 
 (def triangle-properties
   [{:id :median :label "medians and centroid"}
-   {:id :circumcircle :label "circumcircle"}
+   {:id :circumcircle :label "perpendicular bisectors and circumcircle"}
    {:id :altitude :label "altitudes and orthocenter"}
    {:id :incircle :label "incircle"}
    {:id :excircles :label "excircles"}

@@ -4,14 +4,14 @@
 
 ** overview
    use the triangle to illuminate geometric ideas
-   tel a story, the story of the triangle
-   illustrate ideas of symmetry
+   tell a story, the story of the triangle
+   to illustrate ideas of symmetry
 
    an interactive movie with
    animated definitions, examples, theorems
    mouse over, or touch, to higlight a graphical element
    color coordinated
-   symbols and graphics abd sounds   
+   symbols and graphics and sounds   
 
    current definition, example, theorem
    text box
@@ -78,7 +78,7 @@
 
    closure-play on numenor - google closure library, css
    
-*** dev profile
+*** TODO dev profile
     dev/user.clj
 
     add dev profile to  project.clj
@@ -89,6 +89,8 @@
                                     [org.clojure/test.check "0.5.7"]]}}
     #+END_SRC
 
+    make custom lien template with dev profile
+    
 ** references
 *** css
 **** flexbox specification
@@ -108,7 +110,6 @@
      screencast
      https://www.youtube.com/watch?v=tge9YQDAasc
 
-
 **** Sean Floritto
      Sketching with CSS
      screencast
@@ -126,10 +127,13 @@
 *** secretary
     clojurescript client side routing
     https://github.com/gf3/secretary
+    
 *** goog history
     http://docs.closure-library.googlecode.com/git/class_goog_History.html
+    
 *** session yantra merchant
     graphics represented as data
+    
 **** session
      https://github.com/kovasb/session
      https://github.com/kovasb/session/blob/master/src/clj/session/user.clj
@@ -202,8 +206,9 @@
     1 2 3 4 5  ...
     
 *** change Line rendering to render its points also
-    using their style
+    using style passed as an argument to draw-line
     give some style to the line as well
+    
 *** add notation
     optionally give items a name
     that uses the items style
@@ -396,3 +401,22 @@ X :: *[c:character; west?c ->
 *** Anharmonic Ratio
 *** Analytic Geometry
 *** Circular Transformations
+** implementation notes
+*** things to do
+    separate out platform specific code
+    use cljx
+    add tests
+    robustify code
+    
+    add fill triangle method
+    add ability to mask regions
+    using lines and arcs
+    
+    determine images of lines and circles
+    under inversion in a circle
+
+    compose transformations
+
+    turn drawings into animations
+    
+    
