@@ -408,7 +408,6 @@ X :: *[c:character; west?c ->
     add tests
     robustify code
     
-    add fill triangle method
     add ability to mask regions
     using lines and arcs
     
