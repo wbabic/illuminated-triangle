@@ -107,35 +107,83 @@
 (defn draw-triangle
   "draw triangle p1 p2 p3 in draw-chan with options"
   [p1 p2 p3 draw-chan options]
-  (let [circumcenter (geom/circumcenter [p1 p2 p3])]
-    (when (contains? options :circumcircle)
+  (when (contains? options :circumcircle)
+    (let[circumcenter (geom/circumcenter [p1 p2 p3])]
       (draw-circle-2 circumcenter (geom/distance p1 circumcenter)
                      draw-chan {:stroke :yellow :fill :lt-grey})
       (draw-line p1 circumcenter draw-chan #{} :yellow)
       (draw-line p2 circumcenter draw-chan #{} :yellow)
-      (draw-line p3 circumcenter draw-chan #{} :yellow))
+      (draw-line p3 circumcenter draw-chan #{} :yellow)
+      (draw-point circumcenter draw-chan {:stroke :grey-2 :fill :yellow})))
 
-    (when (contains? options :median)
-      (let [centroid (geom/centroid [p1 p2 p3])
-            [m1 m2 m3] (geom/midpoints (geom/segments [p1 p2 p3]))]
-        (fill-tri p1 centroid p2 draw-chan :lt-red)
-        (fill-tri p2 centroid p3 draw-chan :lt-blue)
-        (fill-tri p3 centroid p1 draw-chan :lt-green)
-        (draw-line p1 m1 draw-chan #{} :yellow)
-        (draw-line p2 m2 draw-chan #{} :yellow)
-        (draw-line p3 m3 draw-chan #{} :yellow)
-        (draw-point centroid draw-chan {:stroke :grey-2 :fill :yellow})))
+  (when (contains? options :median)
+    (let [centroid (geom/centroid [p1 p2 p3])
+          [m1 m2 m3] (geom/midpoints (geom/segments [p1 p2 p3]))]
+      ;; fll sub triangles
+      (fill-tri p1 centroid p2 draw-chan :lt-red)
+      (fill-tri p2 centroid p3 draw-chan :lt-blue)
+      (fill-tri p3 centroid p1 draw-chan :lt-green)
+      ;; draw medians
+      (draw-line p1 m1 draw-chan #{} :yellow)
+      (draw-line p2 m2 draw-chan #{} :yellow)
+      (draw-line p3 m3 draw-chan #{} :yellow)
+      (draw-point centroid draw-chan {:stroke :grey-2 :fill :yellow})))
 
-    (let [line-options (cond->
-                        #{}
-                        (contains? options :perp-bisector) (conj :perp-bisector)
-                        (contains? options :median) (conj :midpoint))]
-      (draw-line p1 p2 draw-chan line-options :red)
-      (draw-line p2 p3 draw-chan line-options :blue)
-      (draw-line p3 p1 draw-chan line-options :green))
-
-    (when (contains? options :circumcenter)
-      (draw-point circumcenter draw-chan {:stroke :grey-2 :fill :yellow}))))
+  (when (contains? options :incircle)
+    ;; draw angular biscetors extended
+    (fill-tri p1 p2 p3 draw-chan :lt-red)
+    (doseq [perm [[p1 p2 p3] [p2 p3 p1] [p3 p1 p2]]]
+      (let [[M1 M2] (geom/ang-bisector-segment perm)
+            [M1P M2P] (geom/perp-bisector [M1 M2])]
+        (draw-line M1 M2 draw-chan #{} :lt-grew)
+        (draw-line M1P M2P draw-chan #{} :lt-grey)))
+    ;; draw incircle
+    (let [l1 (geom/ang-bisector-segment [p1 p2 p3])
+          l2 (geom/ang-bisector-segment [p2 p3 p1])
+          ic (geom/intersection l1 l2)
+          d (geom/altitude p1 p2 ic)
+          e (geom/altitude p2 p3 ic)
+          f (geom/altitude p3 p1 ic)
+          ir (geom/distance ic d)]
+      (draw-point ic draw-chan {:stroke :grey-2 :fill :yellow})
+      (draw-line ic d draw-chan #{} :yellow)
+      (draw-line ic e draw-chan #{} :yellow)
+      (draw-line ic f draw-chan #{} :yellow)
+      (draw-circle-2 ic ir draw-chan {:stroke :yellow :fill :lt-grey}))
+    ;; draw excircles
+    (let [l1 (geom/ang-bisector-segment [p1 p2 p3])
+          l2 (geom/ang-bisector-segment [p2 p3 p1])
+          l3 (geom/ang-bisector-segment [p3 p1 p2])
+          l1p (geom/perp-bisector l1)
+          l2p (geom/perp-bisector l2)
+          l3p (geom/perp-bisector l3)
+          ic1 (geom/intersection l1p l2p)
+          ic2 (geom/intersection l2p l3p)
+          ic3 (geom/intersection l3p l1p)
+          d (geom/altitude p1 p2 ic1)
+          e (geom/altitude p2 p3 ic2)
+          f (geom/altitude p3 p1 ic3)
+          ir1 (geom/distance ic1 d)
+          ir2 (geom/distance ic2 e)
+          ir3 (geom/distance ic3 f)]
+      (draw-point ic1 draw-chan {:stroke :grey-2 :fill :yellow})
+      (draw-point ic2 draw-chan {:stroke :grey-2 :fill :yellow})
+      (draw-point ic3 draw-chan {:stroke :grey-2 :fill :yellow})
+      (draw-line ic1 d draw-chan #{} :yellow)
+      (draw-line ic2 e draw-chan #{} :yellow)
+      (draw-line ic3 f draw-chan #{} :yellow)
+      (draw-circle-2 ic1 ir1 draw-chan {:stroke :yellow :fill :lt-grey})
+      (draw-circle-2 ic2 ir2 draw-chan {:stroke :yellow :fill :lt-grey})
+      (draw-circle-2 ic3 ir3 draw-chan {:stroke :yellow :fill :lt-grey})))
+  
+  (let [line-options (cond->
+                      #{}
+                      (contains? options :perp-bisector) (conj :perp-bisector)
+                      (contains? options :median) (conj :midpoint)
+                      (contains? options :incircle) (conj :extended))]
+    (draw-line p1 p2 draw-chan line-options :red)
+    (draw-line p2 p3 draw-chan line-options :blue)
+    (draw-line p3 p1 draw-chan line-options :green)))
 
 (defn point-state-transitioner
   "handle event by using current state and event to transition to new state
@@ -255,9 +303,7 @@ return new state"
                 b1 (geom/altitude p1 p2 p3)
                 b2 (geom/altitude p2 p3 p1)
                 b3 (geom/altitude p3 p1 p2)
-                ;;orthocenter (first (geom/orthocenter [p1 p2 p3]))
-                ;;_ (println orthocenter)
-                ]
+                orthocenter (geom/intersection [p1 b2] [p2 b3])]
             (fill-tri p1 p2 p3 draw-chan :lt-red)
             (draw-line p1 p2 draw-chan #{:extended} :red)
             (draw-line p2 p3 draw-chan #{:extended} :green)
@@ -265,7 +311,7 @@ return new state"
             (draw-line p3 b1 draw-chan #{:extended} :yellow)
             (draw-line p2 b3 draw-chan #{:extended} :yellow)
             (draw-line p1 b2 draw-chan #{:extended} :yellow)
-            ;;(draw-point orthocenter draw-chan {:stroke :lt-grey :fill :pink})
+            (draw-point orthocenter draw-chan {:stroke :lt-grey :fill :pink})
             current-state)))
     :click
     (condp = (:step current-state)
@@ -338,6 +384,41 @@ return new state"
                 p2 (:p2 current-state)
                 p3 value]
             (draw-triangle p1 p2 p3 draw-chan #{:median})
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (do
+          (go (>! draw-chan clear)
+              (>! draw-chan [(dt/style {:stroke :red
+                                        :fill :grey-2})
+                             (dt/point value)]))
+          {:step 1 :p1 value}) 
+      1 (let [p1 (:p1 current-state)
+              line (dt/line [p1 value])]
+          {:step 2 :p1 p1 :p2 value})
+      2 (let [p1 (:p1 current-state)
+              p2 (:p2 current-state)]
+          {:step 0}))))
+
+(defn incircle-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go
+       (>! draw-chan clear))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
+            current-state)
+        1 (let [p1 (:p1 current-state)]
+            (draw-line p1 value draw-chan #{} :red)
+            current-state)
+        2 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value]
+            (draw-triangle p1 p2 p3 draw-chan #{:incircle})
             current-state)))
     :click
     (condp = (:step current-state)
@@ -744,6 +825,10 @@ return new state"
               (recur item
                      (median-state-transitioner [type value] state return-message-chan draw-chan))
 
+              :incircle
+              (recur item
+                     (incircle-state-transitioner [type value] state return-message-chan draw-chan))
+              
               :circle
               (recur item
                      (circle-state-transitioner [type value] state return-message-chan draw-chan))

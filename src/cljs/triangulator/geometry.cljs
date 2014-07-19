@@ -66,20 +66,13 @@ the given line"
   (+ (* (u 0) (v 0))
      (* (u 1) (v 1))))
 
-(defn altitude [A B C]
+(defn altitude
+  "return altitude from C to AB"
+  [A B C]
   (let [b (minus C A)
         c (minus B A)
         t (/ (dot b c) (dot c c))]
     (plus A (scal-mul t c))))
-
-(defn altitudes [coords]
-  (let [[A B C] coords
-        a1 (altitude A B C)
-        a2 (altitude B C A)
-        a3 (altitude C A B)]
-    [[B a1]
-     [C a2]
-     [A a3]]))
 
 (defn reflection [A B]
   (fn [C]
@@ -188,23 +181,31 @@ where equation of line is ax + by = c"
    (/ 3)
    (plus A (plus B C))))
 
-(defn orthocenter
-  [coords]
-  (let [alts (altitudes coords)
-        line-coords (mapv (fn [[P Q]] (line-coords P Q)) alts)]
-    (let [[a b c] (line-coords 0)
-          [d e f] (line-coords 1)
-          [g h i] (line-coords 2)
-          m1 (inverse [[a b] [d e]])
-          c1 (column [c f])
-          m2 (inverse [[d e] [g h]])
-          c2 (column[f i])
-          m3 (inverse [[g h] [a b]])
-          c3 (column[i c])
-          columns (mapv
-                   (fn [[matrix column]]
-                     (multiply matrix column))
-                   [[m1 c1]
-                    [m2 c2]
-                    [m3 c3]])]
-      (mapv c->v columns))))
+(defn intersection
+  "intersection of two lines with each a pair of points
+l1 = [p1 p2] l2 = [p3 p4]"
+  [l1 l2]
+  (let [[p1 p2] l1
+        [p3 p4] l2
+        [a b c] (line-coords p1 p2)
+        [d e f] (line-coords p3 p4)
+        m1 (inverse [[a b] [d e]])
+        c1 (column [c f])
+        res (multiply m1 c1)]
+    (c->v res)))
+
+(defn ang-bisector-segment
+  "return agnular bisector segment at A"
+  [[A B C]]
+  (let [c (minus B A)
+        b (minus C A)
+        lb (length b)
+        lc (length c)
+        B1 (plus A (scal-mul (/ 1000 lb) b))
+        C1 (plus A (scal-mul (/ 1000 lc) c))
+        B2 (plus A (scal-mul (/ -1000 lb) b))
+        C2 (plus A (scal-mul (/ -1000 lc) c))
+        M1 (midpoint B1 C1)
+        M2 (midpoint B2 C2)]
+    [M1 M2]))
+

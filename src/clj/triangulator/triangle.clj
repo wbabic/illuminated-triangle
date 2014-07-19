@@ -154,12 +154,22 @@ of parameteriezed line"
 ;; how far is point from line?
 
 (comment
-  ;; aax + by = c, [a b c]
+  ;; ax + by = c, [a b c]
   ;; line equation: x + y = 1
   ;; line between two points [p1 p2]
   ;; [p1 p2] = [e1 e2]
   ;; line triple: [1 1 1]
   ;; p1 = [1 0] p2 = [0 1]
+
+  (defn intersection
+    "find intersection of given line-coords l1 l2
+line coords are of the form [a b c] where ax + by = c"
+    [l1 l2]
+    (let [[a b e] l1
+          [c d f] l2
+          det (- (* a d) (* b c))
+          _ (println det)]
+      [0 0]))
   
   (defn is-on-line [line-triple]
     (fn [point]
@@ -172,4 +182,19 @@ of parameteriezed line"
         ts [0 1 (/ 2) 2 -2]
         test-points (map m ts)]
     (every? true? (map chk-fn test-points)))
+
+  (let [A [3 2]
+        B [2 6]
+        C [5 2]
+        D [7 4]
+        l1 (line-coords [A B])
+        _ (println "l1 = " l1)
+        l2 (line-coords [C D])
+        _ (println "l2 = " l2)
+        l1? (is-on-line l1)
+        l2? (is-on-line l2)
+        E (intersection l1 l2)]
+    [(l1? E) (l2? E)])
+  
   )
+

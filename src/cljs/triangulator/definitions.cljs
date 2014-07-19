@@ -21,8 +21,7 @@
   [{:id :median :label "medians and centroid"}
    {:id :circumcircle :label "perpendicular bisectors and circumcircle"}
    {:id :altitude :label "altitudes and orthocenter"}
-   {:id :incircle :label "incircle"}
-   {:id :excircles :label "excircles"}
+   {:id :incircle :label "angular bisectors, incircle and excircles"}
    {:id :eulor-line :label "eulor line"}
    {:id :nine-pt-circle :label "nine point circle"}])
 
@@ -100,6 +99,9 @@
 
    :median
    ["Median perspective of a triangle. Two taps to fix an edge. Then move to see triangle with medians and centroid."]
+
+   :incircle
+   ["Incircle and excircles perspective of a triangle from angular bisectors. Two taps to fix an edge. Then move to see triangle with angular bisectors, incircle and excircles."]
 
    :altitude
    ["Altitude perspective of a triangle. Two taps to fix an edge. Then move to see the altitude from the current point to the fixed line."]

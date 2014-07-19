@@ -419,3 +419,7 @@ X :: *[c:character; west?c ->
     turn drawings into animations
     
     
+    angular bisector
+    intersection ot two lines
+
+    
