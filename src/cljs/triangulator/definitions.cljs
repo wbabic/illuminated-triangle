@@ -22,7 +22,7 @@
    {:id :circumcircle :label "perpendicular bisectors and circumcircle"}
    {:id :altitude :label "altitudes and orthocenter"}
    {:id :incircle :label "angular bisectors, incircle and excircles"}
-   {:id :eulor-line :label "eulor line"}
+   {:id :euler-line :label "euler line"}
    {:id :nine-pt-circle :label "nine point circle"}])
 
 (def triangle-transformations
@@ -104,5 +104,10 @@
    ["Incircle and excircles perspective of a triangle from angular bisectors. Two taps to fix an edge. Then move to see triangle with angular bisectors, incircle and excircles."]
 
    :altitude
-   ["Altitude perspective of a triangle. Two taps to fix an edge. Then move to see the altitude from the current point to the fixed line."]
+   ["Altitude perspective of a triangle."
+    "Two taps to fix an edge. Then move to see the altitude from the current point to the fixed line."]
+
+   :euler-line
+   ["Euler line of a triangle."
+    "The line from the circumcenter to the orthocenter."]
 })
