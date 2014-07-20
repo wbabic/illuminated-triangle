@@ -189,7 +189,8 @@
 
   ;; angle bisectors or orthocenter
   (when (or (contains? options :ang-bisector)
-            (contains? options :orthocenter))
+            (contains? options :orthocenter)
+            (contains? options :nine-pt-circle))
     (let [b3 (geom/altitude p1 p2 p3)
           b1 (geom/altitude p2 p3 p1)
           b2 (geom/altitude p3 p1 p2)
@@ -205,14 +206,31 @@
       (when (contains? options :euler)
         (let [circumcenter (geom/circumcenter [p1 p2 p3])]
           ;; TODO DRY circumcenter
-          (draw-line orthocenter circumcenter draw-chan #{} :pink)))))
+          (draw-line orthocenter circumcenter draw-chan #{} :pink)))
+      (when (contains? options :nine-pt-circle)
+        (let [orthic-circumcenter (geom/circumcenter [b1 b2 b3])
+              r (geom/distance b1 orthic-circumcenter)]
+          ;; midpoints of vertices to orthocenter
+          (let [m1 (geom/midpoint orthocenter p1)
+                m2 (geom/midpoint orthocenter p2)
+                m3 (geom/midpoint orthocenter p3)]
+            (draw-point m1 draw-chan {:stroke :lt-grey :fill :pink})
+            (draw-point m2 draw-chan {:stroke :lt-grey :fill :pink})
+            (draw-point m3 draw-chan {:stroke :lt-grey :fill :pink}))
+          ;; feets of atltitudes to orthic-circumcenter
+          (draw-line orthic-circumcenter b1 draw-chan #{} :yellow)
+          (draw-line orthic-circumcenter b2 draw-chan #{} :yellow)
+          (draw-line orthic-circumcenter b3 draw-chan #{} :yellow)
+          ;; nine point circle
+          (draw-circle-2 orthic-circumcenter r draw-chan {:stroke :yellow :fill :lt-grey})))))
   
   (let [line-options (cond->
                       #{}
                       (contains? options :perp-bisector) (conj :perp-bisector)
                       (contains? options :median) (conj :midpoint)
                       (contains? options :incircle) (conj :extended)
-                      (contains? options :ang-bisector) (conj :extended))]
+                      (contains? options :ang-bisector) (conj :extended)
+                      (contains? options :nine-pt-circle) (conj :midpoint))]
     (draw-line p1 p2 draw-chan line-options :red)
     (draw-line p2 p3 draw-chan line-options :blue)
     (draw-line p3 p1 draw-chan line-options :green)))
@@ -334,6 +352,43 @@ return new state"
                 p3 value]
             (fill-tri p1 p2 p3 draw-chan :lt-red)
             (draw-triangle p1 p2 p3 draw-chan #{:ang-bisector :orthocenter})
+            current-state)))
+    :click
+    (condp = (:step current-state)
+      0 (do
+          (go (>! draw-chan clear)
+              (>! draw-chan [(dt/style {:stroke :red
+                                        :fill :grey-2})
+                             (dt/point value)]))
+          {:step 1 :p1 value}) 
+      1 (let [p1 (:p1 current-state)
+              line (dt/line [p1 value])]
+          {:step 2 :p1 p1 :p2 value})
+      2 (let [p1 (:p1 current-state)
+              p2 (:p2 current-state)
+              triangle (dt/triangle p1 p2 value)]
+          {:step 0}))))
+
+(defn nine-pt-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (go
+       (>! draw-chan clear)
+       (>! out [:draw :triangle draw-chan]))
+      (condp = (:step current-state)
+        0 (do
+            (draw-point-coords value draw-chan {:stroke :lt-grey :fill :red})
+            current-state)
+        1 (let [p1 (:p1 current-state)]
+            (draw-line p1 value draw-chan #{} :red)
+            current-state)
+        2 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value]
+            (draw-triangle p1 p2 p3 draw-chan #{:ang-bisector :nine-pt-circle})
             current-state)))
     :click
     (condp = (:step current-state)
@@ -882,6 +937,10 @@ return new state"
               :euler-line
               (recur item
                      (euler-state-transitioner [type value] state return-message-chan draw-chan))
+
+              :nine-pt-circle
+              (recur item
+                     (nine-pt-state-transitioner [type value] state return-message-chan draw-chan))
 
               :median
               (recur item

@@ -110,4 +110,9 @@
    :euler-line
    ["Euler line of a triangle."
     "The line from the circumcenter to the orthocenter."]
+
+   :nine-pt-circle
+   ["Nine point circle of a triangle."
+    "The circumcircle of the orthic triangle of the feet of the altitudes"]
+
 })
