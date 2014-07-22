@@ -33,7 +33,8 @@
    {:id :inversion :label "inversion"}
    {:id :mobius :label "mobius"}])
 
-(def ui
+(comment
+  (def ui
   [{:section-name "Geometric Objects"
     :data geometric-objects}
    {:section-name "Geometric Concepts"
@@ -41,6 +42,13 @@
    {:section-name "Special Triangles"
     :data special-triangles}
    {:section-name "Properties of Triangles"
+    :data triangle-properties}
+   {:section-name "Transformations of Triangles"
+    :data triangle-transformations}])
+  )
+
+(def ui
+  [{:section-name "Properties of Triangles"
     :data triangle-properties}
    {:section-name "Transformations of Triangles"
     :data triangle-transformations}])
@@ -95,24 +103,27 @@
     "Two points to determine a translation vector. See the image of the current point under the translation defined by the selected translation vector. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
    :circumcircle
-   ["Circumcircle perspective of a triangle. Two taps to fix an edge. Then move to see triangle with perpendicular bisectors, circumcenter and circumcircle."]
+   ["Circumcircle perspective"
+    "Two taps to fix an edge with perpendicular bisector. Then see triangle with perpendicular bisectors, circumcenter (intersection of perpendicular bisectors) and circumcircle."]
 
    :median
-   ["Median perspective of a triangle. Two taps to fix an edge. Then move to see triangle with medians and centroid."]
+   ["Median perspective"
+    "Two taps to fix an edge with midpoint. Then see triangle with medians (line from vertex to midpoint) and centroid (intersection of medians)."]
 
    :incircle
-   ["Incircle and excircles perspective of a triangle from angular bisectors. Two taps to fix an edge. Then move to see triangle with angular bisectors, incircle and excircles."]
+   ["Incircle and excircles perspective."
+    "Two taps to fix an edge. Then see triangle with angular bisectors. Their points of intersections are the incenter and excenters. Incircle and excircles are drawn with the incenter and excenters as center and radii equal to the distance from the centers to the sides of the triangle."]
 
    :altitude
-   ["Altitude perspective of a triangle."
-    "Two taps to fix an edge. Then move to see the altitude from the current point to the fixed line."]
+   ["Altitude perspective"
+    "Two taps to fix an edge. Then see the triangle with altitudes (line from vertex to opposite side, perpendicular to that side)) and the orthocenter (the intersection of altitudes)."]
 
    :euler-line
    ["Euler line of a triangle."
     "The line from the circumcenter to the orthocenter."]
 
    :nine-pt-circle
-   ["Nine point circle of a triangle."
-    "The circumcircle of the orthic triangle of the feet of the altitudes"]
+   ["Nine point circle of a triangle"
+    "The circumcircle of the orthic triangle of the feet of the altitudes."]
 
 })
