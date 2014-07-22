@@ -25,13 +25,11 @@ a:active {
 
 .header {
     padding: 10px;
-    background: tomato;
     -webkit-flex: 1 100%;
 }
 
 .nav {
     padding: 10px;
-    background: plum;
     -webkit-flex: 1 100%;
 }
 
@@ -42,12 +40,10 @@ a:active {
 
 .footer {
     padding: 10px;
-    background: lightgreen;
     -webkit-flex: 1 100%;
 }
 
 .main {
-    background: deepskyblue;
     display: -webkit-flex;
     -webkit-flex-flow: column;
     -webkit-justify-content: center;
@@ -61,12 +57,10 @@ a:active {
 }
 
 .aside-1 {
-    background: gold;
     -webkit-flex: 0 0 25%;
 }
 
 .aside-2 {
-    background: hotpink;
     -webkit-flex: 0 0 25%;
 }
 
