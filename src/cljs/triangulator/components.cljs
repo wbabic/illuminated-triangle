@@ -37,6 +37,8 @@
     (render [this]
       (dom/div #js {:className "section"}
                (dom/h2 nil (:section-name section))
+               (when-let [header (:header section)]
+                 (dom/p nil header))
                (apply dom/ul nil (om/build-all definition-entry (:data section)))))))
 
 (defn nav-box [ui owner]

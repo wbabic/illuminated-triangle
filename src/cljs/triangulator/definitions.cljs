@@ -18,10 +18,10 @@
    {:id :golden :label "golden"}])
 
 (def triangle-properties
-  [{:id :median :label "medians and centroid"}
-   {:id :circumcircle :label "perpendicular bisectors and circumcircle"}
-   {:id :altitude :label "altitudes and orthocenter"}
-   {:id :incircle :label "angular bisectors, incircle and excircles"}
+  [{:id :median :label "centroid"}
+   {:id :circumcircle :label "circumcircle"}
+   {:id :altitude :label "orthocenter"}
+   {:id :incircle :label "incircle and excircles"}
    {:id :euler-line :label "euler line"}
    {:id :nine-pt-circle :label "nine point circle"}])
 
@@ -33,6 +33,9 @@
    {:id :inversion :label "inversion"}
    {:id :mobius :label "mobius"}])
 
+(def transformation-header
+  "Transform a triangle. First create a transform then create a triangle and see its image under the transformation.")
+
 (comment
   (def ui
   [{:section-name "Geometric Objects"
@@ -41,17 +44,18 @@
     :data geometric-concepts}
    {:section-name "Special Triangles"
     :data special-triangles}
-   {:section-name "Properties of Triangles"
+   {:section-name "Triangular Properties"
     :data triangle-properties}
-   {:section-name "Transformations of Triangles"
+   {:section-name "Transformations"
     :data triangle-transformations}])
   )
 
 (def ui
-  [{:section-name "Properties of Triangles"
+  [{:section-name "Triangular Properties"
     :data triangle-properties}
-   {:section-name "Transformations of Triangles"
-    :data triangle-transformations}])
+   {:section-name "Transform a Triangle"
+    :data triangle-transformations
+    :header transformation-header}])
 
 (def definition-text
   {:point
