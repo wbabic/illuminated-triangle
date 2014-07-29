@@ -1,72 +1,56 @@
 * the Triangulator
-  definition viewer
-  with examples and theorems
+  interactive definition viewer
+  for triangles and transformations
+  text definition with interactive graphics
 
 ** overview
-   use the triangle to illuminate geometric ideas
-   tell a story, the story of the triangle
-   to illustrate ideas of symmetry
+   illuminate geometric properties of a triangle
+   apply basic transformations to a triangle
 
-   an interactive movie with
-   animated definitions, examples, theorems
-   mouse over, or touch, to higlight a graphical element
-   color coordinated
-   symbols and graphics and sounds   
+*** create triangles interactively
+    see basic geometric properties as the triangle is being built
 
-   current definition, example, theorem
-   text box
-   graphics box
-   definition box
+    three taps make three vertices
+    first will fix a point
+    second, a line 
+    and third, a triangle
 
-   a sequence of steps
-   text and graphics
-   play, step through, replay
-   like a debugger
+    basic geometric properties include:
+    midpoint, distance, angle,
+    perpendiclar bisector, altitude,
+    angle bisector
 
-   use the language of geometry and symmetry
-   the transforms which preserves distance, isometries
+    triangle properties include:
+    centroid, circumcircle, orthocenter,
+    incircle, excircles, euler line, nine point circle
 
-   click a definition
-   walk through or let it run
-   replay forward and backward
-   edit the general objects, like points, that are used in the
-   definition, example or theorem
+*** create transform interactively
+    transforms preserving:
+    distance -> isometry 
+    ratios of distances -> similarity
+    generalized circles -> linear fractional transformation
 
-   walk through the steps of a proof
-   expand, collapse a proof
-   see the overview
-   see the details
+    translation rotation reflection
+    homothety
+    inversion
 
-   ability to add and edit items
-   abiility to test
-   ability to create challenge exercises based on user history
-   store user activity
-  
 ** the play
 *** how to use it
+    click a definition link
+    make a triangle
+    see the relevant geoometric properties
 
-    play by making triangles and 
-    seeing their properties as you make them
-
-    create transforsm and
-    see the image of the triangle under the transformation
+    click a transform link
+    make a transformation
+    apply it to a triangle,
+    ome point at a time,
+    or as a whole
 
     create multiple transforms and compose them
-    apply sequence of transforms to the triangle
+    apply sequence of transforms to the triangle,
+    one at a time or
+    all at once
 
-    make new triangles from old
-    tesselate the plane
-
-    change perspective
-    transform the camera
-
-    project onto a sphere
-    step back
-
-    terms you need to know to play
-    terms you will learn
-    test user
-    
 *** how it works
     one tap to make a point
     move curser to draw line
@@ -74,6 +58,9 @@
     move to draw triangle
     tap again to fix third point
     now you have a triangle
+
+    depending on the property,
+    certain geometric ideas will be draw as the triangle is created
 
     screen coordinates
     the coordinate system of the canvas
@@ -83,38 +70,28 @@
     second coordinate is top to bottom,
     also from 0 to 500
 
-    use transforms to change coordinate system
-    translate scale rotate reflect
-    apply any isometry or  similarity
+** implementation
+   app state contains the current item
+   set by uri using secretary
 
-    project from three dimensions into two
-    into the two dimensional canvas
-    which is a 500 square pixel space
-    with 24 bit color and 8 bit alpha
-    rgba hsla
-    n-fold color sets for faces of solids
-    
+   om components include:
+   item list box
+   graphics box
+   definition box
+
+   mouse over, or touch, text to higlight a graphical element
+   color coordinated
+   symbols and graphics
+
 ** workflow
    interactive design
    interactive programming
 
-   browser -> google chrome
-   develop prototype that works on chrome first
-   first with html and css then using hiccup and garden
-
-   use garden to generate other browser prefixs
-   treat css and javascript as targets generated from clojure
-   targeted to the browser env
-   also run on node, possibly
-
-   clojure repl
-   clojurescript repl, connected to browser
-
    current flow of work
    edit cljs in emacs
    lein cljsbuild auto dev
-   automatically build javascript
-   reload browser
+   automatically builds javascript
+   then reload browser
 
    needs improvement
    could use cljx
@@ -123,6 +100,19 @@
    test in the repl
    play in the repl
    
+   browser -> google chrome
+   develop prototype that works on chrome first
+   first with html and css then using hiccup and garden
+
+   TODO
+   use garden to generate other browser prefixs
+   treat css and javascript as targets generated from clojure
+
+   clojurescript repl:
+   using phantomjs,
+   connected to browser,
+   using rhino
+
 *** live coding with clojure and Emacs
     Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
 
@@ -192,13 +182,19 @@
 *** secretary
     clojurescript client side routing
     https://github.com/gf3/secretary
-    
-*** goog history
-    http://docs.closure-library.googlecode.com/git/class_goog_History.html
-    
+
+    use secretary and goog.History
+    to route requests and update current item
+
+**** goog history
+     http://docs.closure-library.googlecode.com/git/class_goog_History.html
+     
 *** session yantra merchant
     graphics represented as data
-    
+
+    borrowed idea of datatypes
+    to represent graphical objects as data
+    appled to canvas instead of svg
 **** session
      https://github.com/kovasb/session
      https://github.com/kovasb/session/blob/master/src/clj/session/user.clj
@@ -211,14 +207,93 @@
      https://github.com/kovasb/merchant
      https://github.com/kovasb/merchant/blob/master/src/clj/merchant/common.clj
      
-** notes
-   project notes
-   ideas borrowed form other projects
+*** csp
+**** references
+     http://www.cs.cmu.edu/~crary/819-f09/
+
+     http://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf
+
+     in the go lang:
+     http://godoc.org/github.com/thomas11/csp
+
+     in core.async:
+     https://github.com/nodename/async-plgd/blob/master/src/hoare/coroutines.clj
+
+     an axiomatic basis for computer programming
+     http://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf
+
+     gaurded commands, non determinacy, and formal derivation of
+     programs
+     http://www.cs.cmu.edu/~crary/819-f09/Dijkstra75.pdf
+
+**** ex 1
+     #+BEGIN_SRC 
+     X :: *[c:character; west?c -> east!c]
+     #+END_SRC
+     
+    #+BEGIN_SRC clojure
+      (ns hoare.coroutines
+        (:require [clojure.core.async :refer :all]))
+      
+      (defn copier
+        "A process that copies values from the source channel"
+        [source]
+        (let [c (chan)]
+          (go
+           (loop []
+             (let [value (<! source)]
+               ;; this value will be nil if close! has been called on the channel.
+               ;; we cannot copy nil to c because explicitly putting a nil is not allowed.
+               (if (nil? value)
+                 (close! c)
+                 (do
+                   (>! c value)
+                   (recur))))))
+          c))
+           
+      (defn test-copy
+        "Print out all the numbers from 0 to 9,
+           then after two seconds print out the numbers from 10 to 19"
+        []
+        (let [west (chan)
+              ;; this process will remain ready to copy...
+              east (copier west)
+              ;; a channel that will close after 2000 ms:
+              timeout (timeout 2000)]
+          
+          (go
+           (dotimes [i 10]
+             (>! west i))
+           ;; the only value that will come from the timeout is the nil when it closes:
+           (<! timeout)
+           (dotimes [i 10]
+             (>! west (+ 10 i))))
+          
+          ;; this process will remain ready to print...
+          (go
+           (loop []
+             (println (<! east))
+             (recur))))
+        
+        ;; until all the processes go away when they go out of scope:
+        nil)
+    #+END_SRC
+
+*** om todo with undo
+    
+    undo ability
+    redo ability
+    rivendell:file:///Users/wbabic/dev/clojurescript/om/om-todomvc/todomvc/labs/architecture-examples/om-undo/index.html
+    
+** project notes
+   ideas borrowed from my other projects
 *** om-async
-    triangle maker
+    first triangle maker
 
     borrowed clojurescript, cljsbuild and om setup
     lein cljsbuild auto dev
+
+    see om-async -> triangle.org
 
 *** modern webapp
     yeoman
@@ -228,48 +303,119 @@
 
     notes and ideas on a web page
     
-*** om todo with undo
-    add secretary
-    
-    goog.History
-    
-    undo ability
-    redo ability
-    rivendell:file:///Users/wbabic/dev/clojurescript/om/om-todomvc/todomvc/labs/architecture-examples/om-undo/index.html
-    
 *** infinite diamonds
     loop for rendering to canvas
     geometry.clj
     canvas
     tilings
     symmetry
-** goal
-   ideas on what to build
-   see om-async -> triangle.org
+** geometry
+   in clojure first
+   with tests
+   then to clojurescript
 
-   graphics represented as data
-   ideas from yantra, session
-   react-page art
+   geometry.clj
 
-   view definition
+   cljx 
+   
+*** unit-complex
+    a closed system
+    integral multiples of a twentyfourth
+    dividing a line
+    wrapped around the unit circle
+    exact multiplication
+    which is rotation
+    in the plane
+    about an origin
 
-   #/centroid
-   #/perp-bisector
+    a twentyfour step cycle
 
-   graphics coordinated with text
-   in color in time
+    halves thirds fourths 8ths sixths and twelths
+    1/2 1/3 1/4 1/8 1/6 1/12
+    Cn Dn
+    group representaions
 
-   app-state: current definition
-   local state: current step
-
-   mouseover or tap on symbol
-   highlight graphical element
-
-** ideas
-*** give Point some style
-    an ordered color set
-    1 2 3 4 5  ...
+    addition modulo 24 with integers 0 .. 23
+    addition modulo 1 with multiples of a 1/24
     
+    an other system:
+    fifths tenths twentieths hundredths
+    1/5 1/10 1/20 1/100
+    pentagon golden triangle golden ratio
+    five fold with bilateral symmetry
+
+*** complex
+    complex.clj
+    Complex protocol
+    rectangular polar
+    one zero infinity
+    
+    transformations of
+    translation
+    rotation
+    homothety
+    inversion
+
+    map center of inversion to infinity
+    what does it men to be close to zero
+    or close to infinity?
+
+    play a game to get to a
+    neighborhood of infinity
+    or, inversly, a neighborhood of zero
+
+*** unit-quaternions
+    {1 i j k}
+    Q 
+*** geometry of complex number
+    Deaux
+    Complex protocol
+**** Fundamental Operations
+     vector addition scalar multiplication
+     complex multiplication division
+     polar form, exponential
+     scalar product
+     vector product
+**** Fundamental Transformations
+     translation
+     rotation
+     symmetry wrt a line
+     inversion
+     point at infinity
+     
+**** Anharmonic Ratio
+**** Analytic Geometry
+**** Circular Transformations
+** things to do
+   separate out platform specific code using cljx
+   make more literate
+   add more tests
+   make more robust -> handle blow ups, non intersection of parallel lines
+   
+   determine images of lines and circles
+   under inversion in a circle
+
+   compose transformations
+
+   add key strokes to handlers
+   arrow keys for selection
+   letters for transformations
+   display in legend
+
+   add living legend
+   to connect words and symbols
+   to explain geometric concepts at work
+
+   change mouse handler to persist
+   triangles and
+   transformations
+
+   better handling of style
+
+   display coordinates of points
+
+   automate updating of gh-pages branch
+   
 *** add notation
     optionally give items a name
     that uses the items style
@@ -312,193 +458,3 @@
      distance between two lines
      angle between two lines
      
-** csp
-*** references
-    http://www.cs.cmu.edu/~crary/819-f09/
-
-    http://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf
-
-    in the go lang:
-    http://godoc.org/github.com/thomas11/csp
-
-    in core.async:
-    https://github.com/nodename/async-plgd/blob/master/src/hoare/coroutines.clj
-
-    an axiomatic basis for computer programming
-    http://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf
-
-    gaurded commands, non determinacy, and formal derivation of
-    programs
-    http://www.cs.cmu.edu/~crary/819-f09/Dijkstra75.pdf
-
-*** ex 1
-    X :: *[c:character; west?c -> east!c]
-   #+BEGIN_SRC clojure
-     (ns hoare.coroutines
-       (:require [clojure.core.async :refer :all]))
-     
-     (defn copier
-       "A process that copies values from the source channel"
-       [source]
-       (let [c (chan)]
-         (go
-          (loop []
-            (let [value (<! source)]
-              ;; this value will be nil if close! has been called on the channel.
-              ;; we cannot copy nil to c because explicitly putting a nil is not allowed.
-              (if (nil? value)
-                (close! c)
-                (do
-                  (>! c value)
-                  (recur))))))
-         c))
-          
-     (defn test-copy
-       "Print out all the numbers from 0 to 9,
-          then after two seconds print out the numbers from 10 to 19"
-       []
-       (let [west (chan)
-             ;; this process will remain ready to copy...
-             east (copier west)
-             ;; a channel that will close after 2000 ms:
-             timeout (timeout 2000)]
-         
-         (go
-          (dotimes [i 10]
-            (>! west i))
-          ;; the only value that will come from the timeout is the nil when it closes:
-          (<! timeout)
-          (dotimes [i 10]
-            (>! west (+ 10 i))))
-         
-         ;; this process will remain ready to print...
-         (go
-          (loop []
-            (println (<! east))
-            (recur))))
-       
-       ;; until all the processes go away when they go out of scope:
-       nil)
-   #+END_SRC
-
-*** ex 2
-X :: *[c:character; west?c ->
-  [c != asterisk -> east!c 
-  |c = asterisk -> west?c; 
-       [c != asterisk -> east!asterisk; east!c 
-       |c = asterisk ~ east!upward arrow 
-  ]]   ]
-
-| is separator in a gaurded statement
-
-** geometry
-   in clojure first
-   with tests
-   then to clojurescript
-
-   geometry.clj
-
-   cljx 
-   
-** unit-complex
-   a closed system
-   integral multiples of a twentyfourth
-   dividing a line
-   wrapped around the unit circle
-   exact multiplication
-   which is rotation
-   in the plane
-   about an origin
-
-   a twentyfour step cycle
-
-   halves thirds fourths 8ths sixths and twelths
-   1/2 1/3 1/4 1/8 1/6 1/12
-   Cn Dn
-   group representaions
-
-   addition modulo 24 with integers 0 .. 23
-   addition modulo 1 with multiples of a 1/24
-   
-   an other system:
-   fifths tenths twentieths hundredths
-   1/5 1/10 1/20 1/100
-   pentagon golden triangle golden ratio
-   five fold with bilateral symmetry
-
-** complex
-   complex.clj
-   Complex protocol
-   rectangular polar
-   one zero infinity
-   
-   transformations of
-   translation
-   rotation
-   homothety
-   inversion
-
-   map center of inversion to infinity
-   what does it men to be close to zero
-   or close to infinity?
-
-   play a game to get to a
-   neighborhood of infinity
-   or, inversly, a neighborhood of zero
-
-** unit-quaternions
-   {1 i j k}
-   Q 
-** geometry of complex number
-   Deaux
-   Complex protocol
-*** Fundamental Operations
-    vector addition scalar multiplication
-    complex multiplication division
-    polar form, exponential
-    scalar product
-    vector product
-*** Fundamental Transformations
-    translation
-    rotation
-    symmetry wrt a line
-    inversion
-    point at infinity
-    
-*** Anharmonic Ratio
-*** Analytic Geometry
-*** Circular Transformations
-** implementation notes
-*** things to do
-    separate out platform specific code
-    use cljx
-    make more literate
-    add more tests
-    make more robust -> handle blow ups, non intersection of parallel lines
-    
-    add ability to mask regions
-    using lines and arcs
-    
-    determine images of lines and circles
-    under inversion in a circle
-
-    compose transformations
-
-    turn drawings into animations
-    
-    add key strokes to handlers
-    arrow keys for selection
-    letters for transformations
-    display in legend
-
-    add living legend
-    to connect words and symbols
-    to explain geometric concepts at work
-
-    change mouse handler to persist
-    triangles and
-    transformations
-
-    better handling of style
-
-    display coordinates of points

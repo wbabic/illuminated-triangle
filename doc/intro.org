@@ -1,40 +1,10 @@
 * Introduction to sketching
   Sketching with css and clojure ... in the canvas
   making geometrical objects
-  with visual representation and
+  with visual representation,
   represented by data
   
-** a five hundred square pixel canvas
-   screen coordinates
-   bit map
-
-   represent as a matrix in core.matrix
-   
-** create geometric data with your fingers
-   mouse move click
-   touch tap drag
-
-   key press
-   
-** finger painting with geometric objects
-   point line circle triangle
-   with effects and guides
-   in color and time
-   
-** make triangles
-   create point triples
-   each point with a pair of coordinates
-
-** transform triangles
-   create transforms and
-   apply them to triangles
-
-   compose transforms
-   apply a sequence of transforms to a triangle
-   one at a time
-   all at once
-   
-** transformation
+** transformations
    transformation
    a one-to-one correspondence
    P -> P'
@@ -128,20 +98,23 @@
      distinct centers
      unequal radii
      
+*** inversion in a circle
+    fixed circle
+    let point vary
+    see its image
+    see images of lines and circles
+
+    see the image of an arbitrary triangle
+
+    see the image of a triangle
+    in its own circumcircle
+    
 ** nine point circle
+   homothety about points G, H by factor 1/2 -1/2
    G(-1/2)
    H(1/2)
-   
-** inversion in a circle
-   fixed circle
-   let point vary
-   see its image
-   see images of lines and circles
 
-   see the image of an arbitrary triangle
-
-   see the image of a triangle
-   in its own circumcircle
+   relates nine point circle to circumcircle
    
 ** symmetry
 *** symmetry of a triangle
