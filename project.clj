@@ -3,12 +3,12 @@
   :url "http://wbabic.github.io"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.5.1"]
-                 [hiccup "1.0.4"]
-                 [garden "1.1.6"]
-                 [org.clojure/clojurescript "0.0-2202"]
+  :dependencies [[org.clojure/clojure "1.6.0"]
+                 [hiccup "1.0.5"]
+                 [garden "1.2.1"]
+                 [org.clojure/clojurescript "0.0-2277"]
                  [org.clojure/core.async "0.1.298.0-2a82a1-alpha"]
-                 [om "0.6.2"]
+                 [om "0.6.5"]
                  [secretary "1.1.0"]
                  [net.mikera/core.matrix "0.18.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]

@@ -1,8 +1,6 @@
 (ns user
   (:require [clojure.repl :refer :all]
             [clojure.pprint :refer (pprint)]
-            [triangulator.sketch :as sketch]
-            [garden.repl]
             [clojure.test :refer :all]
             [triangulator.geometry :as geom]
             [triangulator.geometry-test]

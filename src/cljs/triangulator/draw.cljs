@@ -15,6 +15,7 @@
    :grey     "rgba(200, 200, 200, 0.1)"
    :lt-grey  "rgba(100, 100, 100, 0.3)"
    :grey-2   "rgb(200,200,200)"
+   :grey-3   "rgb(75,75,75)"
    :pink     "#EF0BEE"
    :cyan     "#02E6FB"
    :orange   "#FF8108"
