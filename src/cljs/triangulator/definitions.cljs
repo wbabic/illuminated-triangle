@@ -88,7 +88,7 @@
     "Angle between two intersecting lines. Line that divides angle into equal parts. Loci of points equidistant from two lines."]
 
    :reflection
-   ["Reflection in a line of symmetry."
+   ["Reflection in a line"
     "Two taps to create a line of symmetry. Then see the image of the reflection in that line, of a point, a line and a triangle. Move mouse to see image move. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
    :rotation
@@ -96,7 +96,7 @@
     "One point to determine center. Default to a twentyfourth of a tau. See the twenty four images of current point."]
 
    :inversion
-   ["Reflection in a circle."
+   ["Inversion in a circle"
     "Two taps to create a circle. Then see the image of the inversion in that circle of a point, a line and a tringle. Move mouse to see image move. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
    :homothety
