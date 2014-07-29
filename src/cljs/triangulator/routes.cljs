@@ -12,9 +12,13 @@
 
 (enable-console-print!)
 
-(def app-state (atom {:current-item :point}))
+(def app-state (atom {:current-item :centroid}))
 
 (println "hello walter")
+
+(defroute "/" []
+  (println "redirecting ...")
+  (secretary/dispatch! "/triangle"))
 
 (defroute "/:definition" {:as params}
   (let [item (:definition params)]

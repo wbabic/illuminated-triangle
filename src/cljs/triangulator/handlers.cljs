@@ -358,28 +358,29 @@ return new state"
               (>! out [:draw :triangle draw-chan]))
           {:step 0}))))
 
-(defn altitude-state-transitioner
+(defn orthocenter-state-transitioner
   "see point-state-transitioner"
   [[type value] current-state out draw-chan]
   (case type
     :move
     (do
-      (go
-       (>! draw-chan clear)
-       (>! out [:draw :triangle draw-chan]))
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan clear))
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [p1 (:p1 current-state)]
+            (go (>! draw-chan clear))
             (draw-line p1 value draw-chan #{:endpoint} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
+            (go (>! draw-chan clear))
             (fill-tri p1 p2 p3 draw-chan :lt-red)
             (draw-triangle p1 p2 p3 draw-chan #{:ang-bisector :orthocenter})
-            current-state)))
+            current-state)
+        3 current-state))
     :click
     (condp = (:step current-state)
       0 (do
@@ -391,10 +392,8 @@ return new state"
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
           {:step 2 :p1 p1 :p2 value})
-      2 (let [p1 (:p1 current-state)
-              p2 (:p2 current-state)
-              triangle (dt/triangle p1 p2 value)]
-          {:step 0}))))
+      2 (assoc current-state :step 3)
+      3 {:step 0})))
 
 (defn nine-pt-state-transitioner
   "see point-state-transitioner"
@@ -402,21 +401,22 @@ return new state"
   (case type
     :move
     (do
-      (go
-       (>! draw-chan clear)
-       (>! out [:draw :triangle draw-chan]))
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan clear))
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [p1 (:p1 current-state)]
+            (go (>! draw-chan clear))
             (draw-line p1 value draw-chan #{:endpoint} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
+            (go (>! draw-chan clear))
             (draw-triangle p1 p2 p3 draw-chan #{:ang-bisector :nine-pt-circle})
-            current-state)))
+            current-state)
+        3 current-state))
     :click
     (condp = (:step current-state)
       0 (do
@@ -428,10 +428,8 @@ return new state"
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
           {:step 2 :p1 p1 :p2 value})
-      2 (let [p1 (:p1 current-state)
-              p2 (:p2 current-state)
-              triangle (dt/triangle p1 p2 value)]
-          {:step 0}))))
+      2 (assoc current-state :step 3)
+      3 {:step 0})))
 
 (defn euler-state-transitioner
   "see point-state-transitioner"
@@ -439,21 +437,23 @@ return new state"
   (case type
     :move
     (do
-      (go
-       (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan clear))
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [p1 (:p1 current-state)]
+            (go (>! draw-chan clear))
             (draw-line p1 value draw-chan #{} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
+            (go (>! draw-chan clear))
             (fill-tri p1 p2 p3 draw-chan :lt-red)
             (draw-triangle p1 p2 p3 draw-chan #{:ang-bisector :perp-bisector :orthocenter :circumcenter :euler})
-            current-state)))
+            current-state)
+        3 current-state))
     :click
     (condp = (:step current-state)
       0 (do
@@ -465,9 +465,8 @@ return new state"
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
           {:step 2 :p1 p1 :p2 value})
-      2 (let [p1 (:p1 current-state)
-              p2 (:p2 current-state)]
-          {:step 0}))))
+      2 (assoc current-state :step 3)
+      3 {:step 0})))
 
 (defn circumcircle-state-transitioner
   "see point-state-transitioner"
@@ -475,21 +474,23 @@ return new state"
   (case type
     :move
     (do
-      (go
-       (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan clear))
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [p1 (:p1 current-state)]
+            (go (>! draw-chan clear))
             (draw-line p1 value draw-chan #{:perp-bisector :endpoint} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
+            (go (>! draw-chan clear))
             (fill-tri p1 p2 p3 draw-chan :lt-red)
             (draw-triangle p1 p2 p3 draw-chan #{:circumcenter :circumcircle :perp-bisector})
-            current-state)))
+            current-state)
+        3 current-state))
     :click
     (condp = (:step current-state)
       0 (do
@@ -501,31 +502,33 @@ return new state"
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
           {:step 2 :p1 p1 :p2 value})
-      2 (let [p1 (:p1 current-state)
-              p2 (:p2 current-state)]
-          {:step 0}))))
+      2 (assoc current-state :step 3)
+      3 {:step 0})))
 
-(defn median-state-transitioner
+(defn centroid-state-transitioner
   "see point-state-transitioner"
   [[type value] current-state out draw-chan]
   (case type
     :move
     (do
-      (go
-       (>! draw-chan clear))
+      
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan clear))
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [p1 (:p1 current-state)
                 p2 value]
+            (go (>! draw-chan clear))
             (draw-line p1 p2 draw-chan #{:midpoint :endpoint} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
+            (go (>! draw-chan clear))
             (draw-triangle p1 p2 p3 draw-chan #{:median})
-            current-state)))
+            current-state)
+        3 current-state))
     :click
     (condp = (:step current-state)
       0 (do
@@ -537,9 +540,8 @@ return new state"
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
           {:step 2 :p1 p1 :p2 value})
-      2 (let [p1 (:p1 current-state)
-              p2 (:p2 current-state)]
-          {:step 0}))))
+      2  (assoc current-state :step 3)
+      3 {:step 0})))
 
 (defn incircle-state-transitioner
   "see point-state-transitioner"
@@ -547,20 +549,22 @@ return new state"
   (case type
     :move
     (do
-      (go
-       (>! draw-chan clear))
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan clear))
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [p1 (:p1 current-state)]
+            (go (>! draw-chan clear))
             (draw-line p1 value draw-chan #{} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
+            (go (>! draw-chan clear))
             (draw-triangle p1 p2 p3 draw-chan #{:incircle})
-            current-state)))
+            current-state)
+        3 current-state))
     :click
     (condp = (:step current-state)
       0 (do
@@ -572,9 +576,8 @@ return new state"
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
           {:step 2 :p1 p1 :p2 value})
-      2 (let [p1 (:p1 current-state)
-              p2 (:p2 current-state)]
-          {:step 0}))))
+      2 (assoc current-state :step 3)
+      3 {:step 0})))
 
 (defn circle-state-transitioner
   "see point-state-transitioner"
@@ -1009,18 +1012,18 @@ return new state"
               :circumcircle
               (recur item
                      (circumcircle-state-transitioner [type value] state return-message-chan draw-chan))
-              :altitude
+              :orthocenter
               (recur item
-                     (altitude-state-transitioner [type value] state return-message-chan draw-chan))
+                     (orthocenter-state-transitioner [type value] state return-message-chan draw-chan))
               :euler-line
               (recur item
                      (euler-state-transitioner [type value] state return-message-chan draw-chan))
               :nine-pt-circle
               (recur item
                      (nine-pt-state-transitioner [type value] state return-message-chan draw-chan))
-              :median
+              :centroid
               (recur item
-                     (median-state-transitioner [type value] state return-message-chan draw-chan))
+                     (centroid-state-transitioner [type value] state return-message-chan draw-chan))
               :incircle
               (recur item
                      (incircle-state-transitioner [type value] state return-message-chan draw-chan))

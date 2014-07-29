@@ -9,7 +9,7 @@
                  [org.clojure/clojurescript "0.0-2277"]
                  [org.clojure/core.async "0.1.298.0-2a82a1-alpha"]
                  [om "0.6.5"]
-                 [secretary "1.1.0"]
+                 [secretary "1.2.0"]
                  [net.mikera/core.matrix "0.18.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/core.match "0.2.1"]

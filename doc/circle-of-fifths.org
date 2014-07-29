@@ -2,12 +2,20 @@
   Pythagorean Circle
   pitch frequencies
   vibrating strings of various length
+
   an octave
+  divide a string in the ratio 1:2
+  take half of its length, reduce length by 2
+  lower pitch by an octave
+
   assign a pitch to each of the 12 points around a circle
   approximate 12 half steps of an octave in the present system
   unnit of measure is cnets
   1200 cents equals one octave
   each half step has 100 cents
+
+  scale 
+  chords
   
 ** code
   #+BEGIN_SRC clojure
@@ -26,8 +34,7 @@
   #+END_SRC
 
 ** links
-*** http://en.wikipedia.org/wiki/Circle_of_fifths
-    
+*** http://en.wikipedia.org/wiki/Circle_of_fifths    
 **** interactive circle of fifths
      http://randscullard.com/CircleOfFifths/
 
@@ -58,3 +65,4 @@
    communicate usin OSC (Open Sound Control)
 
    { [SinOsc.ar(440, 0, 0.2), SinOsc.ar(442, 0, 0.2)] }.play;
+** overtone

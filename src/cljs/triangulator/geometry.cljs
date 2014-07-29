@@ -46,7 +46,6 @@
    (take 3
          (partition 2 1 (drop 1 (cycle t))))))
 
-
 (defn perp [[x y]]
   [(- y) x])
 

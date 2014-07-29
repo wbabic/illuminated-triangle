@@ -42,6 +42,58 @@
    ability to create challenge exercises based on user history
    store user activity
   
+** the play
+*** how to use it
+
+    play by making triangles and 
+    seeing their properties as you make them
+
+    create transforsm and
+    see the image of the triangle under the transformation
+
+    create multiple transforms and compose them
+    apply sequence of transforms to the triangle
+
+    make new triangles from old
+    tesselate the plane
+
+    change perspective
+    transform the camera
+
+    project onto a sphere
+    step back
+
+    terms you need to know to play
+    terms you will learn
+    test user
+    
+*** how it works
+    one tap to make a point
+    move curser to draw line
+    tap again to fix second point
+    move to draw triangle
+    tap again to fix third point
+    now you have a triangle
+
+    screen coordinates
+    the coordinate system of the canvas
+    origin in top left corner [0 0]
+    first coordinate is from 0 to 500,
+    from the left to the right
+    second coordinate is top to bottom,
+    also from 0 to 500
+
+    use transforms to change coordinate system
+    translate scale rotate reflect
+    apply any isometry or  similarity
+
+    project from three dimensions into two
+    into the two dimensional canvas
+    which is a 500 square pixel space
+    with 24 bit color and 8 bit alpha
+    rgba hsla
+    n-fold color sets for faces of solids
+    
 ** workflow
    interactive design
    interactive programming
@@ -58,27 +110,40 @@
    clojure repl
    clojurescript repl, connected to browser
 
-*** live coding with clojure and Emacs
-   Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
+   current flow of work
+   edit cljs in emacs
+   lein cljsbuild auto dev
+   automatically build javascript
+   reload browser
 
-   modified by walter p babic
-
-   bring together ideas from other projects:
-   om-async
-   infinate-diamonds geometry.clj
-   modern
-   sketching - this one
-   om todo mvc with undo
-   om tutorial, intermediate - datomic, ajax
-
-   session
-   om components
-   svg
-   canvas
-
-   closure-play on numenor - google closure library, css
+   needs improvement
+   could use cljx
+   test in phantumjs
+   test in clojure
+   test in the repl
+   play in the repl
    
-*** TODO dev profile
+*** live coding with clojure and Emacs
+    Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
+
+    modified by walter p babic
+
+    bring together ideas from other projects:
+    om-async
+    infinate-diamonds geometry.clj
+    modern
+    sketching - this one
+    om todo mvc with undo
+    om tutorial, intermediate - datomic, ajax
+
+    session
+    om components
+    svg
+    canvas
+
+    closure-play on numenor - google closure library, css
+   
+*** dev profile
     dev/user.clj
 
     add dev profile to  project.clj
@@ -89,7 +154,7 @@
                                     [org.clojure/test.check "0.5.7"]]}}
     #+END_SRC
 
-    make custom lien template with dev profile
+    TODO make custom lien template with dev profile
     
 ** references
 *** css
@@ -205,30 +270,30 @@
     an ordered color set
     1 2 3 4 5  ...
     
-*** change Line rendering to render its points also
-    using style passed as an argument to draw-line
-    give some style to the line as well
-    
 *** add notation
     optionally give items a name
     that uses the items style
+    and a label, in color
     
 *** add hilightibility
-    mouse over to highlight
+    mouse over text to highlight
     symbol and graphic
 
 *** add interacive guides
 **** line
-     two points
-     show midpoint when drawing a line, along with perpendicular
-     bisector
+     two points define a line
+***** options
+      draw endpoints, first, second or both
+      show midpoint when drawing a line, 
+      along with perpendicular bisector
 
-     show circles centered at endpoints as well as centered at radius
+      show circles centered at endpoints as well as centered at radius
 
-     extend line in both directions
+      extend line in both directions
+      
 **** two lines
      find the intersection of two lines
-     or if they are paalell
+     or if they are paallel
 
      find the angles between them
      bisect the angles between them
@@ -332,7 +397,9 @@ X :: *[c:character; west?c ->
    then to clojurescript
 
    geometry.clj
- 
+
+   cljx 
+   
 ** unit-complex
    a closed system
    integral multiples of a twentyfourth
@@ -405,8 +472,9 @@ X :: *[c:character; west?c ->
 *** things to do
     separate out platform specific code
     use cljx
-    add tests
-    robustify code
+    make more literate
+    add more tests
+    make more robust -> handle blow ups, non intersection of parallel lines
     
     add ability to mask regions
     using lines and arcs
@@ -418,8 +486,19 @@ X :: *[c:character; west?c ->
 
     turn drawings into animations
     
-    
-    angular bisector
-    intersection ot two lines
+    add key strokes to handlers
+    arrow keys for selection
+    letters for transformations
+    display in legend
 
-    
+    add living legend
+    to connect words and symbols
+    to explain geometric concepts at work
+
+    change mouse handler to persist
+    triangles and
+    transformations
+
+    better handling of style
+
+    display coordinates of points

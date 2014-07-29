@@ -13,6 +13,8 @@
 ** create geometric data with your fingers
    mouse move click
    touch tap drag
+
+   key press
    
 ** finger painting with geometric objects
    point line circle triangle
@@ -26,27 +28,31 @@
 ** transform triangles
    create transforms and
    apply them to triangles
-   and other things
+
+   compose transforms
+   apply a sequence of transforms to a triangle
+   one at a time
+   all at once
    
-** isometry
-   a congruent transformation
-   from Coxeter
-*** transformation
-    transformation
-    a one-to-one correspondence
-    P -> P'
-    amoung all points in the plane (or space)
+** transformation
+   transformation
+   a one-to-one correspondence
+   P -> P'
+   amoung all points in the plane (or space)
 
-    a rule for associating points
-    each pair has a first point P and a second member P'
-    every point occurs as the first member of just one pair
+   a rule for associating points
+   each pair has a first point P and a second member P'
+   every point occurs as the first member of just one pair
 
-    when P' coincides with P we have what is called an invariant point
+   when P' coincides with P we have what is called an invariant point
 
-    product of transformations
-    identiy and inverse
+   product of transformations
+   identiy and inverse
 
-*** Isometry
+*** isometry
+    a congruent transformation
+    from Coxeter
+    
     a length preserving transformation
     if (P, P') and (Q, Q') are two pairs of corresponding points then
     PQ = P'Q'
@@ -67,61 +73,61 @@
     reflection
     invariant mirror line or plane in 2d 3d
    
-*** 2.31 an isometry with 2 invariant points (or more)
-    If an isometry has more than one invariant point, it must be
-    either the identity or a reflection
+**** 2.31 an isometry with 2 invariant points (or more)
+     If an isometry has more than one invariant point, it must be
+     either the identity or a reflection
 
-**** proof
-     Let A and B be two invariant points, and P be any point not on AB
+***** proof
+      Let A and B be two invariant points, and P be any point not on AB
 
-     Let P' be the image of P by an isometry, then we know
-     AP = AP' and BP = BP'
+      Let P' be the image of P by an isometry, then we know
+      AP = AP' and BP = BP'
 
-     intersection of two circles
-     center at A radius AP
-     center at B radius BP
-     when P is not on AB
-     has two points
+      intersection of two circles
+      center at A radius AP
+      center at B radius BP
+      when P is not on AB
+      has two points
 
-     it would have just one point if P were on AB
-     a tangent point
+      it would have just one point if P were on AB
+      a tangent point
+      
+**** reflection in a line
+    fix a line by choosing two points A and B
+    vary P and see the image P' under
+    the reflection in line AB
+
+    #+BEGIN_SRC clojure
+      (ns triangulator.reflection
+        (:require [triangulator.complex :as c]))
+      
+      (let [[A B] [[0 0] [0 1]]
+            ref (reflection A B)
+            pre-image [[1 0] [1 1] [0 1] [0 0]]
+            image (map ref pre-image)]
+        (zipmap pre-image image))
+    #+END_SRC
+
+*** similarity
+    dilatation (or homothety)
+    transforms each line into a parallel line
+    given two parallel lines 
+    there exists a unique dilatation relating them
+    find it
+
+    includes halfturns and translations as special cases
+
+    O(lambda)
+    center O
+    factor (or power) lambda 
+
+    O(k)
+
+**** center of similtude
+     of two circles
+     distinct centers
+     unequal radii
      
-*** reflection in a line
-   fix a line by choosing two points A and B
-   vary P and see the image P' under
-   the reflection in line AB
-
-   #+BEGIN_SRC clojure
-     (ns triangulator.reflection
-       (:require [triangulator.complex :as c]))
-     
-     (let [[A B] [[0 0] [0 1]]
-           ref (reflection A B)
-           pre-image [[1 0] [1 1] [0 1] [0 0]]
-           image (map ref pre-image)]
-       (zipmap pre-image image))
-   #+END_SRC
-
-** similarity
-   dilatation (or homothety)
-   transforms each line into a parallel line
-   given two parallel lines 
-   there exists a unique dilatation relating them
-   find it
-
-   includes halfturns and translations as special cases
-
-   O(lambda)
-   center O
-   factor (or power) lambda 
-
-   O(k)
-
-** center of similtude
-   of two circles
-   distinct centers
-   unequal radii
-   
 ** nine point circle
    G(-1/2)
    H(1/2)
@@ -139,7 +145,6 @@
    
 ** symmetry
 *** symmetry of a triangle
-
     one line of reflection in the plane
     isosceles
 
