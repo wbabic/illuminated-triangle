@@ -556,7 +556,7 @@ return new state"
             current-state)
         1 (let [p1 (:p1 current-state)]
             (go (>! draw-chan clear))
-            (draw-line p1 value draw-chan #{} :red)
+            (draw-line p1 value draw-chan #{:endpoint} :red)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)

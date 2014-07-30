@@ -117,7 +117,7 @@
 
    :incircle
    ["Incircle and excircles"
-    "The angle bisectors of the edges of a triangle (interior and exterior) intersect in four points, one inside the triangle, called the incenter, and three outside, called excenters. These points are equidistant from the edges (extended) of the triangle. The incircle and excircles are circles centered at the incenter and excenters with radii equal to the distance from the centers to the sides of the triangle. The incircle is inside the triangle and the excircles are outside. Each of the excircles are tangent to one of the edges of the triangle while the incircle is tangent to all three."]
+    "The angle bisectors of the (extended) edges of a triangle (interior and exterior) intersect in four points, one inside the triangle, called the incenter, and three outside, called excenters. These points are equidistant from the edges (extended) of the triangle. The incircle and excircles are circles centered at the incenter and excenters with radii equal to the distance from the centers to the sides of the triangle. The incircle is inside the triangle and the excircles are outside. The incircle and the excircles are tangent to the edges of the triangle."]
 
    :orthocenter
    ["Orthocenter"
