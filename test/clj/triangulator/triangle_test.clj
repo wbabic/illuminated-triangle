@@ -77,3 +77,7 @@
     (is (equals m (p-line (/ 2))))
     (is (equals [2 0] (p-line 2)))
     (is (equals [-2 0] (p-line -2)))))
+
+(comment
+  (run-tests 'triangulator.triangle-test)
+  )

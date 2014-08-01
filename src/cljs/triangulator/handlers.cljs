@@ -125,7 +125,7 @@
   [p1 p2 p3 draw-chan options]
   (when (or (contains? options :circumcircle)
             (contains? options :circumcenter))
-    (let[circumcenter (tri/circumcenter [p1 p2 p3])]
+    (let [circumcenter (tri/circumcenter [p1 p2 p3])]
       ;; circumradii
       (when (contains? options :circumcircle)
         (draw-circle-2 circumcenter (geom/distance p1 circumcenter)

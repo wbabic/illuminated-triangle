@@ -69,20 +69,9 @@ of parameteriezed line"
         p4 (l -1000)]
     [p3 p4]))
 
-(defn multiply
-  "multiply m, a 2x2 matrix by c
-where c is either a vector or a matrix "
-  [m c]
-  (let [[r1 r2] m] (condp = (count c))
-       1 [(dot r1 c) (dot r2 c)]
-       2 (let [c1 [(get-in c [0 0]) (get-in c [1 0])]
-               c2 [(get-in c [0 1]) (get-in c [1 1])]]
-           [[(dot r1 c1) (dot r2 c1)]
-            [(dot r1 c2) (dot r2 c2)]])))
-
 (defn mmmult
   "multiply m, a 2x2 matrix by c
-where c is either a vector or a matrix "
+where c is a vector"
   [m c]
   (let [c00 (get-in c [0 0])
         c10 (get-in c [1 0])
@@ -96,7 +85,7 @@ where c is either a vector or a matrix "
 
 (defn mvmult
   "multiply m, a 2x2 matrix by c
-where c is either a vector or a matrix "
+where c is a matrix "
   [m c]
   (let [[r1 r2] m]
     [(dot r1 c) (dot r2 c)]))

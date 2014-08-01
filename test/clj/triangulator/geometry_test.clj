@@ -49,3 +49,7 @@
         e2 [0 1]
         root2 (Math/sqrt 2)]
     (is (== root2 (distance e1 e2)))))
+
+(comment
+  (run-tests 'triangulator.geometry-test)
+  )

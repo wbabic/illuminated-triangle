@@ -44,3 +44,7 @@
   (let [e1 [1 0]
         e2 [0 1]
         [e1 e2]]))
+
+(comment
+  (run-tests 'triangulator.transforms-test)
+  )
