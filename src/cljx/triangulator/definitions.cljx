@@ -30,8 +30,7 @@
    {:id :translation :label "translation"}
    {:id :rotation :label "rotation"}
    {:id :homothety :label "homothety"}
-   {:id :inversion :label "inversion"}
-   {:id :mobius :label "mobius"}])
+   {:id :inversion :label "inversion"}])
 
 (def transformation-header
   "Transform a triangle. First create a transform then create a triangle and see its image under the transformation.")
@@ -109,7 +108,7 @@
 
    :circumcircle
    ["Circumcircle"
-    "The intersection of the three perpendicular bisectors meet in a point called the circumcenter. This point is equidistant from the vertices (why?), and is called the circumradius. The circle with the circumcenter for center and radius equal to the circumcradius is called the circumcenter. The circumcenter is the unique circle contiaining the three vertices of the triangle."]
+    "The intersection of the three perpendicular bisectors meet in a point called the circumcenter. This point is equidistant from the vertices (why?) and is called the circumcenter. The distance between the circumcenter and a vertex is called the circumradius. The circle centered at the circumcenter with radius equal to the circumcradius is called the circumcircle. The circumcircle is the unique circle contiaining the three vertices of the triangle."]
 
    :centroid
    ["Centroid"

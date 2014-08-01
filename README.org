@@ -112,7 +112,12 @@
    using phantomjs,
    connected to browser,
    using rhino
+*** cljx
+    https://github.com/lynaghk/cljx
 
+    src/cljx
+
+    
 *** live coding with clojure and Emacs
     Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
 

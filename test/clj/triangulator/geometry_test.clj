@@ -1,6 +1,15 @@
 (ns triangulator.geometry-test
   (:require [clojure.test :refer :all])
+  (:require [clojure.core.matrix :as m])
+  (:require [clojure.core.matrix.operators :as o])
   (:use [triangulator.geometry]))
+
+(defn equals
+  ([m n] (o/== m n))
+  ([m n epsilon] (o/== m n epsilon)))
+
+(defn almost-equals [x y epsilon]
+  (< (Math/abs (- x y)) epsilon))
 
 (deftest test-equals
   (is (equals [1 0] [1.0 0.0]))
@@ -12,10 +21,9 @@
     (is (== (dot v w) 23))
     (is (== 0 (dot v (perp v))))))
 
-(deftest test-scal-mult
+(deftest test-scal-mul
   (let [v [1 2]]
-    (is (equals [2 4] (scal-mult 2 v)))
-    (is (equals [[2 4] [2 4]] (scal-mult 2 [v v])))))
+    (is (equals [2 4] (scal-mul 2 v)))))
 
 (deftest test-length
   (let [v [1 2]]
@@ -23,19 +31,18 @@
     (is (== (Math/sqrt 5) (length v)))
     (is (== 1 (length [1 0])))))
 
-(deftest test-add
+(deftest test-plus
   (let [v [1 2]
         w [3 4]
         m [v w]]
-    (is (equals [4 6] (add v w)))
-    (is (equals [[2 4] [6 8]] (add m m)))))
+    (is (equals [4 6] (plus v w)))))
 
-(deftest test-mult
+(deftest test-multiply
   (let [v [1 2]
         w [3 4]
         m [v w]]
-    (is (equals [5 11] (mult m v)))
-    (is (equals [[7 10] [15 22]] (mult m m)))))
+    (is (equals [5 11] (mvmult m v)))
+    (is (equals [[7 10] [15 22]] (mmmult m m)))))
 
 (deftest test-distance
   (let [e1 [1 0]

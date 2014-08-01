@@ -5,6 +5,8 @@
             [cljs.core.async :as async :refer [>! <! put! chan alts! sliding-buffer]]
             [triangulator.datatypes :as dt]
             [triangulator.geometry :as geom]
+            [triangulator.triangle :as tri]
+            [triangulator.transforms :as trans]
             [triangulator.complex :as complex]))
 
 (enable-console-print!)
@@ -123,7 +125,7 @@
   [p1 p2 p3 draw-chan options]
   (when (or (contains? options :circumcircle)
             (contains? options :circumcenter))
-    (let[circumcenter (geom/circumcenter [p1 p2 p3])]
+    (let[circumcenter (tri/circumcenter [p1 p2 p3])]
       ;; circumradii
       (when (contains? options :circumcircle)
         (draw-circle-2 circumcenter (geom/distance p1 circumcenter)
@@ -136,8 +138,8 @@
         (draw-point circumcenter draw-chan {:stroke :grey-3 :fill :yellow}))))
 
   (when (contains? options :median)
-    (let [centroid (geom/centroid [p1 p2 p3])
-          [m1 m2 m3] (geom/midpoints (geom/segments [p1 p2 p3]))]
+    (let [centroid (tri/centroid [p1 p2 p3])
+          [m1 m2 m3] (tri/midpoints (tri/segments [p1 p2 p3]))]
       ;; fll sub triangles
       (fill-tri p1 centroid p2 draw-chan :lt-red)
       (fill-tri p2 centroid p3 draw-chan :lt-blue)
@@ -152,17 +154,17 @@
     ;; draw angular biscetors extended
     (fill-tri p1 p2 p3 draw-chan :lt-red)
     (doseq [perm [[p1 p2 p3] [p2 p3 p1] [p3 p1 p2]]]
-      (let [[M1 M2] (geom/ang-bisector-segment perm)
+      (let [[M1 M2] (tri/ang-bisector-segment perm)
             [M1P M2P] (geom/perp-bisector [M1 M2])]
         (draw-line M1 M2 draw-chan #{} :lt-grew)
         (draw-line M1P M2P draw-chan #{} :lt-grey)))
     ;; draw incircle
-    (let [l1 (geom/ang-bisector-segment [p1 p2 p3])
-          l2 (geom/ang-bisector-segment [p2 p3 p1])
+    (let [l1 (tri/ang-bisector-segment [p1 p2 p3])
+          l2 (tri/ang-bisector-segment [p2 p3 p1])
           i (geom/intersection l1 l2)
-          d (geom/altitude p1 p2 i)
-          e (geom/altitude p2 p3 i)
-          f (geom/altitude p3 p1 i)
+          d (tri/altitude p1 p2 i)
+          e (tri/altitude p2 p3 i)
+          f (tri/altitude p3 p1 i)
           r (geom/distance i d)]
       ;; incenter
       (draw-point i draw-chan {:stroke :grey-3 :fill :yellow})
@@ -173,24 +175,24 @@
       ;; incircle
       (draw-circle-2 i r draw-chan {:stroke :yellow :fill :lt-grey}))
     ;; draw excircles
-    (let [l1 (geom/ang-bisector-segment [p1 p2 p3])
-          l2 (geom/ang-bisector-segment [p2 p3 p1])
-          l3 (geom/ang-bisector-segment [p3 p1 p2])
+    (let [l1 (tri/ang-bisector-segment [p1 p2 p3])
+          l2 (tri/ang-bisector-segment [p2 p3 p1])
+          l3 (tri/ang-bisector-segment [p3 p1 p2])
           l1p (geom/perp-bisector l1)
           l2p (geom/perp-bisector l2)
           l3p (geom/perp-bisector l3)
           i1 (geom/intersection l1p l2p)
           i2 (geom/intersection l2p l3p)
           i3 (geom/intersection l3p l1p)
-          d1 (geom/altitude p1 p2 i1)
-          d2 (geom/altitude p2 p3 i1)
-          d3 (geom/altitude p3 p1 i1)
-          e1 (geom/altitude p1 p2 i2)
-          e2 (geom/altitude p2 p3 i2)
-          e3 (geom/altitude p3 p1 i2)
-          f1 (geom/altitude p1 p2 i3)
-          f2 (geom/altitude p2 p3 i3)
-          f3 (geom/altitude p3 p1 i3)
+          d1 (tri/altitude p1 p2 i1)
+          d2 (tri/altitude p2 p3 i1)
+          d3 (tri/altitude p3 p1 i1)
+          e1 (tri/altitude p1 p2 i2)
+          e2 (tri/altitude p2 p3 i2)
+          e3 (tri/altitude p3 p1 i2)
+          f1 (tri/altitude p1 p2 i3)
+          f2 (tri/altitude p2 p3 i3)
+          f3 (tri/altitude p3 p1 i3)
           r1 (geom/distance i1 d1)
           r2 (geom/distance i2 e1)
           r3 (geom/distance i3 f1)]
@@ -218,9 +220,9 @@
   (when (or (contains? options :ang-bisector)
             (contains? options :orthocenter)
             (contains? options :nine-pt-circle))
-    (let [b3 (geom/altitude p1 p2 p3)
-          b1 (geom/altitude p2 p3 p1)
-          b2 (geom/altitude p3 p1 p2)
+    (let [b3 (tri/altitude p1 p2 p3)
+          b1 (tri/altitude p2 p3 p1)
+          b2 (tri/altitude p3 p1 p2)
           orthocenter (geom/intersection [p1 b1] [p2 b2])]
       ;; ang bisectors
       (when (contains? options :ang-bisector)
@@ -231,11 +233,11 @@
       (when (contains? options :orthocenter)
         (draw-point orthocenter draw-chan {:stroke :lt-grey :fill :pink}))
       (when (contains? options :euler)
-        (let [circumcenter (geom/circumcenter [p1 p2 p3])]
+        (let [circumcenter (tri/circumcenter [p1 p2 p3])]
           ;; TODO DRY circumcenter
           (draw-line orthocenter circumcenter draw-chan #{} :pink)))
       (when (contains? options :nine-pt-circle)
-        (let [orthic-circumcenter (geom/circumcenter [b1 b2 b3])
+        (let [orthic-circumcenter (tri/circumcenter [b1 b2 b3])
               r (geom/distance b1 orthic-circumcenter)]
           ;; midpoints of vertices to orthocenter
           (let [m1 (geom/midpoint orthocenter p1)
@@ -332,7 +334,7 @@ return new state"
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value
-                base (geom/altitude p1 p2 p3)]
+                base (tri/altitude p1 p2 p3)]
             (draw-line p1 p2 draw-chan #{:circles :extended} :red)
             (draw-line p2 p3 draw-chan nil :blue)
             (draw-line p3 p1 draw-chan nil :green)
@@ -576,7 +578,7 @@ return new state"
       1 (let [p1 (:p1 current-state)
               line (dt/line [p1 value])]
           {:step 2 :p1 p1 :p2 value})
-      2 (assoc current-state :step 3)
+      2 (assoc current-state :step 3 :p3 value)
       3 {:step 0})))
 
 (defn circle-state-transitioner
@@ -627,7 +629,7 @@ return new state"
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value
-                ref (geom/reflection p1 p2)
+                ref (trans/reflection p1 p2)
                 image (ref p3)]
             (draw-line p1 p2 draw-chan #{:extended-full} :yellow)
             (draw-line p3 image draw-chan #{:midpoint} :lt-grey)
@@ -636,7 +638,7 @@ return new state"
                 p2 (:p2 current-state)
                 A (:A current-state)
                 B value
-                ref (geom/reflection p1 p2)
+                ref (trans/reflection p1 p2)
                 imageA (ref A)
                 imageB (ref B)]
             (draw-line p1 p2 draw-chan #{:extended-full} :yellow)
@@ -650,7 +652,7 @@ return new state"
                 A (:A current-state)
                 B (:B current-state)
                 C value
-                ref (geom/reflection p1 p2)
+                ref (trans/reflection p1 p2)
                 imageA (ref A)
                 imageB (ref B)
                 imageC (ref C)]
@@ -679,14 +681,16 @@ return new state"
   (case type
     :move
     (do
-      (go (>! draw-chan clear))
+      
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan clear))
             (draw-point-coords value draw-chan)
             current-state)
         1 (let [center (:center current-state)
                 radius (geom/distance value center)]
-            (draw-circle-2 center radius draw-chan {:stroke :yellow :fill :grey-2})
+            (go (>! draw-chan clear))
+            (draw-circle-2 center radius draw-chan {:stroke :yellow :fill :lt-grey})
             (draw-line center value draw-chan #{} :pink)
             current-state)
         2 (let [center (:center current-state)
@@ -694,10 +698,11 @@ return new state"
                 inversion (:inversion current-state)
                 A value
                 image (inversion A)]
+            (go (>! draw-chan clear))
             (draw-circle-2 center radius draw-chan
-                           {:stroke :yellow :fill :grey-2})
+                           {:stroke :yellow :fill :lt-grey})
             (draw-line center A draw-chan #{:extended} :lt-grey)
-            (draw-point image draw-chan {:stroke :lt-grey :fill :red})
+            (draw-point image draw-chan {:stroke :lt-grey :fill :lt-red})
             (draw-point A draw-chan {:stroke :lt-grey :fill :red})
             (draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
             current-state)
@@ -711,6 +716,7 @@ return new state"
                 line (geom/param-line A B)
                 pre-image-points (map line (geom/parts 24))
                 image-points (map inversion pre-image-points)]
+            (go (>! draw-chan clear))
             (draw-circle-2 center radius draw-chan
                            {:stroke :yellow :fill :grey-2})
             (draw-line center A draw-chan #{:extended} :lt-grey)
@@ -741,6 +747,7 @@ return new state"
                 image-points1 (map inversion pre-image-points1)
                 image-points2 (map inversion pre-image-points2)
                 image-points3 (map inversion pre-image-points3)]
+            (go (>! draw-chan clear))
             (draw-circle-2 center radius draw-chan
                            {:stroke :yellow :fill :grey-2})
             (draw-point image1 draw-chan {:stroke :lt-grey :fill :red})
@@ -758,7 +765,8 @@ return new state"
             (doseq [p pre-image-points3]
               (draw-point p draw-chan {:stroke :lt-grey :fill :blue}))
             (draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
-            current-state)))
+            current-state)
+        5 current-state))
     :click
     (condp = (:step current-state)
       0 (do
@@ -776,7 +784,8 @@ return new state"
            :inversion inversion})
       2 (assoc current-state :A value :step 3)
       3 (assoc current-state :B value :step 4)
-      4 {:step 0})))
+      4 (assoc current-state :step 5)
+      5 {:step 0})))
 
 (defn homothety-state-transitioner
   "see point-state-transitioner"
