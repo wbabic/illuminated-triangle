@@ -6,9 +6,9 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [garden "1.2.1"]
-                 [org.clojure/clojurescript "0.0-2277"]
-                 [org.clojure/core.async "0.1.298.0-2a82a1-alpha"]
-                 [om "0.6.5"]
+                 [org.clojure/clojurescript "0.0-2280"]
+                 [org.clojure/core.async "0.1.303.0-886421-alpha"]
+                 [om "0.7.0"]
                  [secretary "1.2.0"]
                  [net.mikera/core.matrix "0.18.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
@@ -22,7 +22,7 @@
   :profiles
   {:dev
    {:source-paths ["test/clj" "dev"]
-    :dependencies [[org.clojure/tools.namespace "0.2.4"]
+    :dependencies [[org.clojure/tools.namespace "0.2.5"]
                    [org.clojure/java.classpath "0.2.0"]
                    [org.clojure/test.check "0.5.7"]
                    [com.cemerick/piggieback "0.1.3"]
