@@ -1,7 +1,5 @@
 (ns triangulator.datatypes)
 
-(enable-console-print!)
-
 (defrecord Point [point style lable])
 (defrecord Line [points])
 (defrecord Disk [center radius])

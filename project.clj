@@ -15,7 +15,7 @@
                  [org.clojure/core.match "0.2.1"]
                  [expresso "0.2.0"]]
 
-  :source-paths ["target/classes" "src/cljs"]
+  :source-paths ["src/cljx" "src/cljs"]
   
   :resource-paths ["resources"]
 
