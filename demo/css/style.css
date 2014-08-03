@@ -1,0 +1,104 @@
+body, h1, h2, h3, p, li {
+    padding: 10px;
+}
+
+p {
+    text-align: left;
+}
+
+li {
+    padding: 5px;
+}
+
+h1 {
+    font-size: 175%;
+}
+
+h2 {
+    font-size: 150%;
+}
+
+h3 {
+    font-size: 125%;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    color: green;
+}
+
+a:active {
+    color: yellow;
+}
+
+.wrapper {
+    display: -webkit-flex;
+    -webkit-flex-flow: row wrap;
+  
+    text-align: center;
+    font: normal 16px verdana,sans-serif;
+}
+
+.section {
+    padding: 10px;
+    border-top: 2px solid grey;
+}
+
+.header {
+    padding: 10px;
+    -webkit-flex: 1 100%;
+}
+
+.nav {
+    padding: 10px;
+    -webkit-flex: 1 100%;
+}
+
+.nav li {
+    display: inline;
+    list-style: none;
+}
+
+.footer {
+    padding: 10px;
+    -webkit-flex: 1 100%;
+}
+
+.main {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+    -webkit-justify-content: center;
+    -webkit-flex: 0 0 50%;
+}
+
+.canvas {
+    border: 2px solid rgba(156, 80, 172, 0.75);
+    border-radius: 5px;
+    margin: auto;
+}
+
+.aside-1 {
+    -webkit-flex: 0 0 25%;
+}
+
+.aside-2 {
+    -webkit-flex: 0 0 25%;
+}
+
+#definition-box {
+    margin: 10px;
+}
+
+#definition-list {
+    margin: 10px;
+}
+
+@media all and (min-width: 600px) {
+  .aside-2 { order: 1; } 
+  .main    { order: 2; }
+  .aside-1 { order: 3; }
+  .footer  { order: 4; }
+}
