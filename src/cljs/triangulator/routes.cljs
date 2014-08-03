@@ -12,7 +12,7 @@
 
 (defroute "/" []
   (println "redirecting ...")
-  (secretary/dispatch! "/triangle"))
+  (secretary/dispatch! "/centroid"))
 
 (defroute "/:definition" {:as params}
   (let [item (:definition params)]
