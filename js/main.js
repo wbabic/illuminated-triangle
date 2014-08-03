@@ -17695,7 +17695,7 @@ tt.string = function(a, b) {
 };
 Na();
 Kt("/", function(a) {
-  return yd(a) ? (Jd(a) && qd.d(qh, a), Sh.j(s(["redirecting ..."], 0)), Mt("/triangle")) : zd(a) ? (Sh.j(s(["redirecting ..."], 0)), Mt("/triangle")) : null;
+  return yd(a) ? (Jd(a) && qd.d(qh, a), Sh.j(s(["redirecting ..."], 0)), Mt("/centroid")) : zd(a) ? (Sh.j(s(["redirecting ..."], 0)), Mt("/centroid")) : null;
 });
 Kt("/:definition", function(a) {
   if (yd(a)) {
