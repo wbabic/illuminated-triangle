@@ -3,6 +3,9 @@
   for triangles and transformations
   text definition with interactive graphics
 
+  for demo see http://wbabic.github.io/illuminated-triangle
+  (use google chrome for now)
+  
 ** overview
    illuminate geometric properties of a triangle
    apply basic transformations to a triangle
