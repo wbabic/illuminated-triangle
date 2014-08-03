@@ -37,7 +37,15 @@
                          :output-to "resources/public/js/main.js"
                          :output-dir "resources/public/js/out"
                          :optimizations :none
-                         :source-map true}}]}
+                         :source-map true}}
+             {:id "release"
+              :source-paths ["src/cljs" "target/classes"]
+              :compiler {
+                         :output-to "demo/main.js"
+                         :optimizations :advanced
+                         :pertty-print false
+                         :preamble ["react/react.min.js"]
+                         :externs ["react/externs/react.js"]}}]}
 
   :cljx {:builds [{:source-paths ["src/cljx"]
                    :output-path "target/classes"
