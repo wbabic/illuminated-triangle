@@ -1,6 +1,6 @@
 (ns triangulator.draw
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.core.async :as async :refer [>! <! put! chan alts! sliding-buffer]]
+  (:require [cljs.core.async :as async :refer [>! <! put! chan alts!]]
             [triangulator.datatypes :as dt]))
 
 (enable-console-print!)

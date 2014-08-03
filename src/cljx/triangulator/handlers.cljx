@@ -773,49 +773,64 @@ return new state"
                      state)
               :point
               (recur item
-                     (point-state-transitioner [type value] state return-message-chan draw-chan))
+                     (point-state-transitioner [type value]
+                                               state return-message-chan draw-chan))
               :line
               (recur item
-                     (line-state-transitioner [type value] state return-message-chan draw-chan))
+                     (line-state-transitioner [type value]
+                                              state return-message-chan draw-chan))
               :triangle
               (recur item
-                     (tri-state-transitioner [type value] state return-message-chan draw-chan))
+                     (tri-state-transitioner [type value]
+                                             state return-message-chan draw-chan))
               :circumcircle
               (recur item
-                     (circumcircle-state-transitioner [type value] state return-message-chan draw-chan))
+                     (circumcircle-state-transitioner [type value]
+                                                      state return-message-chan draw-chan))
               :orthocenter
               (recur item
-                     (orthocenter-state-transitioner [type value] state return-message-chan draw-chan))
+                     (orthocenter-state-transitioner [type value]
+                                                     state return-message-chan draw-chan))
               :euler-line
               (recur item
-                     (euler-state-transitioner [type value] state return-message-chan draw-chan))
+                     (euler-state-transitioner [type value]
+                                               state return-message-chan draw-chan))
               :nine-pt-circle
               (recur item
-                     (nine-pt-state-transitioner [type value] state return-message-chan draw-chan))
+                     (nine-pt-state-transitioner [type value]
+                                                 state return-message-chan draw-chan))
               :centroid
               (recur item
-                     (centroid-state-transitioner [type value] state return-message-chan draw-chan))
+                     (centroid-state-transitioner [type value]
+                                                  state return-message-chan draw-chan))
               :incircle
               (recur item
-                     (incircle-state-transitioner [type value] state return-message-chan draw-chan))
+                     (incircle-state-transitioner [type value]
+                                                  state return-message-chan draw-chan))
               :circle
               (recur item
-                     (circle-state-transitioner [type value] state return-message-chan draw-chan))
+                     (circle-state-transitioner [type value]
+                                                state return-message-chan draw-chan))
               :reflection
               (recur item
-                     (reflection-state-transitioner [type value] state return-message-chan draw-chan))
+                     (reflection-state-transitioner [type value]
+                                                    state return-message-chan draw-chan))
               :inversion
               (recur item
-                     (inversion-state-transitioner [type value] state return-message-chan draw-chan))
+                     (inversion-state-transitioner [type value]
+                                                   state return-message-chan draw-chan))
               :homothety
               (recur item
-                     (homothety-state-transitioner [type value] state return-message-chan draw-chan))
+                     (homothety-state-transitioner [type value]
+                                                   state return-message-chan draw-chan))
               :rotation
               (recur item
-                     (rotation-state-transitioner [type value] state return-message-chan draw-chan))
+                     (rotation-state-transitioner [type value]
+                                                  state return-message-chan draw-chan))
               :translation
               (recur item
-                    (translation-state-transitioner [type value] state return-message-chan draw-chan))
+                    (translation-state-transitioner [type value]
+                                                    state return-message-chan draw-chan))
               (do
                 (println "warning: iten not handled: " item)
                 (recur item state))))))
