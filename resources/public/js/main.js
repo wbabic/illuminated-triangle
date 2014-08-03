@@ -19,9 +19,11 @@ goog.addDependency("../triangulator/events.js", ['triangulator.events'], ['goog.
 goog.addDependency("../om/dom.js", ['om.dom'], ['cljs.core']);
 goog.addDependency("../triangulator/definitions.js", ['triangulator.definitions'], ['cljs.core']);
 goog.addDependency("../triangulator/draw.js", ['triangulator.draw'], ['triangulator.datatypes', 'cljs.core', 'cljs.core.async']);
+goog.addDependency("../triangulator/state.js", ['triangulator.state'], ['cljs.core']);
 goog.addDependency("../om/core.js", ['om.core'], ['cljs.core', 'om.dom', 'goog.ui.IdGenerator']);
-goog.addDependency("../triangulator/components.js", ['triangulator.components'], ['triangulator.datatypes', 'triangulator.draw', 'triangulator.geometry', 'triangulator.handlers', 'cljs.core', 'om.dom', 'cljs.core.async', 'om.core', 'triangulator.definitions']);
+goog.addDependency("../triangulator/components.js", ['triangulator.components'], ['triangulator.datatypes', 'triangulator.draw', 'triangulator.geometry', 'triangulator.handlers', 'cljs.core', 'om.dom', 'triangulator.state', 'cljs.core.async', 'om.core', 'triangulator.definitions', 'triangulator.events']);
 goog.addDependency("../clojure/string.js", ['clojure.string'], ['goog.string', 'cljs.core', 'goog.string.StringBuffer']);
 goog.addDependency("../clojure/walk.js", ['clojure.walk'], ['cljs.core']);
 goog.addDependency("../secretary/core.js", ['secretary.core'], ['cljs.core', 'clojure.string', 'clojure.walk']);
-goog.addDependency("../triangulator/routes.js", ['triangulator.routes'], ['triangulator.draw', 'triangulator.components', 'cljs.core', 'om.dom', 'goog.history.EventType', 'goog.History', 'om.core', 'triangulator.definitions', 'secretary.core', 'triangulator.events', 'goog.events']);
+goog.addDependency("../triangulator/routes.js", ['triangulator.routes'], ['triangulator.draw', 'triangulator.components', 'cljs.core', 'goog.history.EventType', 'triangulator.state', 'goog.History', 'triangulator.definitions', 'secretary.core', 'goog.events']);
+goog.addDependency("../triangulator/handlers/util.js", ['triangulator.handlers.util'], ['triangulator.datatypes', 'triangulator.render', 'triangulator.handlers', 'cljs.core', 'cljs.core.async']);

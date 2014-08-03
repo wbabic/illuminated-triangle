@@ -759,79 +759,64 @@ return new state"
                        click :click
                        move :move
                        ctr-chan :ctr-chan)]
-            (when (= channel ctr-chan)
+            (if (= channel ctr-chan)
               (do
                 (println "ctr-chan item: " value)
                 (when-not (= item value)
                   (>! draw-chan render/clear)
                   (>! return-message-chan [:draw value draw-chan]))
-                (recur value {:step 0})))
-
-            (condp = item
-              :none
-              (recur item
-                     state)
-              :point
-              (recur item
-                     (point-state-transitioner [type value]
-                                               state return-message-chan draw-chan))
-              :line
-              (recur item
-                     (line-state-transitioner [type value]
-                                              state return-message-chan draw-chan))
-              :triangle
-              (recur item
-                     (tri-state-transitioner [type value]
-                                             state return-message-chan draw-chan))
-              :circumcircle
-              (recur item
-                     (circumcircle-state-transitioner [type value]
-                                                      state return-message-chan draw-chan))
-              :orthocenter
-              (recur item
-                     (orthocenter-state-transitioner [type value]
-                                                     state return-message-chan draw-chan))
-              :euler-line
-              (recur item
-                     (euler-state-transitioner [type value]
-                                               state return-message-chan draw-chan))
-              :nine-pt-circle
-              (recur item
-                     (nine-pt-state-transitioner [type value]
-                                                 state return-message-chan draw-chan))
-              :centroid
-              (recur item
-                     (centroid-state-transitioner [type value]
-                                                  state return-message-chan draw-chan))
-              :incircle
-              (recur item
-                     (incircle-state-transitioner [type value]
-                                                  state return-message-chan draw-chan))
-              :circle
-              (recur item
-                     (circle-state-transitioner [type value]
-                                                state return-message-chan draw-chan))
-              :reflection
-              (recur item
-                     (reflection-state-transitioner [type value]
-                                                    state return-message-chan draw-chan))
-              :inversion
-              (recur item
-                     (inversion-state-transitioner [type value]
-                                                   state return-message-chan draw-chan))
-              :homothety
-              (recur item
-                     (homothety-state-transitioner [type value]
-                                                   state return-message-chan draw-chan))
-              :rotation
-              (recur item
-                     (rotation-state-transitioner [type value]
-                                                  state return-message-chan draw-chan))
-              :translation
-              (recur item
-                    (translation-state-transitioner [type value]
-                                                    state return-message-chan draw-chan))
-              (do
-                (println "warning: iten not handled: " item)
-                (recur item state))))))
+                (recur value {:step 0}))
+              (let [new-state
+                    (condp = item
+                      :none
+                      state
+                      :point
+                      (point-state-transitioner [type value]
+                                                state return-message-chan draw-chan)
+                      :line
+                      (line-state-transitioner [type value]
+                                               state return-message-chan draw-chan)
+                      :triangle
+                      (tri-state-transitioner [type value]
+                                              state return-message-chan draw-chan)
+                      :circumcircle
+                      (circumcircle-state-transitioner [type value]
+                                                       state return-message-chan draw-chan)
+                      :orthocenter
+                      (orthocenter-state-transitioner [type value]
+                                                      state return-message-chan draw-chan)
+                      :euler-line
+                      (euler-state-transitioner [type value]
+                                                state return-message-chan draw-chan)
+                      :nine-pt-circle
+                      (nine-pt-state-transitioner [type value]
+                                                  state return-message-chan draw-chan)
+                      :centroid
+                      (centroid-state-transitioner [type value]
+                                                   state return-message-chan draw-chan)
+                      :incircle
+                      (incircle-state-transitioner [type value]
+                                                   state return-message-chan draw-chan)
+                      :circle
+                      (circle-state-transitioner [type value]
+                                                 state return-message-chan draw-chan)
+                      :reflection
+                      (reflection-state-transitioner [type value]
+                                                     state return-message-chan draw-chan)
+                      :inversion
+                      (inversion-state-transitioner [type value]
+                                                    state return-message-chan draw-chan)
+                      :homothety
+                      (homothety-state-transitioner [type value]
+                                                    state return-message-chan draw-chan)
+                      :rotation
+                      (rotation-state-transitioner [type value]
+                                                   state return-message-chan draw-chan)
+                      :translation
+                      (translation-state-transitioner [type value]
+                                                      state return-message-chan draw-chan)
+                      (do
+                        (println "warning: iten not handled: " item)
+                        state))]
+                (recur item new-state))))))
     return-message-chan))

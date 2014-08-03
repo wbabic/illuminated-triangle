@@ -7,19 +7,9 @@
             [triangulator.draw :as draw]
             [triangulator.definitions :as d]
             [triangulator.datatypes :as dt]
-            [triangulator.geometry :as geom]))
-
-;; app state is the currently selected definition or none
-
-;; compoents
-;; definition entry
-;; definition list
-;; section
-;; definition box
-
-;; a definition box contains sections
-;; each section has a heading label and a list of definitions
-;; each definition has a label and a link
+            [triangulator.geometry :as geom]
+            [triangulator.events :as events]
+            [triangulator.state :as state]))
 
 (enable-console-print!)
 
@@ -161,11 +151,20 @@
                  (dom/p nil (second (item d/definition-text)))
                  (apply dom/ul nil (om/build-all item-detail (item state))))))))
 
-(defn item-view [app owner]
-  (reify
-    om/IRender
-    (render [_]
-      (if-let [item (:current-item app)]
-        ;; use item
-        (do
-          (om/build item-controller app))))))
+(om/root
+ item-controller
+ state/app-state
+ {:target (. js/document (getElementById "definition-box"))
+  :shared (let [{:keys [canvas width height] :as surface} (draw/surface "graphics-box")
+                click-chan (events/mouse-chan canvas :mouse-down)
+                mouse-move-chan (events/mouse-chan canvas :mouse-move)
+                draw-chan (draw/drawing-loop canvas width height)]
+            {:surface surface
+             :click-chan click-chan
+             :mouse-move-chan mouse-move-chan
+             :draw-chan draw-chan})})
+
+(om/root
+ nav-box
+ d/ui
+ {:target (. js/document (getElementById "definition-list"))})

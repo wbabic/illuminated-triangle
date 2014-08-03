@@ -2,6 +2,10 @@ body, h1, h2, h3, p, li {
     padding: 10px;
 }
 
+p {
+    text-align: left;
+}
+
 li {
     padding: 5px;
 }
