@@ -1,16 +1,16 @@
-* the Triangulator
+* The Triangulator
   An interactive definition viewer
   for triangles and transformations
-  with text definition with interactive graphics
+  with text definition with interactive graphics.
 
-  for demo see http://wbabic.github.io/illuminated-triangle
+  For demo see http://wbabic.github.io/illuminated-triangle
   (use google chrome for now)
   
-** overview
+** Overview
    Iilluminate geometric properties of a triangle
    and apply basic transformations to a triangle
 
-*** create triangles interactively
+*** Create triangles interactively
     See basic geometric properties as the triangle is being built.
 
     Three taps make three vertices.
@@ -27,7 +27,7 @@
     centroid, circumcircle, orthocenter,
     incircle, excircles, euler line, nine point circle.
 
-*** create transform interactively
+*** Create transform interactively
     Ttransforms preserving:
     distance -> isometry. 
     ratios of distances -> similarity,
@@ -36,31 +36,30 @@
     Includ translation, rotation, reflection,
     homothety and  inversion.
 
-** the play
-*** how to use it
-    Click a definition link.
-    Make a triangle.
-    See the relevant geoometric properties.
+** The play
+   Click a definition link.
+   Make a triangle.
+   See the relevant geoometric properties.
 
-    Click a transform link.
-    Make a transformation.
-    Apply it to a triangle,
-    ome point at a time,
-    or as a whole.
+   Click a transform link.
+   Make a transformation.
+   Apply it to a triangle,
+   ome point at a time,
+   or as a whole.
 
-    ToDo
-    Create multiple transforms and compose them and
-    apply sequence of transforms to the triangle,
-    one at a time or
-    all at once.
+   One tap to make a point.
+   Move curser to draw line.
+   Tap again to fix second point.
+   Move to draw triangle.
+   Tap again to fix third point.
+   Now you have a triangle.
+   
+   Depending on the property,
+   certain geometric ideas will be draw as the triangle is created.
 
-*** how it works
-    One tap to make a point.
-    Move curser to draw line.
-    Tap again to fix second point.
-    Move to draw triangle.
-    Tap again to fix third point.
-    Now you have a triangle.
+   ToDo
+   Create multiple transforms and compose them and
+   apply sequence of transforms to the triangle,
+   one at a time or
+   all at once.
 
-    Depending on the property,
-    certain geometric ideas will be draw as the triangle is created.
