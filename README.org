@@ -1,468 +1,66 @@
 * the Triangulator
-  interactive definition viewer
+  An interactive definition viewer
   for triangles and transformations
-  text definition with interactive graphics
+  with text definition with interactive graphics
 
   for demo see http://wbabic.github.io/illuminated-triangle
   (use google chrome for now)
   
 ** overview
-   illuminate geometric properties of a triangle
-   apply basic transformations to a triangle
+   Iilluminate geometric properties of a triangle
+   and apply basic transformations to a triangle
 
 *** create triangles interactively
-    see basic geometric properties as the triangle is being built
+    See basic geometric properties as the triangle is being built.
 
-    three taps make three vertices
-    first will fix a point
-    second, a line 
-    and third, a triangle
+    Three taps make three vertices.
+    First will fix a point.
+    Second, a line.
+    And third, a triangle.
 
-    basic geometric properties include:
+    Basic geometric properties include:
     midpoint, distance, angle,
     perpendiclar bisector, altitude,
-    angle bisector
+    angle bisector.
 
-    triangle properties include:
+    Triangle properties include:
     centroid, circumcircle, orthocenter,
-    incircle, excircles, euler line, nine point circle
+    incircle, excircles, euler line, nine point circle.
 
 *** create transform interactively
-    transforms preserving:
-    distance -> isometry 
-    ratios of distances -> similarity
-    generalized circles -> linear fractional transformation
+    Ttransforms preserving:
+    distance -> isometry. 
+    ratios of distances -> similarity,
+    generalized circles -> linear fractional transformation.
 
-    translation rotation reflection
-    homothety
-    inversion
+    Includ translation, rotation, reflection,
+    homothety and  inversion.
 
 ** the play
 *** how to use it
-    click a definition link
-    make a triangle
-    see the relevant geoometric properties
+    Click a definition link.
+    Make a triangle.
+    See the relevant geoometric properties.
 
-    click a transform link
-    make a transformation
-    apply it to a triangle,
+    Click a transform link.
+    Make a transformation.
+    Apply it to a triangle,
     ome point at a time,
-    or as a whole
+    or as a whole.
 
-    create multiple transforms and compose them
+    ToDo
+    Create multiple transforms and compose them and
     apply sequence of transforms to the triangle,
     one at a time or
-    all at once
+    all at once.
 
 *** how it works
-    one tap to make a point
-    move curser to draw line
-    tap again to fix second point
-    move to draw triangle
-    tap again to fix third point
-    now you have a triangle
+    One tap to make a point.
+    Move curser to draw line.
+    Tap again to fix second point.
+    Move to draw triangle.
+    Tap again to fix third point.
+    Now you have a triangle.
 
-    depending on the property,
-    certain geometric ideas will be draw as the triangle is created
-
-    screen coordinates
-    the coordinate system of the canvas
-    origin in top left corner [0 0]
-    first coordinate is from 0 to 500,
-    from the left to the right
-    second coordinate is top to bottom,
-    also from 0 to 500
-
-** implementation
-   app state contains the current item
-   set by uri using secretary
-
-   om components include:
-   item list box
-   graphics box
-   definition box
-
-   mouse over, or touch, text to higlight a graphical element
-   color coordinated
-   symbols and graphics
-
-** workflow
-   interactive design
-   interactive programming
-
-   current flow of work
-   edit cljs in emacs
-   lein cljsbuild auto dev
-   automatically builds javascript
-   then reload browser
-
-   needs improvement
-   could use cljx
-   test in phantumjs
-   test in clojure
-   test in the repl
-   play in the repl
-   
-   browser -> google chrome
-   develop prototype that works on chrome first
-   first with html and css then using hiccup and garden
-
-   TODO
-   use garden to generate other browser prefixs
-   treat css and javascript as targets generated from clojure
-
-   clojurescript repl:
-   using phantomjs,
-   connected to browser,
-   using rhino
-*** cljx
-    https://github.com/lynaghk/cljx
-
-    src/cljx
-
-    
-*** live coding with clojure and Emacs
-    Accompanying code for the blog post: http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
-
-    modified by walter p babic
-
-    bring together ideas from other projects:
-    om-async
-    infinate-diamonds geometry.clj
-    modern
-    sketching - this one
-    om todo mvc with undo
-    om tutorial, intermediate - datomic, ajax
-
-    session
-    om components
-    svg
-    canvas
-
-    closure-play on numenor - google closure library, css
-   
-*** dev profile
-    dev/user.clj
-
-    add dev profile to  project.clj
-    #+BEGIN_SRC clojure
-    :profiles {:dev {:source-paths ["dev"]
-                     :dependencies [[org.clojure/tools.namespace "0.2.4"]
-                                    [org.clojure/java.classpath "0.2.0"]
-                                    [org.clojure/test.check "0.5.7"]]}}
-    #+END_SRC
-
-    TODO make custom lien template with dev profile
-    
-** references
-*** css
-**** flexbox specification
-     http://www.w3.org/TR/css3-flexbox/
-
-**** smashing magazine tutorial
-     http://www.smashingmagazine.com/2013/05/22/centering-elements-with-flexbox/
-
-**** MDN
-     using CSS flexible boxes
-     https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Flexible_boxes
-
-**** CSS Tricks
-     A domplete guide to flexbox
-     http://css-tricks.com/snippets/css/a-guide-to-flexbox/
-
-     screencast
-     https://www.youtube.com/watch?v=tge9YQDAasc
-
-**** Sean Floritto
-     Sketching with CSS
-     screencast
-
-     https://www.youtube.com/watch?v=t6GoK1yGcFM
-
-     http://www.sketchingwithcss.com/
-     
-**** Live Coding with lojure and Emacs
-     http://danielsz.github.io/2014/01/20/Live-coding-with-Clojure-and-Emacs/
-
-**** reset.css
-     http://meyerweb.com/eric/tools/css/reset/
-
-*** secretary
-    clojurescript client side routing
-    https://github.com/gf3/secretary
-
-    use secretary and goog.History
-    to route requests and update current item
-
-**** goog history
-     http://docs.closure-library.googlecode.com/git/class_goog_History.html
-     
-*** session yantra merchant
-    graphics represented as data
-
-    borrowed idea of datatypes
-    to represent graphical objects as data
-    appled to canvas instead of svg
-**** session
-     https://github.com/kovasb/session
-     https://github.com/kovasb/session/blob/master/src/clj/session/user.clj
-
-**** yantra
-     https://github.com/kovasb/yantra/blob/master/src/cljs/yantra/graphics.cljs
-     https://github.com/kovasb/yantra/blob/master/src/cljs/yantra/datatypes.cljs
-
-**** merchant
-     https://github.com/kovasb/merchant
-     https://github.com/kovasb/merchant/blob/master/src/clj/merchant/common.clj
-     
-*** csp
-**** references
-     http://www.cs.cmu.edu/~crary/819-f09/
-
-     http://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf
-
-     in the go lang:
-     http://godoc.org/github.com/thomas11/csp
-
-     in core.async:
-     https://github.com/nodename/async-plgd/blob/master/src/hoare/coroutines.clj
-
-     an axiomatic basis for computer programming
-     http://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf
-
-     gaurded commands, non determinacy, and formal derivation of
-     programs
-     http://www.cs.cmu.edu/~crary/819-f09/Dijkstra75.pdf
-
-**** ex 1
-     #+BEGIN_SRC 
-     X :: *[c:character; west?c -> east!c]
-     #+END_SRC
-     
-    #+BEGIN_SRC clojure
-      (ns hoare.coroutines
-        (:require [clojure.core.async :refer :all]))
-      
-      (defn copier
-        "A process that copies values from the source channel"
-        [source]
-        (let [c (chan)]
-          (go
-           (loop []
-             (let [value (<! source)]
-               ;; this value will be nil if close! has been called on the channel.
-               ;; we cannot copy nil to c because explicitly putting a nil is not allowed.
-               (if (nil? value)
-                 (close! c)
-                 (do
-                   (>! c value)
-                   (recur))))))
-          c))
-           
-      (defn test-copy
-        "Print out all the numbers from 0 to 9,
-           then after two seconds print out the numbers from 10 to 19"
-        []
-        (let [west (chan)
-              ;; this process will remain ready to copy...
-              east (copier west)
-              ;; a channel that will close after 2000 ms:
-              timeout (timeout 2000)]
-          
-          (go
-           (dotimes [i 10]
-             (>! west i))
-           ;; the only value that will come from the timeout is the nil when it closes:
-           (<! timeout)
-           (dotimes [i 10]
-             (>! west (+ 10 i))))
-          
-          ;; this process will remain ready to print...
-          (go
-           (loop []
-             (println (<! east))
-             (recur))))
-        
-        ;; until all the processes go away when they go out of scope:
-        nil)
-    #+END_SRC
-
-*** om todo with undo
-    
-    undo ability
-    redo ability
-    rivendell:file:///Users/wbabic/dev/clojurescript/om/om-todomvc/todomvc/labs/architecture-examples/om-undo/index.html
-    
-** project notes
-   ideas borrowed from my other projects
-*** om-async
-    first triangle maker
-
-    borrowed clojurescript, cljsbuild and om setup
-    lein cljsbuild auto dev
-
-    see om-async -> triangle.org
-
-*** modern webapp
-    yeoman
-    live reload
-    grunt tasks
-    bower dependencies
-
-    notes and ideas on a web page
-    
-*** infinite diamonds
-    loop for rendering to canvas
-    geometry.clj
-    canvas
-    tilings
-    symmetry
-** geometry
-   in clojure first
-   with tests
-   then to clojurescript
-
-   geometry.clj
-
-   cljx 
-   
-*** unit-complex
-    a closed system
-    integral multiples of a twentyfourth
-    dividing a line
-    wrapped around the unit circle
-    exact multiplication
-    which is rotation
-    in the plane
-    about an origin
-
-    a twentyfour step cycle
-
-    halves thirds fourths 8ths sixths and twelths
-    1/2 1/3 1/4 1/8 1/6 1/12
-    Cn Dn
-    group representaions
-
-    addition modulo 24 with integers 0 .. 23
-    addition modulo 1 with multiples of a 1/24
-    
-    an other system:
-    fifths tenths twentieths hundredths
-    1/5 1/10 1/20 1/100
-    pentagon golden triangle golden ratio
-    five fold with bilateral symmetry
-
-*** complex
-    complex.clj
-    Complex protocol
-    rectangular polar
-    one zero infinity
-    
-    transformations of
-    translation
-    rotation
-    homothety
-    inversion
-
-    map center of inversion to infinity
-    what does it men to be close to zero
-    or close to infinity?
-
-    play a game to get to a
-    neighborhood of infinity
-    or, inversly, a neighborhood of zero
-
-*** unit-quaternions
-    {1 i j k}
-    Q 
-*** geometry of complex number
-    Deaux
-    Complex protocol
-**** Fundamental Operations
-     vector addition scalar multiplication
-     complex multiplication division
-     polar form, exponential
-     scalar product
-     vector product
-**** Fundamental Transformations
-     translation
-     rotation
-     symmetry wrt a line
-     inversion
-     point at infinity
-     
-**** Anharmonic Ratio
-**** Analytic Geometry
-**** Circular Transformations
-** things to do
-   separate out platform specific code using cljx
-   make more literate
-   add more tests
-   make more robust -> handle blow ups, non intersection of parallel lines
-   
-   determine images of lines and circles
-   under inversion in a circle
-
-   compose transformations
-
-   add key strokes to handlers
-   arrow keys for selection
-   letters for transformations
-   display in legend
-
-   add living legend
-   to connect words and symbols
-   to explain geometric concepts at work
-
-   change mouse handler to persist
-   triangles and
-   transformations
-
-   better handling of style
-
-   display coordinates of points
-
-   automate updating of gh-pages branch
-   
-*** add notation
-    optionally give items a name
-    that uses the items style
-    and a label, in color
-    
-*** add hilightibility
-    mouse over text to highlight
-    symbol and graphic
-
-*** add interacive guides
-**** line
-     two points define a line
-***** options
-      draw endpoints, first, second or both
-      show midpoint when drawing a line, 
-      along with perpendicular bisector
-
-      show circles centered at endpoints as well as centered at radius
-
-      extend line in both directions
-      
-**** two lines
-     find the intersection of two lines
-     or if they are paallel
-
-     find the angles between them
-     bisect the angles between them
-     
-**** triangle
-     illuminate special triangles and snap to exact spot
-     equilateral
-     isosceles
-     right
-     golden
-     
-**** geometric concepts
-     distance from a point
-     distance between two points
-     distance bewteen a point and a line
-     distance between two lines
-     angle between two lines
-     
+    Depending on the property,
+    certain geometric ideas will be draw as the triangle is created.
