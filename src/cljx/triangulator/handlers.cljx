@@ -1,16 +1,17 @@
 (ns triangulator.handlers
-  (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
-            [cljs.core.async :as async :refer [>! <! put! chan alts!]]
-            [triangulator.datatypes :as dt]
+  (:require [triangulator.datatypes :as dt]
             [triangulator.geometry :as geom]
             [triangulator.triangle :as tri]
             [triangulator.transforms :as trans]
             [triangulator.complex :as complex]
-            [triangulator.render :as render]))
+            [triangulator.render :as render]
+     #+clj  [clojure.core.async :as async :refer [>! <! put! chan alts! go]]
+     #+cljs [cljs.core.async :as async :refer [>! <! put! chan alts!]]
+            )
+  #+cljs  (:require-macros [cljs.core.async.macros :refer [go]])
+  )
 
-(enable-console-print!)
+#+cljs (enable-console-print!)
 
 (defn point-state-transitioner
   "handle event by using current state and event to transition to new state
