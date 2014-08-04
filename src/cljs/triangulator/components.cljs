@@ -65,14 +65,12 @@
        :control nil})
     om/IWillMount
     ;; set up event hanndler
-    (will-mount [_]
+     (will-mount [_]
       (let [_ (println "mounting item-controller")
-            {:keys [click-chan mouse-move-chan draw-chan]} (om/get-shared owner)
+            {:keys [event-chan draw-chan]} (om/get-shared owner)
             control-chan (chan)
-            handler-chan (handlers/mouse-handler
-                          click-chan
-                          mouse-move-chan
-                          control-chan
+            handler-chan (handlers/event-handler
+                          (async/merge [event-chan control-chan])
                           draw-chan)]
         (om/set-state! owner :handler handler-chan)
         (om/set-state! owner :control control-chan)
@@ -145,7 +143,7 @@
     (render-state [_ state]
       (let [item (:current-item app)
             {:keys [control]} state
-            _ (go (>! control item))]
+            _ (go (>! control [:control item]))]
         (dom/div #js {:className "definition"}
                  (dom/h3 nil (first (item d/definition-text)))
                  (dom/p nil (second (item d/definition-text)))
@@ -156,12 +154,12 @@
  state/app-state
  {:target (. js/document (getElementById "definition-box"))
   :shared (let [{:keys [canvas width height] :as surface} (draw/surface "graphics-box")
-                click-chan (events/mouse-chan canvas :mouse-down)
-                mouse-move-chan (events/mouse-chan canvas :mouse-move)
-                draw-chan (draw/drawing-loop canvas width height)]
+                click-chan (events/mouse-chan canvas :mouse-down :click)
+                mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
+                draw-chan (draw/drawing-loop canvas width height)
+                events (async/merge [mouse-move-chan click-chan])]
             {:surface surface
-             :click-chan click-chan
-             :mouse-move-chan mouse-move-chan
+             :event-chan events
              :draw-chan draw-chan})})
 
 (om/root

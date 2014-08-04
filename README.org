@@ -7,8 +7,8 @@
   (use google chrome for now)
   
 ** Overview
-   Iilluminate geometric properties of a triangle
-   and apply basic transformations to a triangle
+   Illuminate geometric properties of a triangle
+   and apply basic transformations to a triangle.
 
 *** Create triangles interactively
     See basic geometric properties as the triangle is being built.
@@ -35,6 +35,45 @@
 
     Include translation, rotation, reflection,
     homothety and inversion.
+** Implementation
+*** the event handler
+The event hadler takes an event channel and a drawing channel.
+It handles incomming events by sending messages to the drawing
+channel.
+It also retuns a return message channel and send update state messages
+to the caller.
+
+It contains a local state which gets updates from its logic that
+handles the input events coming in from the event channel.
+
+It also draws the current state by sending graphics related data into
+the draw channel.
+
+It alows the user to create and veiw a triangle by clicking and moving
+the mouse.
+
+However, it is not directly coupled to browser events; any channel
+will do. So testing from the repl is possible.
+
+For an example, see cljx/handlers/util.cljx
+*** the drawing loop
+    This is a go loop accepting drawing events as defined in
+    datatypes.cljx and converts the data into calls to a graphics
+    context.
+
+    It just understands a few basic types, like Style, Point, Line,
+    Circle and has no state.
+
+    The Graphics context on the other hand does have state.
+
+    For now it is up to the caller to track where it is at. Currently,
+    it just sends redundent data. Like, always setting the style.
+
+    So far, the styke only has fil and stroke properties.
+
+    This is an area in need of improvement.
+
+    But for now, it is working, sort of. 
 
 ** The play
    Click a definition link.
@@ -62,4 +101,3 @@
    apply sequence of transforms to the triangle,
    one at a time or
    all at once.
-

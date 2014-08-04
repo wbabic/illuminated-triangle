@@ -751,15 +751,12 @@ return new state"
       3 (assoc current-state :step 4 :p2 value)
       4 (assoc (dissoc current-state :p1 :p2) :step 2))))
 
-(defn mouse-handler [click move ctr-chan draw-chan]
+(defn event-handler [event-chan draw-chan]
   (let [return-message-chan (chan)]
     (go (loop [item :none state {:step 0}]
-          (let [[value channel] (alts! [click move ctr-chan])
-                type (condp = channel
-                       click :click
-                       move :move
-                       ctr-chan :ctr-chan)]
-            (if (= channel ctr-chan)
+          (let [[type value] (<! event-chan)
+                _ (println "event-handler: " [type value])]
+            (if (= type :control)
               (do
                 (println "ctr-chan item: " value)
                 (when-not (= item value)

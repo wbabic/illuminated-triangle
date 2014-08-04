@@ -18,10 +18,10 @@
     (events/listen el type #(put! out %))
     out))
 
-(defn mouse-chan [element event-type]
+(defn mouse-chan [element event-type key]
   (async/map
    (fn [e] (let [px (.-offsetX e)
                 py (.-offsetY e)]
-            [px py]))
+            [key [px py]]))
    [(listen element (event-type event-map))]))
 

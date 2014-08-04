@@ -4,8 +4,8 @@
             [triangulator.geometry.triangle :as tri]
             [triangulator.geometry.transforms :as trans]
             [triangulator.geometry.complex :as complex]
-     #+clj  [clojure.core.async :as async :refer [>! <! put! chan alts! go]]
-     #+cljs [cljs.core.async :as async :refer [>! <! put! chan alts!]]
+     #+clj  [clojure.core.async :as async :refer [>! <! chan go]]
+     #+cljs [cljs.core.async :as async :refer [>! <! chan]]
      )
 #+cljs(:require-macros [cljs.core.async.macros :refer [go]])
 )
