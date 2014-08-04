@@ -29,12 +29,12 @@
 
 *** Create transform interactively
     Ttransforms preserving:
-    distance -> isometry. 
+    distance -> isometry,
     ratios of distances -> similarity,
     generalized circles -> linear fractional transformation.
 
-    Includ translation, rotation, reflection,
-    homothety and  inversion.
+    Include translation, rotation, reflection,
+    homothety and inversion.
 
 ** The play
    Click a definition link.
@@ -57,7 +57,7 @@
    Depending on the property,
    certain geometric ideas will be draw as the triangle is created.
 
-   ToDo
+   ToDo:
    Create multiple transforms and compose them and
    apply sequence of transforms to the triangle,
    one at a time or
