@@ -1,6 +1,6 @@
-(ns triangulator.transforms
+(ns triangulator.geometry.transforms
   (:require [triangulator.geometry :as geom]
-            [triangulator.triangle :as tri]))
+            [triangulator.geometry.triangle :as tri]))
 
 ;; 2x2 matrices
 

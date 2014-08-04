@@ -1,4 +1,4 @@
-(ns triangulator.complex
+(ns triangulator.geometry.complex
   (:require [triangulator.protocols :as p]
             [triangulator.geometry :as geom]))
 

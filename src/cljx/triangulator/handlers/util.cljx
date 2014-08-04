@@ -8,12 +8,10 @@
   #+cljs  (:require-macros [cljs.core.async.macros :refer [go]])
   )
 
-
 (defn collector
   "collect data from chan to a vector
 return when chan is closed"
   [chan])
-
 
 (comment
   ;; create a new drawing channel

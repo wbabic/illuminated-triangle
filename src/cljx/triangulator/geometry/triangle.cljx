@@ -1,4 +1,4 @@
-(ns triangulator.triangle
+(ns triangulator.geometry.triangle
   (:require [triangulator.geometry :as geom]))
 
 (defn segments
