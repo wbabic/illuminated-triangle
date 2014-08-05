@@ -764,8 +764,7 @@ return new state"
                 (recur value {:step 0}))
               (let [new-state
                     (condp = item
-                      :none
-                      state
+                      :none state
                       :point
                       (point-state-transitioner [type value]
                                                 state return-message-chan draw-chan)

@@ -46,8 +46,6 @@ in a go loop"
   (collector draw-chan :draw-chan)
   (collector return-chan :return-chan)
 
-
-
   
   (collector (async/merge [draw-chan ret-chan]))
   (go (>! draw-chan [:click [1 2]]))
