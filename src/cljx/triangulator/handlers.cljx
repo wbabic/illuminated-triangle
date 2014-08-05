@@ -754,8 +754,7 @@ return new state"
 (defn event-handler [event-chan draw-chan]
   (let [return-message-chan (chan)]
     (go (loop [item :none state {:step 0}]
-          (let [[type value] (<! event-chan)
-                _ (println "event-handler: " [type value])]
+          (let [[type value] (<! event-chan)]
             (if (= type :control)
               (do
                 (println "ctr-chan item: " value)
