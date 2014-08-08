@@ -52,3 +52,27 @@ in a go loop"
   (go (>! ret-chan [:move [1 2]]))
 
   )
+
+
+(comment
+  ;; in triangulator.render
+  ;; draw line
+
+  (def draw-chan (chan))
+  (collector draw-chan :draw-chan)
+  (def options #{:endpoint})
+  (render/draw-line [0 1] [1 0] draw-chan options :red)
+
+
+  ;; new line options
+  (def l1-options {:line {:stroke :red}
+                   :p1 {:stroke :grey-3 :fill :green}
+                   :p2 {:fill :blue}
+                   :extended :lt-red
+                   :midpoint {:stroke :grey-3 :fill :grey-2}
+                   :perp-bisector {:stroke :lt-grey}})
+
+  (render/draw-line-data [0 1] [1 0] l1-options)
+
+  
+  )

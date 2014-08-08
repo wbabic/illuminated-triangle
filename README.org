@@ -75,6 +75,12 @@ For an example, see cljx/handlers/util.cljx
 
     But for now, it is working, sort of. 
 
+*** notes
+    abstact data
+    separate style from geometry
+    easy to change style
+    easy to change options
+
 ** The play
    Click a definition link.
    Make a triangle.

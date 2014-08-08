@@ -120,16 +120,16 @@ return new state"
             (go (>! draw-chan render/clear))
             (render/draw-point-coords value draw-chan)
             current-state)
-        1 (let [p1 (:p1 current-state)]
+        1 (let [p1 (:p1 current-state)
+                p2 value]
             (go (>! draw-chan render/clear))
-            (render/draw-line p1 value draw-chan #{:endpoint} :red)
+            (render/draw-line-2 p1 p2 draw-chan :e1 #{:line :endpoint1 :endpoint2 :extended })
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
             (go (>! draw-chan render/clear))
-            (render/fill-tri p1 p2 p3 draw-chan :lt-red)
-            (render/draw-triangle p1 p2 p3 draw-chan #{:ang-bisector :orthocenter})
+            (render/draw-tri-2 p1 p2 p3 draw-chan #{:altitudes :orthocenter :fill})
             current-state)
         3 current-state))
     :click
@@ -161,13 +161,16 @@ return new state"
             current-state)
         1 (let [p1 (:p1 current-state)]
             (go (>! draw-chan render/clear))
-            (render/draw-line p1 value draw-chan #{:endpoint} :red)
+            (render/draw-line-2 p1 value draw-chan :e1
+                                #{:line :midpoint :extended :endpoint1 :endpoint2})
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
             (go (>! draw-chan render/clear))
-            (render/draw-triangle p1 p2 p3 draw-chan #{:ang-bisector :nine-pt-circle})
+            (render/draw-tri-2 p1 p2 p3 draw-chan
+                               #{:altitudes :perp-bisector :orthocenter
+                                 :circumcenter :nine-pt-circle :fill})
             current-state)
         3 current-state))
     :click
@@ -200,15 +203,16 @@ return new state"
         1 (let [p1 (:p1 current-state)
                 p2 value]
             (go (>! draw-chan render/clear))
-            (render/draw-line p1 p2 draw-chan #{:endpoint} :red)
+            (render/draw-line-2 p1 p2 draw-chan :e1
+                                #{:line :endpoint1 :endpoint2 :extended})
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
             (go (>! draw-chan render/clear))
-            (render/fill-tri p1 p2 p3 draw-chan :lt-red)
-            (render/draw-triangle p1 p2 p3 draw-chan
-                           #{:ang-bisector :perp-bisector :orthocenter :circumcenter :euler})
+            (render/draw-tri-2 p1 p2 p3 draw-chan
+                                  #{:altitudes :perp-bisector :orthocenter
+                                    :circumcenter :euler :fill})
             current-state)
         3 current-state))
     :click
@@ -238,16 +242,16 @@ return new state"
             (go (>! draw-chan render/clear))
             (render/draw-point-coords value draw-chan)
             current-state)
-        1 (let [p1 (:p1 current-state)]
+        1 (let [p1 (:p1 current-state)
+                p2 value]
             (go (>! draw-chan render/clear))
-            (render/draw-line p1 value draw-chan #{:perp-bisector :endpoint} :red)
+            (render/draw-line-2 p1 p2 draw-chan :e1 #{:line :perp-bisector :midpoint :endpoint1 :endpoint2})
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
             (go (>! draw-chan render/clear))
-            (render/fill-tri p1 p2 p3 draw-chan :lt-red)
-            (render/draw-triangle p1 p2 p3 draw-chan #{:circumcenter :circumcircle :perp-bisector})
+            (render/draw-tri-2 p1 p2 p3 draw-chan #{:circumcenter :circumcircle :perp-bisector :fill})
             current-state)
         3 current-state))
     :click
@@ -280,13 +284,13 @@ return new state"
         1 (let [p1 (:p1 current-state)
                 p2 value]
             (go (>! draw-chan render/clear))
-            (render/draw-line p1 p2 draw-chan #{:midpoint :endpoint} :red)
+            (render/draw-line-2 p1 p2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
             (go (>! draw-chan render/clear))
-            (render/draw-triangle p1 p2 p3 draw-chan #{:median})
+            (render/draw-tri-2 p1 p2 p3 draw-chan #{:medians :centroid})
             current-state)
         3 current-state))
     :click
@@ -318,13 +322,15 @@ return new state"
             current-state)
         1 (let [p1 (:p1 current-state)]
             (go (>! draw-chan render/clear))
-            (render/draw-line p1 value draw-chan #{:endpoint} :red)
+            (render/draw-line-2 p1 value draw-chan :e1
+                                #{:line :endpoint1 :endpoint2 :fill})
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
             (go (>! draw-chan render/clear))
-            (render/draw-triangle p1 p2 p3 draw-chan #{:incircle})
+            (render/draw-tri-2 p1 p2 p3 draw-chan
+                              #{:ang-bisector :incircle :excircle})
             current-state)
         3 current-state))
     :click
