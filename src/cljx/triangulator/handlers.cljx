@@ -5,6 +5,7 @@
             [triangulator.geometry.transforms :as trans]
             [triangulator.geometry.complex :as complex]
             [triangulator.render :as render]
+            [triangulator.handlers.transitioners :as t]
      #+clj  [clojure.core.async :as async :refer [>! <! put! chan alts! go]]
      #+cljs [cljs.core.async :as async :refer [>! <! put! chan alts!]]
             )
@@ -12,375 +13,6 @@
   )
 
 #+cljs (enable-console-print!)
-
-(defn point-state-transitioner
-  "handle event by using current state and event to transition to new state
-send drawing events to draw-chan
-send state changes to out
-return new state"
-  [[type value] current-state out draw-chan]
-  (condp = type
-    :move
-    (do ;; clear-screen draw-state draw-point-coords
-      (go (>! draw-chan render/clear)
-          (>! out [:draw :point draw-chan]))
-      (render/draw-point-coords value draw-chan)
-      current-state)
-    :click
-    (do ;; add point to state; reset state
-      (go (>! out (dt/point value))
-          (>! out [:draw :point draw-chan]))
-      {:step 0})))
-
-(defn line-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (go
-       (>! draw-chan render/clear)
-       (>! out [:draw :line draw-chan]))
-      (condp = (:step current-state)
-        0 (do
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)]
-            (render/draw-line p1 value draw-chan #{:circles :midpoint} :red)
-            current-state)))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! out [:draw :line draw-chan])
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          (go (>! out line)
-              (>! draw-chan render/clear)
-              (>! out [:draw :line draw-chan]))
-          {:step 0}))))
-
-(defn tri-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (go
-       (>! draw-chan render/clear)
-       (>! out [:draw :triangle draw-chan]))
-      (condp = (:step current-state)
-        0 (do
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)]
-            (render/draw-line p1 value draw-chan #{:circles} :red)
-            current-state)
-        2 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value
-                base (tri/altitude p1 p2 p3)]
-            (render/draw-line p1 p2 draw-chan #{:circles :extended} :red)
-            (render/draw-line p2 p3 draw-chan nil :blue)
-            (render/draw-line p3 p1 draw-chan nil :green)
-            (render/draw-line p3 base draw-chan nil :yellow)
-            current-state)))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! out [:draw :triangle draw-chan])
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          (go (>! out [:draw :triangle draw-chan]))
-          {:step 2 :p1 p1 :p2 value})
-      2 (let [p1 (:p1 current-state)
-              p2 (:p2 current-state)
-              triangle (dt/triangle p1 p2 value)]
-          (go (>! out triangle)
-              (>! out [:draw :triangle draw-chan]))
-          {:step 0}))))
-
-(defn orthocenter-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (condp = (:step current-state)
-        0 (do
-            (go (>! draw-chan render/clear))
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)
-                p2 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-line-2 p1 p2 draw-chan :e1
-                                #{:line :endpoint1 :endpoint2 :extended })
-            current-state)
-        2 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-tri-2 p1 p2 p3 draw-chan
-                               #{:altitudes :orthocenter :fill})
-            current-state)
-        3 current-state))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          {:step 2 :p1 p1 :p2 value})
-      2 (assoc current-state :step 3)
-      3 (do
-          (go (>! draw-chan render/clear))
-          {:step 0}))))
-
-(defn nine-pt-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (condp = (:step current-state)
-        0 (do
-            (go (>! draw-chan render/clear))
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)]
-            (go (>! draw-chan render/clear))
-            (render/draw-line-2 p1 value draw-chan :e1
-                                #{:line :midpoint :extended :endpoint1 :endpoint2})
-            current-state)
-        2 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-tri-2 p1 p2 p3 draw-chan
-                               #{:altitudes :perp-bisector :orthocenter
-                                 :circumcenter :nine-pt-circle :fill})
-            current-state)
-        3 current-state))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          {:step 2 :p1 p1 :p2 value})
-      2 (assoc current-state :step 3)
-      3 (do
-          (go (>! draw-chan render/clear))
-          {:step 0}))))
-
-(defn euler-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (condp = (:step current-state)
-        0 (do
-            (go (>! draw-chan render/clear))
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)
-                p2 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-line-2 p1 p2 draw-chan :e1
-                                #{:line :endpoint1 :endpoint2 :extended})
-            current-state)
-        2 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-tri-2 p1 p2 p3 draw-chan
-                                  #{:altitudes :perp-bisector :orthocenter
-                                    :circumcenter :euler :fill})
-            current-state)
-        3 current-state))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          {:step 2 :p1 p1 :p2 value})
-      2 (assoc current-state :step 3)
-      3 (do
-          (go (>! draw-chan render/clear))
-          {:step 0}))))
-
-(defn circumcircle-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (condp = (:step current-state)
-        0 (do
-            (go (>! draw-chan render/clear))
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)
-                p2 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-line-2 p1 p2 draw-chan :e1 #{:line :perp-bisector :midpoint :endpoint1 :endpoint2})
-            current-state)
-        2 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-tri-2 p1 p2 p3 draw-chan #{:circumcenter :circumcircle :perp-bisector :fill})
-            current-state)
-        3 current-state))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          {:step 2 :p1 p1 :p2 value})
-      2 (assoc current-state :step 3)
-      3 (do
-          (go (>! draw-chan render/clear))
-          {:step 0}))))
-
-(defn centroid-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (condp = (:step current-state)
-        0 (do
-            (go (>! draw-chan render/clear))
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)
-                p2 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-line-2 p1 p2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
-            current-state)
-        2 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-tri-2 p1 p2 p3 draw-chan #{:medians :centroid})
-            current-state)
-        3 current-state))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          {:step 2 :p1 p1 :p2 value})
-      2  (assoc current-state :step 3)
-      3 (do
-          (go (>! draw-chan render/clear))
-          {:step 0}))))
-
-(defn incircle-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (condp = (:step current-state)
-        0 (do
-            (go (>! draw-chan render/clear))
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)]
-            (go (>! draw-chan render/clear))
-            (render/draw-line-2 p1 value draw-chan :e1
-                                #{:line :endpoint1 :endpoint2})
-            current-state)
-        2 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                p3 value]
-            (go (>! draw-chan render/clear))
-            (render/draw-tri-2 p1 p2 p3 draw-chan
-                              #{:ang-bisector :incircle :excircle :fill})
-            current-state)
-        3 current-state))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              line (dt/line [p1 value])]
-          {:step 2 :p1 p1 :p2 value})
-      2 (assoc current-state :step 3 :p3 value)
-      3 (do
-          (go (>! draw-chan render/clear))
-          {:step 0}))))
-
-(defn circle-state-transitioner
-  "see point-state-transitioner"
-  [[type value] current-state out draw-chan]
-  (case type
-    :move
-    (do
-      (go
-       (>! draw-chan render/clear)
-       (>! out [:draw :circle draw-chan]))
-      (condp = (:step current-state)
-        0 (do
-            (render/draw-point-coords value draw-chan)
-            current-state)
-        1 (let [p1 (:p1 current-state)]
-            (render/draw-circle p1 value draw-chan)
-            current-state)))
-    :click
-    (condp = (:step current-state)
-      0 (do
-          (go (>! draw-chan render/clear)
-              (>! out [:draw :circle draw-chan])
-              (>! draw-chan [(dt/style {:stroke :red
-                                        :fill :grey-2})
-                             (dt/point value)]))
-          {:step 1 :p1 value}) 
-      1 (let [p1 (:p1 current-state)
-              circle (dt/circle p1 (geom/distance p1 value))]
-          (go (>! out circle)
-              (>! out [:draw :circle draw-chan]))
-          {:step 0}))))
 
 (defn reflection-state-transitioner
   "see point-state-transitioner"
@@ -773,51 +405,40 @@ return new state"
               (let [new-state
                     (condp = item
                       :none state
-                      :point
-                      (point-state-transitioner [type value]
-                                                state return-message-chan draw-chan)
-                      :line
-                      (line-state-transitioner [type value]
-                                               state return-message-chan draw-chan)
-                      :triangle
-                      (tri-state-transitioner [type value]
-                                              state return-message-chan draw-chan)
                       :circumcircle
-                      (circumcircle-state-transitioner [type value]
-                                                       state return-message-chan draw-chan)
+                      (t/circumcircle
+                       [type value]
+                       state return-message-chan draw-chan)
                       :orthocenter
-                      (orthocenter-state-transitioner [type value]
-                                                      state return-message-chan draw-chan)
+                      (t/orthocenter [type value]
+                       state return-message-chan draw-chan)
                       :euler-line
-                      (euler-state-transitioner [type value]
-                                                state return-message-chan draw-chan)
+                      (t/euler [type value]
+                       state return-message-chan draw-chan)
                       :nine-pt-circle
-                      (nine-pt-state-transitioner [type value]
-                                                  state return-message-chan draw-chan)
+                      (t/nine-pt [type value]
+                       state return-message-chan draw-chan)
                       :centroid
-                      (centroid-state-transitioner [type value]
-                                                   state return-message-chan draw-chan)
+                      (t/centroid [type value]
+                       state return-message-chan draw-chan)
                       :incircle
-                      (incircle-state-transitioner [type value]
-                                                   state return-message-chan draw-chan)
-                      :circle
-                      (circle-state-transitioner [type value]
-                                                 state return-message-chan draw-chan)
+                      (t/incircle [type value]
+                       state return-message-chan draw-chan)
                       :reflection
                       (reflection-state-transitioner [type value]
-                                                     state return-message-chan draw-chan)
+                       state return-message-chan draw-chan)
                       :inversion
                       (inversion-state-transitioner [type value]
-                                                    state return-message-chan draw-chan)
+                       state return-message-chan draw-chan)
                       :homothety
                       (homothety-state-transitioner [type value]
-                                                    state return-message-chan draw-chan)
+                       state return-message-chan draw-chan)
                       :rotation
                       (rotation-state-transitioner [type value]
-                                                   state return-message-chan draw-chan)
+                       state return-message-chan draw-chan)
                       :translation
                       (translation-state-transitioner [type value]
-                                                      state return-message-chan draw-chan)
+                       state return-message-chan draw-chan)
                       (do
                         (println "warning: iten not handled: " item)
                         state))]

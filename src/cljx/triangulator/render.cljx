@@ -292,19 +292,20 @@ a pure function"
            (dt/triangle p1 p2 p3)])))
 
 (defn style-circle
-  "style an excircle"
-  [style excircle]
-  (let [i (:center excircle)
-        f1 (get-in excircle [:feet 0])
-        f2 (get-in excircle [:feet 1])
-        f3 (get-in excircle [:feet 2])]
-    [ ;; draw excircle, excenter, exradii and feet
+  "merge style and geometry of a circle into drawing commands
+returned as a vector"
+  [style circle]
+  (let [i (:center circle)
+        f1 (get-in circle [:feet 0])
+        f2 (get-in circle [:feet 1])
+        f3 (get-in circle [:feet 2])]
+    [;; draw circle, center, radii and feet
      ;; circle
      (dt/style (:circle style))
-     (dt/circle i (:radius excircle))
+     (dt/circle i (:radius circle))
      ;; center
      (dt/style (:center style))
-     (dt/point (:center excircle))
+     (dt/point (:center circle))
      ;; radii
      (dt/style (get-in style [:radii 0]))
      (dt/line [i f1])
@@ -419,33 +420,7 @@ Uses geometry styles found in style."
                      (dt/line (:e3 ang-bi))]))
 
             (contains? options :incircle)
-            (into (let [incircle (:incircle triangle)
-                        i (:center incircle)
-                        f1 (get-in triangle [:incircle :feet 0])
-                        f2 (get-in triangle [:incircle :feet 1])
-                        f3 (get-in triangle [:incircle :feet 2])
-                        style (:incircle tri-style)]
-                    [;; draw incircle, incenter, inradii and feet
-                     ;; circle
-                     (dt/style (:circle style))
-                     (dt/circle i (:radius incircle))
-                     ;; center
-                     (dt/style (:center style))
-                     (dt/point i)
-                     ;; radii
-                     (dt/style (get-in style [:radii 0]))
-                     (dt/line [i f1])
-                     (dt/style (get-in style [:radii 1]))
-                     (dt/line [i f2])
-                     (dt/style (get-in style [:radii 2]))
-                     (dt/line [i f3])
-                     ;; feet
-                     (dt/style (get-in style [:feet 0]))
-                     (dt/point f1)
-                     (dt/style (get-in style [:feet 1]))
-                     (dt/point f2)
-                     (dt/style (get-in style [:feet 2]))
-                     (dt/point f3)]))
+            (into (style-circle (:incircle tri-style) (:incircle triangle)))
             
             (contains? options :excircle)
             (into (concat
@@ -483,7 +458,7 @@ a map of options to include"
      (draw-edge-data B C :e2 line-options)
      (draw-edge-data C A :e3 line-options))))
 
-(defn draw-tri-2
+(defn draw-triangle
   "new draw-tri
 todo: accept a style map a s an argument
 for now use locally deffed tri-style"
