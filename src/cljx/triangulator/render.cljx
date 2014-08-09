@@ -207,10 +207,16 @@ a pure function"
                   (dt/style {:fill :grey-2})
                   (dt/line [s1 s2]) (dt/point q1) (dt/point q2) (dt/point s1) (dt/point s2)))))
 
-(defn draw-line-2
-  "new draw-line"
+(defn draw-edge
+  "draw given edge with given options"
   [p1 p2 draw-chan side options]
   (let [data (draw-edge-data p1 p2 side options)]
+    (go (>! draw-chan data))))
+
+(defn draw-line-2
+  "draw line from p1 to p2 using given style and options"
+  [p1 p2 draw-chan options style]
+  (let [data (draw-line-data p1 p2 options style)]
     (go (>! draw-chan data))))
 
 (defn draw-line

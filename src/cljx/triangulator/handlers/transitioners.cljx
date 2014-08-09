@@ -28,7 +28,7 @@
         1 (let [p1 (:p1 current-state)
                 p2 value]
             (go (>! draw-chan render/clear))
-            (render/draw-line-2 p1 p2 draw-chan :e1 line-props)
+            (render/draw-edge p1 p2 draw-chan :e1 line-props)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)

@@ -20,62 +20,72 @@
   (case type
     :move
     (do
-      (go (>! draw-chan render/clear))
       (condp = (:step current-state)
         0 (do
+            (go (>! draw-chan render/clear))
             (render/draw-point-coords value draw-chan)
             current-state)
-        1 (let [p1 (:p1 current-state)]
-            (render/draw-line p1 value draw-chan #{:extended-full} :yellow)
+        1 (let [p1 (:p1 current-state)
+                p2 value]
+            (go (>! draw-chan render/clear))
+            (render/draw-line-2 p1 p2 draw-chan
+                                #{:line :extended}
+                                {:line {:stroke :yellow}})
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
-                p3 value
-                ref (trans/reflection p1 p2)
-                image (ref p3)]
-            (render/draw-line p1 p2 draw-chan #{:extended-full} :yellow)
-            (render/draw-line p3 image draw-chan #{:midpoint} :lt-grey)
+                A value
+                ref (:ref current-state)
+                imageA (ref A)]
+            (go (>! draw-chan render/clear))
+            (render/draw-line-2 p1 p2 draw-chan #{:line :extended}
+                                {:line {:stroke :yellow}})
+            (render/draw-line-2 A imageA draw-chan
+                                #{:midpoint :endpoint1 :endpoint2 :line}
+                                {:line {:stroke :lt-grey}
+                                 :endpoint1 {:stroke :grey-3 :fill :red}
+                                 :endpoint2 {:stroke :grey-3 :fill :red}
+                                 :midpoint {:stroke :grey-3 :fill :lt-grey}})
             current-state)
-        3 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                A (:A current-state)
+        3 (let [{:keys [p1 p2 A]} current-state
                 B value
-                ref (trans/reflection p1 p2)
-                imageA (ref A)
-                imageB (ref B)]
-            (render/draw-line p1 p2 draw-chan #{:extended-full} :yellow)
-            (render/draw-line A imageA draw-chan #{:midpoint} :lt-grey)
-            (render/draw-line B imageB draw-chan #{:midpoint} :lt-grey)
-            (render/draw-line A B draw-chan #{} :red)
-            (render/draw-line imageA imageB draw-chan #{} :red)
+                ref (:ref current-state)
+                A' (ref A)
+                B' (ref B)]
+            (go (>! draw-chan render/clear))
+            (render/draw-line-2 p1 p2 draw-chan #{:line :extended}
+                                {:line {:stroke :yellow}})
+            (render/draw-edge A  B  draw-chan :e1 #{:line :endpoint1 :endpoint2})
+            (render/draw-edge A' B' draw-chan :e1 #{:line :endpoint1 :endpoint2})
             current-state)
-        4 (let [p1 (:p1 current-state)
-                p2 (:p2 current-state)
-                A (:A current-state)
-                B (:B current-state)
+        4 (let [{:keys [p1 p2 A B ref]} current-state
                 C value
-                ref (trans/reflection p1 p2)
-                imageA (ref A)
-                imageB (ref B)
-                imageC (ref C)]
-            (render/draw-line p1 p2 draw-chan #{:extended-full} :yellow)
-            (render/draw-line A B draw-chan #{} :red)
-            (render/draw-line B C draw-chan #{} :green)
-            (render/draw-line C A draw-chan #{} :blue)
-            (render/draw-line imageA imageB draw-chan #{} :red)
-            (render/draw-line imageB imageC draw-chan #{} :green)
-            (render/draw-line imageC imageA draw-chan #{} :blue)
-            current-state)))
+                A' (ref A)
+                B' (ref B)
+                C' (ref C)]
+            (go (>! draw-chan render/clear))
+            (render/draw-line-2 p1 p2 draw-chan #{:line :extended}
+                                {:line {:stroke :yellow}})
+            (render/draw-triangle A  B  C  draw-chan #{:fill})
+            (render/draw-triangle A' B' C' draw-chan #{:fill})
+            current-state)
+        5 current-state))
     :click
     (condp = (:step current-state)
       0 (do
           (go (>! draw-chan render/clear))
           (render/draw-point value draw-chan {:stroke :lt-grey :fill :red})
           {:step 1 :p1 value})
-      1 (assoc current-state :p2 value :step 2)
+      1 (let [p1 (:p1 current-state)
+              p2 value
+              ref (trans/reflection p1 p2)]
+          (assoc current-state :p2 p2 :step 2 :ref ref))
       2 (assoc current-state :A value :step 3)
       3 (assoc current-state :B value :step 4)
-      4 {:step 0})))
+      4 (assoc current-state :step 5)
+      5 (do
+          (go (>! draw-chan render/clear))
+          {:step 0}))))
 
 (defn inversion-state-transitioner
   "see point-state-transitioner"
@@ -325,23 +335,23 @@
         0 (do
             (render/draw-point-coords value draw-chan)
             current-state)
-        1 (let [pi (:pi current-state)]
-            (render/draw-line pi value draw-chan nil :yellow)
+        1 (let [pi (:pi current-state)
+                pf value]
+            (render/draw-line-2 pi pf draw-chan
+                                #{:line :endpoint1 :endpoint2}
+                                {:line {:stroke :yellow}
+                                 :endpoint1 {:stroke :grey-3 :fill :lt-grey}
+                                 :endpoint2 {:stroke :grey-3 :fill :lt-grey}})
             current-state)
-        2 (let [pi (:pi current-state)
-                pf (:pf current-state)
+        2 (let [{:keys [pi pf translation]} current-state
                 p1 value
-                translation (:translation current-state)
                 image (translation p1)]
             (render/draw-line pi pf draw-chan nil :yellow)
             (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
             (render/draw-point image draw-chan {:stroke :lt-grey :fill :red})
             current-state)
-        3 (let [pi (:pi current-state)
-                pf (:pf current-state)
-                p1 (:p1 current-state)
+        3 (let [{:keys [pi pf p1 translation]} current-state
                 p2 value
-                translation (:translation current-state)
                 image1 (translation p1)
                 image2 (translation p2)]
             (render/draw-line pi pf draw-chan nil :yellow)
@@ -352,12 +362,8 @@
             (render/draw-line p1 p2 draw-chan nil :red)
             (render/draw-line image1 image2 draw-chan nil :red)
             current-state)
-        4 (let [pi (:pi current-state)
-                pf (:pf current-state)
-                p1 (:p1 current-state)
-                p2 (:p2 current-state)
+        4 (let [{:keys [pi pf p1 p2 translation]} current-state
                 p3 value
-                translation (:translation current-state)
                 image1 (translation p1)
                 image2 (translation p2)
                 image3 (translation p3)]
