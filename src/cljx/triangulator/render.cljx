@@ -213,63 +213,11 @@ a pure function"
   (let [data (draw-edge-data p1 p2 side options)]
     (go (>! draw-chan data))))
 
-(defn draw-line-2
+(defn draw-line
   "draw line from p1 to p2 using given style and options"
   [p1 p2 draw-chan options style]
   (let [data (draw-line-data p1 p2 options style)]
     (go (>! draw-chan data))))
-
-(defn draw-line
-  "draw line between p1 and p2"
-  [p1 p2 draw-chan options color]
-  (let [m (geom/midpoint p1 p2)
-        l (geom/distance p1 p2)
-        [q1 q2 s1 s2] (geom/perp-bisector [p1 p2])]
-    (go (>! draw-chan
-            [(dt/style {:stroke :grey-3 :fill color})
-             (dt/point p1)
-             (dt/style {:stroke color :fill :grey-2})
-             (dt/line [p1 p2])])
-        (when (contains? options :endpoint)
-          (go (>! draw-chan
-                  [(dt/point p2)])))
-        (when (contains? options :midpoint)
-          (>! draw-chan
-            [(dt/style {:stroke :grey-3 :fill :grey-2})
-             (dt/point m)]))
-        (when (contains? options :perp-bisector)
-          (let [[p3 p4] (geom/extend-line s1 s2)]
-            (>! draw-chan
-                [(dt/style {:stroke :lt-grey})
-                 (dt/line [p3 p4])
-                 (dt/style {:stroke :grey-3 :fill :grey-2})
-                 (dt/point m)])))
-        (when (contains? options :circles)
-          (>! draw-chan
-              [(dt/style {:stroke :lt-red
-                          :fill :lt-blue})
-               (dt/circle p1 l)
-               (dt/circle p2 l)
-               (dt/circle m (/ l 2))
-               (dt/style {:fill :grey-2})
-
-               (dt/line [s1 s2])
-               (dt/point q1)
-               (dt/point q2)
-               (dt/point s1)
-               (dt/point s2)]))
-        (when (contains? options :extended)
-          (let [[p3 p4] (geom/extend-line p1 p2)]
-            (>! draw-chan
-                [(dt/style {:stroke :lt-grey})
-                 (dt/line [p1 p3])
-                 (dt/line [p2 p4])])))
-        (when (contains? options :extended-full)
-          (let [[p3 p4] (geom/extend-line p1 p2)]
-            (>! draw-chan
-                [(dt/style {:stroke color})
-                 (dt/line [p1 p3])
-                 (dt/line [p2 p4])]))))))
 
 (defn draw-circle
   "draw item draw point and coords of value"
