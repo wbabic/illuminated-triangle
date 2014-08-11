@@ -16,7 +16,7 @@ goog.addDependency("../triangulator/protocols.js", ['triangulator.protocols'], [
 goog.addDependency("../triangulator/geometry/complex.js", ['triangulator.geometry.complex'], ['triangulator.geometry', 'cljs.core', 'triangulator.protocols']);
 goog.addDependency("../triangulator/render.js", ['triangulator.render'], ['triangulator.datatypes', 'triangulator.geometry.triangle', 'triangulator.geometry', 'cljs.core', 'cljs.core.async', 'triangulator.geometry.transforms', 'triangulator.geometry.complex']);
 goog.addDependency("../triangulator/handlers/transitioners.js", ['triangulator.handlers.transitioners'], ['triangulator.datatypes', 'triangulator.render', 'triangulator.geometry.triangle', 'triangulator.geometry', 'cljs.core', 'cljs.core.async', 'triangulator.geometry.transforms', 'triangulator.geometry.complex']);
-goog.addDependency("../triangulator/handlers.js", ['triangulator.handlers'], ['triangulator.datatypes', 'triangulator.render', 'triangulator.geometry.triangle', 'triangulator.geometry', 'cljs.core', 'cljs.core.async', 'triangulator.geometry.transforms', 'triangulator.geometry.complex', 'triangulator.handlers.transitioners']);
+goog.addDependency("../triangulator/handlers.js", ['triangulator.handlers'], ['triangulator.datatypes', 'triangulator.render', 'triangulator.geometry', 'cljs.core', 'cljs.core.async', 'triangulator.geometry.transforms', 'triangulator.geometry.complex', 'triangulator.handlers.transitioners']);
 goog.addDependency("../triangulator/events.js", ['triangulator.events'], ['goog.dom', 'cljs.core', 'cljs.core.async', 'goog.events']);
 goog.addDependency("../om/dom.js", ['om.dom'], ['cljs.core']);
 goog.addDependency("../triangulator/definitions.js", ['triangulator.definitions'], ['cljs.core']);

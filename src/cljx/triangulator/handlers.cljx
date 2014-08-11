@@ -1,7 +1,6 @@
 (ns triangulator.handlers
   (:require [triangulator.datatypes :as dt]
             [triangulator.geometry :as geom]
-            [triangulator.geometry.triangle :as tri]
             [triangulator.geometry.transforms :as trans]
             [triangulator.geometry.complex :as complex]
             [triangulator.render :as render]

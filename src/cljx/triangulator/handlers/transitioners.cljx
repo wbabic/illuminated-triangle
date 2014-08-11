@@ -1,9 +1,5 @@
 (ns triangulator.handlers.transitioners
   (:require [triangulator.datatypes :as dt]
-            [triangulator.geometry :as geom]
-            [triangulator.geometry.triangle :as tri]
-            [triangulator.geometry.transforms :as trans]
-            [triangulator.geometry.complex :as complex]
             [triangulator.render :as render]
      #+clj  [clojure.core.async :as async :refer [>! <! put! chan alts! go]]
      #+cljs [cljs.core.async :as async :refer [>! <! put! chan alts!]]
