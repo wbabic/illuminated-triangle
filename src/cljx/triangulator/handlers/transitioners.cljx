@@ -11,7 +11,7 @@
 
 (defn property-tranistionaer
   "returns a transitioner that creates triangles drawing given properties returning new state"
-  [line-props tri-props]
+  [line-options tri-options]
   (fn [[type value] current-state out draw-chan]
     (case type
     :move
@@ -24,13 +24,13 @@
         1 (let [p1 (:p1 current-state)
                 p2 value]
             (go (>! draw-chan render/clear))
-            (render/draw-edge p1 p2 draw-chan :e1 line-props)
+            (render/draw-edge p1 p2 draw-chan :e1 line-options)
             current-state)
         2 (let [p1 (:p1 current-state)
                 p2 (:p2 current-state)
                 p3 value]
             (go (>! draw-chan render/clear))
-            (render/draw-triangle p1 p2 p3 draw-chan tri-props)
+            (render/draw-triangle p1 p2 p3 draw-chan tri-options)
             current-state)
         3 current-state))
     :click
@@ -49,34 +49,36 @@
           (go (>! draw-chan render/clear))
           {:step 0})))))
 
+(def line-options #{:line :endpoint1 :endpoint2})
+
 (def orthocenter
   (property-tranistionaer
-   #{:line :endpoint1 :endpoint2 :extended }
+   (conj line-options :extended)
    #{:altitudes :orthocenter :fill}))
 
 (def nine-pt
   (property-tranistionaer
-   #{:line :midpoint :extended :endpoint1 :endpoint2}
+   (conj line-options :extended :midpoint)
    #{:altitudes :perp-bisector :orthocenter
      :circumcenter :nine-pt-circle :fill}))
 
 (def euler
   (property-tranistionaer
-   #{:line :endpoint1 :endpoint2 :extended}
+   (conj line-options :extended)
    #{:altitudes :perp-bisector :orthocenter
      :circumcenter :euler :fill}))
 
 (def circumcircle
   (property-tranistionaer
-   #{:line :perp-bisector :midpoint :endpoint1 :endpoint2}
+   (conj line-options :perp-bisector :midpoint)
    #{:circumcenter :circumcircle :perp-bisector :fill}))
 
 (def centroid
   (property-tranistionaer
-   #{:line :endpoint1 :endpoint2}
-   #{:medians :centroid}))
+   (conj line-options :midpoint)
+   #{:midpoints :medians :centroid}))
 
 (def incircle
   (property-tranistionaer
-   #{:line :endpoint1 :endpoint2}
+   line-options
    #{:ang-bisector :incircle :excircle :fill}))

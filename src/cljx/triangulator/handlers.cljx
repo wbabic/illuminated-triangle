@@ -373,7 +373,7 @@
                 i3 (translation p3)]
             (go (>! draw-chan render/clear))
             (render/draw-line pi pf draw-chan #{:line :endpoint1 :endpoint2} trans-line-style)
-            (render/draw-triangle p1 p2 p3  draw-chan #{:fill})
+            (render/draw-triangle p1 p2 p3 draw-chan #{:fill})
             (render/draw-triangle i1 i2 i3 draw-chan #{:fill})
             current-state)
         5 current-state))

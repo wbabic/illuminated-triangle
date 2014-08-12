@@ -120,13 +120,16 @@ for the given three points"
 
 (defn add-options
   "returns a new map with added geommetric options to the existing triangle,
-assuming the vertices have been added"
+assuming the vertices and segments have been added"
   [tri options]
   (let [[A B C :as t] (:vertices tri)
         tri
         (cond-> tri
                 (contains? options :centroid)
                 (assoc :centroid (centroid t))
+
+                (contains? options :midpoints)
+                (assoc :midpoints (midpoints (:segments tri)))
 
                 (contains? options :circumcenter)
                 (assoc :circumcenter (circumcenter t))
@@ -173,6 +176,9 @@ assuming the vertices have been added"
 
   (def tri-1 (add-options tri #{:circumcenter :orthocenter :altitudes :centroid :nine-pt-circle}))
   (clojure.pprint/pprint tri-1)
+
+  (def tri-2 (add-options tri #{:midpoints :medians :centroid}))
+  (clojure.pprint/pprint tri-2)
 
   (ang-bisector-segment t)
   (ang-bisectors t)

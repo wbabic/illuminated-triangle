@@ -132,45 +132,7 @@
                      (dt/line [value (project-y value)])
                      (dt/point value)])))
 
- (defn draw-edge-data
-  "data to draw line between p1 and p2
-using style from options,
-a pure function"
-  [p1 p2 side options]
-  (let [m (geom/midpoint p1 p2)
-        l (geom/distance p1 p2)
-        [q1 q2 s1 s2] (geom/perp-bisector [p1 p2])
-        [p3 p4] (geom/extend-line p1 p2)
-        style (get tri-style side)]
-
-    (cond-> []
-            (contains? options :line)
-            (conj (dt/style (:line style)) (dt/line [p1 p2]))
-
-            (contains? options :endpoint1)
-            (conj (dt/style (:endpoint1 style)) (dt/point p1))
-
-            (contains? options :endpoint2)
-            (conj (dt/style (:endpoint2 style)) (dt/point p2))
-
-            (contains? options :midpoint)
-            (conj (dt/style (:midpoint style)) (dt/point m))
-
-            (contains? options :perp-bisector)
-            (conj (dt/style (:perp-bisector style)) (dt/line (geom/extend-line s1 s2)))
-
-            (contains? options :extended)
-            (conj (dt/style (:extended style))
-                  (dt/line [p1 p3])
-                  (dt/line [p2 p4]))
-
-            (contains? options :circles)
-            (conj (dt/style (:circles style))
-                  (dt/circle p1 l) (dt/circle p2 l) (dt/circle m (/ l 2))
-                  (dt/style {:fill :grey-2})
-                  (dt/line [s1 s2]) (dt/point q1) (dt/point q2) (dt/point s1) (dt/point s2)))))
-
- (defn draw-line-data
+(defn draw-line-data
   "data to draw line between p1 and p2
 using style from options,
 a pure function"
@@ -206,6 +168,14 @@ a pure function"
                   (dt/circle p1 l) (dt/circle p2 l) (dt/circle m (/ l 2))
                   (dt/style {:fill :grey-2})
                   (dt/line [s1 s2]) (dt/point q1) (dt/point q2) (dt/point s1) (dt/point s2)))))
+
+(defn draw-edge-data
+  "data to draw line between p1 and p2
+using style from options,
+a pure function"
+  [p1 p2 side options]
+  (let [style (get tri-style side)]
+    (draw-line-data p1 p2 options style)))
 
 (defn draw-edge
   "draw given edge with given options"
@@ -280,7 +250,7 @@ returned as a vector"
 and given set of options,
 or returns empty vector if no options handled, ignoring any unkwown options.
 Options handled: :orthocenter, :altitudes, fill,
-:circumcenter, :circumcircle.
+:centroid :medians :circumcenter, :circumcircle.
 Assumes the geometry in triangle has already been built.
 Uses geometry styles found in style."
   [triangle options tri-style]
@@ -288,6 +258,7 @@ Uses geometry styles found in style."
         G (:centroid triangle)
         H (:orthocenter triangle)
         O (:circumcenter triangle)
+        [A1 B1 C1 :as midpoints] (:midpoints triangle)
         [D E F :as feet] (:altitudes triangle)]
     (cond-> []
             (contains? options :fill)
@@ -307,12 +278,17 @@ Uses geometry styles found in style."
              (dt/style (:centroid-fill-2 tri-style))
              (dt/triangle B G C)
              (dt/style (:centroid-fill-3 tri-style))
-             (dt/triangle C G A)
-             ;; draw medians
-             (dt/style (:medians tri-style))
-             (dt/line [A G])
-             (dt/line [B G])
-             (dt/line [C G]))
+             (dt/triangle C G A))
+
+            ;; draw medians
+            (contains? options :medians)
+            (into
+             (let [;; line options for medians
+                   line-options #{:line :endpoint2}
+                   style (:medians tri-style)]
+               (concat (draw-line-data A A1 line-options style)
+                       (draw-line-data B B1 line-options style)
+                       (draw-line-data C C1 line-options style))))
             
             (contains? options :altitudes)
             (into
@@ -390,22 +366,21 @@ Uses geometry styles found in style."
 a merging of style and geometry
 taking the three vertices as input and
 a map of options to include"
-  [A B C options]
-  (let [tri-options options
-        line-options #{:line :endpoint2}
-        ;; build up line options
+  [A B C tri-options]
+  (let [triangle (tri/triangle A B C)
+        line-options #{:line :endpoint1}
         line-options (cond-> line-options
-                             (contains? options :perp-bisector)
+                             (contains? tri-options :perp-bisector)
                              (conj :perp-bisector :midpoint)
 
-                             (or (contains? options :orthocenter)
-                                 (contains? options :incircle)
-                                 (contains? options :excircle))
-                             (conj :extended))
-        triangle (tri/triangle A B C)
+                             (or (contains? tri-options :orthocenter)
+                                 (contains? tri-options :incircle)
+                                 (contains? tri-options :excircle))
+                             (conj :extended)
+                             )
         ;; build up any required geometric data into triangle
-        triangle (tri/add-options triangle options)
-        triangle-data (expand triangle options tri-style)]
+        triangle (tri/add-options triangle tri-options)
+        triangle-data (expand triangle tri-options tri-style)]
     (concat
      triangle-data
      (draw-edge-data A B :e1 line-options)
@@ -416,8 +391,8 @@ a map of options to include"
   "new draw-tri
 todo: accept a style map a s an argument
 for now use locally deffed tri-style"
-  [p1 p2 p3 draw-chan options]
-  (let [data (tri-data p1 p2 p3 options)]
+  [p1 p2 p3 draw-chan tri-options]
+  (let [data (tri-data p1 p2 p3 tri-options)]
     (go (>! draw-chan data))))
 
 (comment
@@ -427,6 +402,9 @@ for now use locally deffed tri-style"
   (clojure.pprint/pprint (:altitudes tri-style))
   (clojure.pprint/pprint
    (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid :fill}))
+
+  (clojure.pprint/pprint
+   (tri-data [0 0] [1 0] [0 1] #{:midpoints :medians :centroid}))
   
   (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid})
 
