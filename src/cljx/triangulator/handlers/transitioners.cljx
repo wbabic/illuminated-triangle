@@ -51,6 +51,11 @@
 
 (def line-options #{:line :endpoint1 :endpoint2})
 
+(def triangle
+  (property-tranistionaer
+   line-options
+   #{:fill}))
+
 (def orthocenter
   (property-tranistionaer
    (conj line-options :extended)

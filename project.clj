@@ -15,7 +15,7 @@
                  [org.clojure/core.match "0.2.1"]
                  [expresso "0.2.0"]]
 
-  :source-paths ["src/cljx" "src/cljs"]
+  :source-paths ["src/cljs" "target/classes"]
   
   :resource-paths ["resources"]
 
@@ -30,23 +30,8 @@
     :plugins [[lein-cljsbuild "1.0.3"]
               [com.keminglabs/cljx "0.4.0"]]}}
 
-  :cljsbuild {
-    :builds [{:id "dev"
-              :source-paths ["src/cljs" "target/classes"]
-              :compiler {
-                         :output-to "resources/public/js/main.js"
-                         :output-dir "resources/public/js/out"
-                         :optimizations :none
-                         :source-map true}}
-             {:id "release"
-              :source-paths ["src/cljs" "target/classes"]
-              :compiler {
-                         :output-to "demo/main.js"
-                         :optimizations :advanced
-                         :pertty-print false
-                         :preamble ["react/react.min.js"]
-                         :externs ["react/externs/react.js"]}}]}
-
+  :hooks [cljx.hooks]
+    
   :cljx {:builds [{:source-paths ["src/cljx"]
                    :output-path "target/classes"
                    :rules :clj}
@@ -54,4 +39,20 @@
                   {:source-paths ["src/cljx"]
                    :output-path "target/classes"
                    :rules :cljs}]}
-  :hooks [cljx.hooks])
+  
+  :cljsbuild {
+    :builds [{:id "dev"
+              :source-paths ["src/cljx" "target/classes"]
+              :compiler {
+                         :output-to "resources/public/js/main.js"
+                         :output-dir "resources/public/js/out"
+                         :optimizations :none
+                         :source-map true}}
+             {:id "release"
+              :source-paths ["src/cljx" "target/classes"]
+              :compiler {
+                         :output-to "demo/main.js"
+                         :optimizations :advanced
+                         :pertty-print false
+                         :preamble ["react/react.min.js"]
+                         :externs ["react/externs/react.js"]}}]})

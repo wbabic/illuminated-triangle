@@ -206,9 +206,9 @@
           (go (>! draw-chan render/clear))
           {:step 0}))))
 
-(def hom-line-style {:line {:stroke :lt-grey}})
+(def dilatation-line-style {:line {:stroke :lt-grey}})
 
-(defn homothety-state-transitioner
+(defn dilatation-state-transitioner
   "see point-state-transitioner"
   [[type value] current-state out draw-chan]
   (case type
@@ -219,31 +219,141 @@
             (go (>! draw-chan render/clear))
             (render/draw-point-coords value draw-chan)
             current-state)
-        1 (let [{:keys [center homothety]} current-state
+        1 (let [{:keys [center dilatation]} current-state
                 p1 value
-                i1 (homothety p1)]
+                i1 (dilatation p1)]
             (go (>! draw-chan render/clear))
-            (render/draw-line center p1 draw-chan #{:line} hom-line-style)
+            (render/draw-line center p1 draw-chan #{:line} dilatation-line-style)
             (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
             (render/draw-point i1 draw-chan {:stroke :lt-grey :fill :red})
             (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
             current-state)
-        2 (let [{:keys [p1 center homothety]} current-state
+        2 (let [{:keys [p1 center dilatation]} current-state
                 p2 value
-                i1 (homothety p1)
-                i2 (homothety p2)]
+                i1 (dilatation p1)
+                i2 (dilatation p2)]
             (go (>! draw-chan render/clear))
-            (render/draw-line center p1 draw-chan #{:line} hom-line-style)
-            (render/draw-line center p2 draw-chan #{:line} hom-line-style)
+            (render/draw-line center p1 draw-chan #{:line} dilatation-line-style)
+            (render/draw-line center p2 draw-chan #{:line} dilatation-line-style)
             (render/draw-edge p1 p2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
             (render/draw-edge i1 i2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
             (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
             current-state)
-        3 (let [{:keys [p1 p2 center homothety]} current-state
+        3 (let [{:keys [p1 p2 center dilatation]} current-state
                 p3 value
-                i1 (homothety p1)
-                i2 (homothety p2)
-                i3 (homothety p3)]
+                i1 (dilatation p1)
+                i2 (dilatation p2)
+                i3 (dilatation p3)]
+            (go (>! draw-chan render/clear))
+            (render/draw-triangle p1 p2 p3 draw-chan #{:fill})
+            (render/draw-triangle i1 i2 i3 draw-chan #{:fill})
+            (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
+            current-state)
+        4 current-state))
+    :click
+    (condp = (:step current-state)
+      0 (let [k (/ -2)
+              center value
+              dilatation (complex/homothety center k)]
+          (assoc current-state :step 1 :center center :dilatation dilatation))
+      1 (assoc current-state :step 2 :p1 value)
+      2 (assoc current-state :step 3 :p2 value)
+      3 (assoc current-state :step 4)
+      4 (do
+          (go (>! draw-chan render/clear))
+          {:step 0}))))
+
+(defn dilatation1-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (condp = (:step current-state)
+        0 (do
+            (go (>! draw-chan render/clear))
+            (render/draw-point-coords value draw-chan)
+            current-state)
+        1 (let [{:keys [center dilatation]} current-state
+                p1 value
+                i1 (dilatation p1)]
+            (go (>! draw-chan render/clear))
+            (render/draw-line center p1 draw-chan #{:line} dilatation-line-style)
+            (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
+            (render/draw-point i1 draw-chan {:stroke :lt-grey :fill :red})
+            (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
+            current-state)
+        2 (let [{:keys [p1 center dilatation]} current-state
+                p2 value
+                i1 (dilatation p1)
+                i2 (dilatation p2)]
+            (go (>! draw-chan render/clear))
+            (render/draw-line center p1 draw-chan #{:line} dilatation-line-style)
+            (render/draw-line center p2 draw-chan #{:line} dilatation-line-style)
+            (render/draw-edge p1 p2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
+            (render/draw-edge i1 i2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
+            (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
+            current-state)
+        3 (let [{:keys [p1 p2 center dilatation]} current-state
+                p3 value
+                i1 (dilatation p1)
+                i2 (dilatation p2)
+                i3 (dilatation p3)]
+            (go (>! draw-chan render/clear))
+            (render/draw-triangle p1 p2 p3 draw-chan #{:fill})
+            (render/draw-triangle i1 i2 i3 draw-chan #{:fill})
+            (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
+            current-state)
+        4 current-state))
+    :click
+    (condp = (:step current-state)
+      0 (let [k (/ -2)
+              center value
+              dilatation (complex/homothety center k)]
+          (assoc current-state :step 1 :center center :dilatation dilatation))
+      1 (assoc current-state :step 2 :p1 value)
+      2 (assoc current-state :step 3 :p2 value)
+      3 (assoc current-state :step 4)
+      4 (do
+          (go (>! draw-chan render/clear))
+          {:step 0}))))
+
+(defn dilatation2-state-transitioner
+  "see point-state-transitioner"
+  [[type value] current-state out draw-chan]
+  (case type
+    :move
+    (do
+      (condp = (:step current-state)
+        0 (do
+            (go (>! draw-chan render/clear))
+            (render/draw-point-coords value draw-chan)
+            current-state)
+        1 (let [{:keys [center dilatation]} current-state
+                p1 value
+                i1 (dilatation p1)]
+            (go (>! draw-chan render/clear))
+            (render/draw-line center p1 draw-chan #{:line} dilatation-line-style)
+            (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red})
+            (render/draw-point i1 draw-chan {:stroke :lt-grey :fill :red})
+            (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
+            current-state)
+        2 (let [{:keys [p1 center dilatation]} current-state
+                p2 value
+                i1 (dilatation p1)
+                i2 (dilatation p2)]
+            (go (>! draw-chan render/clear))
+            (render/draw-line center p1 draw-chan #{:line} dilatation-line-style)
+            (render/draw-line center p2 draw-chan #{:line} dilatation-line-style)
+            (render/draw-edge p1 p2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
+            (render/draw-edge i1 i2 draw-chan :e1 #{:line :endpoint1 :endpoint2})
+            (render/draw-point center draw-chan {:stroke :lt-grey :fill :yellow})
+            current-state)
+        3 (let [{:keys [p1 p2 center dilatation]} current-state
+                p3 value
+                i1 (dilatation p1)
+                i2 (dilatation p2)
+                i3 (dilatation p3)]
             (go (>! draw-chan render/clear))
             (render/draw-triangle p1 p2 p3 draw-chan #{:fill})
             (render/draw-triangle i1 i2 i3 draw-chan #{:fill})
@@ -254,15 +364,14 @@
     (condp = (:step current-state)
       0 (let [k (/ 2)
               center value
-              homothety (complex/homothety center k)]
-          (assoc current-state :step 1 :center center :homothety homothety))
+              dilatation (complex/homothety center k)]
+          (assoc current-state :step 1 :center center :dilatation dilatation))
       1 (assoc current-state :step 2 :p1 value)
       2 (assoc current-state :step 3 :p2 value)
       3 (assoc current-state :step 4)
       4 (do
           (go (>! draw-chan render/clear))
           {:step 0}))))
-
 
 ;; rotation specific style
 (def rot-line-style {:line {:stroke :lt-grey}
@@ -410,6 +519,10 @@
               (let [new-state
                     (condp = item
                       :none state
+                      :triangle
+                      (t/triangle
+                       [type value]
+                       state return-message-chan draw-chan)
                       :circumcircle
                       (t/circumcircle
                        [type value]
@@ -435,14 +548,20 @@
                       :inversion
                       (inversion-state-transitioner [type value]
                        state return-message-chan draw-chan)
-                      :homothety
-                      (homothety-state-transitioner [type value]
+                      :dilatation
+                      (dilatation-state-transitioner [type value]
                        state return-message-chan draw-chan)
                       :rotation
                       (rotation-state-transitioner [type value]
                        state return-message-chan draw-chan)
                       :translation
                       (translation-state-transitioner [type value]
+                       state return-message-chan draw-chan)
+                      :iteration1
+                      (dilatation1-state-transitioner [type value]
+                       state return-message-chan draw-chan)
+                      :iteration2
+                      (dilatation2-state-transitioner [type value]
                        state return-message-chan draw-chan)
                       (do
                         (println "warning: iten not handled: " item)

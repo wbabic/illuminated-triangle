@@ -10,6 +10,10 @@
 ;;            [triangulator.triangle-test]
             ))
 
+(comment
+  (cemerick.piggieback/cljs-repl)
+  )
+
 (defn quick-test []
   (run-tests 'triangulator.geometry-test))
 

@@ -12,17 +12,32 @@
   [{:id :reflection :label "reflection"}
    {:id :translation :label "translation"}
    {:id :rotation :label "rotation"}
-   {:id :homothety :label "homothety"}
+   {:id :dilatation :label "dilatation"}
    {:id :inversion :label "inversion"}])
 
+(def triangle-iterations
+  [{:id :iteration1 :label "G(-2) G(-1/2)"}
+   {:id :iteration2 :label "H(2) H(1/2)"}])
+
+(def triangle
+  [{:id :triangle :label "Create a triangle"}])
+
 (def ui
-  [{:section-name "Properties"
+  [{:section-name "Triangle"
+    :data triangle}
+   {:section-name "Properties"
     :data triangle-properties}
    {:section-name "Transforms"
-    :data triangle-transformations}])
+    :data triangle-transformations}
+   {:section-name "Iterations"
+    :data triangle-iterations}])
 
 (def definition-text
-  {:reflection
+  {:triangle
+   ["Create a triangle"
+    "Click to create a point. Three clicks make a triangle."]
+   
+   :reflection
    ["Reflection in a line"
     "Two taps to create a line of symmetry. Then see the image of the reflection in that line, of a point, a line and a triangle. Move mouse to see image move. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
@@ -34,9 +49,9 @@
    ["Inversion in a circle"
     "Two taps to create a circle. Then see the image of the inversion in that circle of a point, a line and a tringle. Move mouse to see image move. Tap once to fix a point, twice to fix a line. Once line is fixed, moving mouse creates triangles and their images. Additional tap will reset."]
 
-   :homothety
-   ["Homothety with center and ratio k."
-    "One point to determine center. See the images of a line segment for k in [-2 -1 -1/2 1/2 2]. Notice that the images of a line segment are parallel and the ratio of lengths is k. "]
+   :dilatation
+   ["Dilatation"
+    "Dilatation with center and ratio k. One point to determine center. See the images of a line segment for k in -2. Notice that the images of a line segment are parallel and the ratio of lengths is |k|, in this case, 2."]
 
    :translation
    ["Translation by a vector."
@@ -65,4 +80,8 @@
    :nine-pt-circle
    ["Nine point circle"
     "The circumcircle of the orthic triangle. The orthic triangle is the triangle made of the feet of the altitudes. This is also the circumcircle of the midpoints of the edges and the circumcircle of the midpoints from the orthocenter to the vertices. Why?"]
+
+   :iteration1 ["Dilatations about centroid" "Create a triangle and see the iterations of dilatations of triangle by factors of 1/2 and 2 about centroid G:  G(-1/2) G(2)."]
+
+   :iteration2 ["Dilatation about orthocenter" "H(1/2)"]
 })
