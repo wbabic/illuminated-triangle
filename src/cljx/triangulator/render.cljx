@@ -4,6 +4,7 @@
             [triangulator.geometry.triangle :as tri]
             [triangulator.geometry.transforms :as trans]
             [triangulator.geometry.complex :as complex]
+            [triangulator.style :as style]
      #+clj  [clojure.core.async :as async :refer [>! <! chan go]]
      #+cljs [cljs.core.async :as async :refer [>! <! chan]]
      )
@@ -11,97 +12,6 @@
 )
 
 #+cljs (enable-console-print!)
-;; triangle styles
-
-;; oject to color map
-(def color
-  {:p1 :red
-   :p2 :green
-   :p3 :blue
-   :e1-ex :lt-blue
-   :e2-ex :lt-red
-   :e3-ex :lt-green
-   })
-
-;; edge style
-(def common-edge
-  {:midpoint {:stroke :grey-3 :fill :grey-2}
-   :perp-bisector {:stroke :lt-grey}})
-
-(def e1
-  {:e1 (merge common-edge
-              {:line {:stroke (:p3 color)}
-               :endpoint1 {:stroke :grey-3 :fill (:p1 color)}
-               :endpoint2 {:stroke :grey-3 :fill (:p2 color)}
-               :extended {:stroke (:e1-ex color)}})})
-
-(def e2
-  {:e2 (merge common-edge
-              {:line {:stroke (:p1 color)}
-               :endpoint1 {:stroke :grey-3 :fill (:p2 color)}
-               :endpoint2 {:stroke :grey-3 :fill (:p3 color)}
-               :extended {:stroke (:e2-ex color)}})})
-
-(def e3
-  {:e3 (merge common-edge
-              {:line {:stroke (:p2 color)}
-               :endpoint1 {:stroke :grey-3 :fill (:p3 color)}
-               :endpoint2 {:stroke :grey-3 :fill (:p1 color)}
-               :extended {:stroke (:e3-ex color)}})})
-
-;; triangle style
-(def common-tri
-  {:centroid {:stroke :grey-3 :fill :cyan}
-   :centroid-fill-1 {:stroke :grey-3 :fill :lt-blue}
-   :centroid-fill-2 {:stroke :grey-3 :fill :lt-red}
-   :centroid-fill-3 {:stroke :grey-3 :fill :lt-green}
-   :medians {:stroke :grey-3 :fill :cyan}
-   :orthocenter {:stroke :grey-3 :fill :yellow}
-   :orthocentric-midpoints {:stroke :grey-3 :fill :cyan}
-   :nine-pt-circle {:stroke :orange :fill :lt-grey}
-   :circumcenter {:stroke :cyan :fill :pink}
-   :euler {:stroke :pink}
-   :circumcircle {:stroke :pink :fill :lt-grey}
-   :altitudes {:line {:stroke :yellow}
-               :endpoint1 {:stroke :grey-3 :fill :lt-grey}
-               :endpoint2 {:stroke :grey-3 :fill :lt-grey}
-               :extended {:stroke :lt-grey}}
-   :ang-bisector {:stroke :lt-grey}
-   :fill {:fill :lt-blue}
-   :incircle {:center {:stroke :grey-3 :fill :yellow}
-              :circle {:stroke :yellow :fill :lt-grey}
-              :radii [{:stroke :lt-blue}
-                      {:stroke :lt-red}
-                      {:stroke :lt-green}]
-              :feet [{:stroke :grey-3 :fill :grey-3}
-                     {:stroke :grey-3 :fill :grey-3}
-                     {:stroke :grey-3 :fill :grey-3}]}
-   :excircle [{:center {:stroke :grey-3 :fill :yellow}
-               :circle {:stroke :yellow :fill :lt-grey}
-               :radii [{:stroke :lt-blue}
-                       {:stroke :lt-red}
-                       {:stroke :lt-green}]
-               :feet [{:stroke :grey-3 :fill :lt-blue}
-                      {:stroke :grey-3 :fill :lt-red}
-                      {:stroke :grey-3 :fill :lt-green}]}
-              {:center {:stroke :grey-3 :fill :yellow}
-               :circle {:stroke :yellow :fill :lt-grey}
-               :radii [{:stroke :lt-blue}
-                       {:stroke :lt-red}
-                       {:stroke :lt-green}]
-               :feet [{:stroke :grey-3 :fill :lt-blue}
-                      {:stroke :grey-3 :fill :lt-red}
-                      {:stroke :grey-3 :fill :lt-green}]}
-              {:center {:stroke :grey-3 :fill :yellow}
-               :circle {:stroke :yellow :fill :lt-grey}
-               :radii [{:stroke :lt-blue}
-                       {:stroke :lt-red}
-                       {:stroke :lt-green}]
-               :feet [{:stroke :grey-3 :fill :lt-blue}
-                      {:stroke :grey-3 :fill :lt-red}
-                      {:stroke :grey-3 :fill :lt-green}]}]})
-
-(def tri-style (merge e1 e2 e3 common-tri))
 
 (def colors [:red :blue :green])
 
@@ -174,7 +84,7 @@ a pure function"
 using style from options,
 a pure function"
   [p1 p2 side options]
-  (let [style (get tri-style side)]
+  (let [style (get style/tri-style side)]
     (draw-line-data p1 p2 options style)))
 
 (defn draw-edge
@@ -380,7 +290,7 @@ a map of options to include"
                              )
         ;; build up any required geometric data into triangle
         triangle (tri/add-options triangle tri-options)
-        triangle-data (expand triangle tri-options tri-style)]
+        triangle-data (expand triangle tri-options style/tri-style)]
     (concat
      triangle-data
      (draw-edge-data A B :e1 line-options)
@@ -394,10 +304,10 @@ a map of options to include"
     (go (>! draw-chan data))))
 
 (comment
-  (clojure.pprint/pprint tri-style)
+  (clojure.pprint/pprint style/tri-style)
   ;; here we can check the pure data before we even send it to a channel
 
-  (clojure.pprint/pprint (:altitudes tri-style))
+  (clojure.pprint/pprint (:altitudes style/tri-style))
   (clojure.pprint/pprint
    (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid :fill}))
 
@@ -414,9 +324,9 @@ a map of options to include"
 
   (clojure.pprint/pprint
    (expand (tri/add-options (tri/triangle [0 0] [1 0] [0 1]) #{:incircle})
-           #{:incircle} tri-style))
+           #{:incircle} style/tri-style))
 
   (clojure.pprint/pprint
    (expand (tri/add-options (tri/triangle [0 0] [1 0] [0 1]) #{:excircle})
-           #{:excircle} tri-style))
+           #{:excircle} style/tri-style))
 )

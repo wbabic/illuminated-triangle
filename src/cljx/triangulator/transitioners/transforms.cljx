@@ -12,8 +12,8 @@
 
 #+cljs (enable-console-print!)
 
-(defn reflection-state-transitioner
-  "see point-state-transitioner"
+(defn reflection
+  "see point"
   [[type value] current-state out draw-chan]
   (case type
     :move
@@ -85,8 +85,8 @@
           (go (>! draw-chan render/clear))
           {:step 0}))))
 
-(defn inversion-state-transitioner
-  "see point-state-transitioner"
+(defn inversion
+  "see point"
   [[type value] current-state out draw-chan]
   (case type
     :move
@@ -207,8 +207,8 @@
 
 (def dilatation-line-style {:line {:stroke :lt-grey}})
 
-(defn dilatation-state-transitioner
-  "see point-state-transitioner"
+(defn dilatation
+  "see point"
   [[type value] current-state out draw-chan]
   (case type
     :move
@@ -262,8 +262,8 @@
           (go (>! draw-chan render/clear))
           {:step 0}))))
 
-(defn dilatation1-state-transitioner
-  "see point-state-transitioner"
+(defn dilatation1
+  "see point"
   [[type value] current-state out draw-chan]
   (case type
     :move
@@ -317,8 +317,8 @@
           (go (>! draw-chan render/clear))
           {:step 0}))))
 
-(defn dilatation2-state-transitioner
-  "see point-state-transitioner"
+(defn dilatation2
+  "see point"
   [[type value] current-state out draw-chan]
   (case type
     :move
@@ -378,8 +378,8 @@
 
 (def rot-point-style {:stroke :lt-grey :fill :yellow})
 
-(defn rotation-state-transitioner
-  "see point-state-transitioner"
+(defn rotation
+  "see point"
   [[type value] current-state out draw-chan]
   (case type
     :move
@@ -441,8 +441,8 @@
                       :endpoint1 {:stroke :grey-3 :fill :lt-grey}
                       :endpoint2 {:stroke :grey-3 :fill :lt-grey}})
 
-(defn translation-state-transitioner
-  "see point-state-transitioner"
+(defn translation
+  "see point"
   [[type value] current-state out draw-chan]
   (case type
     :move

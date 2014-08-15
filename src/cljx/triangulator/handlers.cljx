@@ -10,6 +10,21 @@
 
 #+cljs (enable-console-print!)
 
+(def fn-map
+  {:triangle p/triangle
+   :circumcircle p/circumcircle
+   :orthocenter p/orthocenter
+   :euler-line p/euler
+   :nine-pt-circle p/nine-pt
+   :centroid p/cnetroid
+   :incircle p/incircle
+   :reflection t/reflection
+   :inversion t/inversion
+   :dilatation t/dilatation
+   :translation t/translation
+   :iteration1 t/dilatation1
+   :iteration2 t/dilatation2})
+
 (defn event-handler [event-chan draw-chan]
   (let [return-message-chan (chan)]
     (go (loop [item :none state {:step 0}]
@@ -21,55 +36,7 @@
                   (>! draw-chan render/clear)
                   (>! return-message-chan [:draw value draw-chan]))
                 (recur value {:step 0}))
-              (let [new-state
-                    (condp = item
-                      :none state
-                      :triangle
-                      (p/triangle
-                       [type value]
-                       state return-message-chan draw-chan)
-                      :circumcircle
-                      (p/circumcircle
-                       [type value]
-                       state return-message-chan draw-chan)
-                      :orthocenter
-                      (p/orthocenter [type value]
-                       state return-message-chan draw-chan)
-                      :euler-line
-                      (p/euler [type value]
-                       state return-message-chan draw-chan)
-                      :nine-pt-circle
-                      (p/nine-pt [type value]
-                       state return-message-chan draw-chan)
-                      :centroid
-                      (p/centroid [type value]
-                       state return-message-chan draw-chan)
-                      :incircle
-                      (p/incircle [type value]
-                       state return-message-chan draw-chan)
-                      :reflection
-                      (t/reflection-state-transitioner [type value]
-                       state return-message-chan draw-chan)
-                      :inversion
-                      (t/inversion-state-transitioner [type value]
-                       state return-message-chan draw-chan)
-                      :dilatation
-                      (t/dilatation-state-transitioner [type value]
-                       state return-message-chan draw-chan)
-                      :rotation
-                      (t/rotation-state-transitioner [type value]
-                       state return-message-chan draw-chan)
-                      :translation
-                      (t/translation-state-transitioner [type value]
-                       state return-message-chan draw-chan)
-                      :iteration1
-                      (t/dilatation1-state-transitioner [type value]
-                       state return-message-chan draw-chan)
-                      :iteration2
-                      (t/dilatation2-state-transitioner [type value]
-                       state return-message-chan draw-chan)
-                      (do
-                        (println "warning: iten not handled: " item)
-                        state))]
+              (let [f (get fn-map item )
+                    new-state (f [type value] state return-message-chan draw-chan)]
                 (recur item new-state))))))
     return-message-chan))

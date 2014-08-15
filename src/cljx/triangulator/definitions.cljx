@@ -1,12 +1,12 @@
 (ns triangulator.definitions)
 
 (def triangle-properties
-  [{:id :centroid :label "centroid"}
-   {:id :circumcircle :label "circumcircle"}
-   {:id :orthocenter :label "orthocenter"}
+  [{:id :centroid :label "centroid" :symbol "G"}
+   {:id :circumcircle :label "circumcenter" :symbol "O"}
+   {:id :orthocenter :label "orthocenter" :symbol "H"}
    {:id :incircle :label "incircle and excircles"}
-   {:id :euler-line :label "euler line"}
-   {:id :nine-pt-circle :label "nine point circle"}])
+   {:id :euler-line :label "euler line" :symbol "OH"}
+   {:id :nine-pt-circle :label "nine point center" :symbol "N"}])
 
 (def triangle-transformations
   [{:id :reflection :label "reflection"}
@@ -20,7 +20,7 @@
    {:id :iteration2 :label "H(2) H(1/2)"}])
 
 (def triangle
-  [{:id :triangle :label "Create a triangle"}])
+  [{:id :triangle :label "Create a triangle" :symbol "ABC"}])
 
 (def ui
   [{:section-name "Triangle"

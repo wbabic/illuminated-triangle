@@ -13,13 +13,15 @@
 
 (enable-console-print!)
 
-(defn definition-entry [current-item owner]
+(defn entry [current-item owner]
   (reify
     om/IRender
     (render [this]
       (dom/li #js {:className "active"}
               (dom/a #js {:href (str "#/" (name (:id current-item)))}
-                     (:label current-item))))))
+                     (:label current-item))
+              (when-let [s (:symbol current-item)]
+                (str " " s))))))
 
 (defn section [section owner]
   (reify
@@ -29,14 +31,14 @@
                (dom/h2 nil (:section-name section))
                (when-let [header (:header section)]
                  (dom/p nil header))
-               (apply dom/ul nil (om/build-all definition-entry (:data section)))))))
+               (apply dom/ul nil (om/build-all entry (:data section)))))))
 
-(defn nav-box [ui owner]
+(defn nav-box [state owner]
   (reify
     om/IRender
     (render [this]
       (apply dom/div nil 
-             (om/build-all section ui)))))
+             (om/build-all section (:ui state))))))
 
 (defn item-detail [p owner]
   (reify
@@ -164,5 +166,5 @@
 
 (om/root
  nav-box
- d/ui
+ state/app-state
  {:target (. js/document (getElementById "definition-list"))})
