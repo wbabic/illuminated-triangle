@@ -388,9 +388,7 @@ a map of options to include"
      (draw-edge-data C A :e3 line-options))))
 
 (defn draw-triangle
-  "new draw-tri
-todo: accept a style map a s an argument
-for now use locally deffed tri-style"
+  "new draw-tri"
   [p1 p2 p3 draw-chan tri-options]
   (let [data (tri-data p1 p2 p3 tri-options)]
     (go (>! draw-chan data))))

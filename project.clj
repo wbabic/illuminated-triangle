@@ -42,14 +42,14 @@
   
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src/cljx" "target/classes"]
+              :source-paths ["src/cljs" "target/classes"]
               :compiler {
                          :output-to "resources/public/js/main.js"
                          :output-dir "resources/public/js/out"
                          :optimizations :none
                          :source-map true}}
              {:id "release"
-              :source-paths ["src/cljx" "target/classes"]
+              :source-paths ["src/cljs" "target/classes"]
               :compiler {
                          :output-to "demo/main.js"
                          :optimizations :advanced
