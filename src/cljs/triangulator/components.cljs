@@ -56,6 +56,7 @@
                           (str "center: " center " radius:" radius))
                 (str "new value: " p))))))
 
+
 (defn item-controller [app owner]
   (reify
     om/IInitState

@@ -16,9 +16,10 @@
    :orthocenter p/orthocenter
    :euler-line p/euler
    :nine-pt-circle p/nine-pt
-   :centroid p/cnetroid
+   :centroid p/centroid
    :incircle p/incircle
    :reflection t/reflection
+   :rotation t/rotation
    :inversion t/inversion
    :dilatation t/dilatation
    :translation t/translation
@@ -33,6 +34,8 @@
               (do
                 (println "ctr-chan item: " value)
                 (when-not (= item value)
+                  (println "old item: " item)
+                  (println "new item: " value)
                   (>! draw-chan render/clear)
                   (>! return-message-chan [:draw value draw-chan]))
                 (recur value {:step 0}))

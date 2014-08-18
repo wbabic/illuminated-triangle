@@ -4,7 +4,8 @@
   [{:id :centroid :label "centroid" :symbol "G"}
    {:id :circumcircle :label "circumcenter" :symbol "O"}
    {:id :orthocenter :label "orthocenter" :symbol "H"}
-   {:id :incircle :label "incircle and excircles"}
+   {:id :incircle :label "inccenter" :symbol "I"}
+   {:id :incircle :label "excenters" :symbol "Ia Ib Ic"}
    {:id :euler-line :label "euler line" :symbol "OH"}
    {:id :nine-pt-circle :label "nine point center" :symbol "N"}])
 

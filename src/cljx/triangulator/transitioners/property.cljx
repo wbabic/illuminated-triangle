@@ -49,10 +49,41 @@
           (go (>! draw-chan render/clear))
           {:step 0})))))
 
+(defn triangle-tranistionaer
+  [line-options tri-options]
+  (fn [[type value] current-state out]
+    (case type
+    :move
+    (do
+      (condp = (:step current-state)
+        0 (do
+            (go (>! out [:clear (dt/point value)]))
+            current-state)
+        1 (let [p1 (:p1 current-state)
+                p2 value]
+            (go (>! out [:clear (dt/line p1 p2)]))
+            current-state)
+        2 (let [p1 (:p1 current-state)
+                p2 (:p2 current-state)
+                p3 value]
+            (go (>! out [:clear (dt/triangle p1 p2 p3)]))
+            current-state)
+        3 current-state))
+    :click
+    (condp = (:step current-state)
+      0 {:step 1 :p1 value}
+      1 (assoc current-state :p1 value :step 2)
+      2 (let [{:keys [p1 p2 p3]} current-state]
+          (go (>! out [:new (dt/triangle p1 p2 p3)]))
+          (assoc current-state :step 3))
+      3 (do
+          (go (>! out [:clear]))
+          {:step 0})))))
+
 (def line-options #{:line :endpoint1 :endpoint2})
 
 (def triangle
-  (property-tranistionaer
+  (triangle-tranistionaer
    line-options
    #{:fill}))
 
@@ -87,3 +118,33 @@
   (property-tranistionaer
    line-options
    #{:ang-bisector :incircle :excircle :fill}))
+
+(def prop-map
+  {:triangle
+   {:line-ops line-options
+    :tri-ops #{:fill}}
+   
+   :centroid
+   {:line-ops (conj line-options :midpoint)
+    :tri-ops #{:midpoints :medians :centroid}}
+
+   :circumcenter
+   {:line-ops (conj line-options :perp-bisector :midpoint)
+    :tri-ops #{:circumcenter :circumcircle :perp-bisector :fill}}
+
+   :orthocenter
+   {:line-ops (conj line-options :extended)
+    :tri-ops #}
+
+   :incircle
+   {:line-ops line-options
+    :tri-ops #{:ang-bisector :incircle :excircle :fill}}
+
+   :euler
+   {:line-ops (conj line-options :extended)
+    :tri-ops #{}}
+
+   :nine-pt-circle
+   {:line-ops (conj line-options :extended)
+    :tri-ops #{:altitudes :perp-bisector :orthocenter
+               :circumcenter :nine-pt-circle :fill}}})
