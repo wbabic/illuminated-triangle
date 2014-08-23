@@ -13,9 +13,7 @@
 
 #+cljs (enable-console-print!)
 
-(def colors [:red :blue :green])
-
-(def clear
+(def clear-style
   [(dt/style {:fill :grey-2}) (dt/rectangle
                                (dt/point [0 0])
                                (dt/point [600 600]))])
@@ -29,15 +27,15 @@
     [x 0]))
 
 (defn draw-point
-  "clear-screen draw item draw point and coords of value"
+  "draw point with style"
   [value draw-chan style]
   (go (>! draw-chan [(dt/style style)
                      (dt/point value)])))
 
 (defn draw-point-coords
-  "clear-screen draw item draw point and coords of value"
+  "draw point with coords"
   [value draw-chan]
-  (go (>! draw-chan [(dt/style {:stroke :lt-grey :fill (colors 0)})
+  (go (>! draw-chan [(dt/style {:stroke :lt-grey :fill :red})
                      (dt/line [value (project-x value)])
                      (dt/line [value (project-y value)])
                      (dt/point value)])))
@@ -276,7 +274,7 @@ Uses geometry styles found in style."
 a merging of style and geometry
 taking the three vertices as input and
 a map of options to include"
-  [A B C tri-options]
+  [A B C tri-options tri-style]
   (let [triangle (tri/triangle A B C)
         line-options #{:line :endpoint1}
         line-options (cond-> line-options
@@ -290,7 +288,7 @@ a map of options to include"
                              )
         ;; build up any required geometric data into triangle
         triangle (tri/add-options triangle tri-options)
-        triangle-data (expand triangle tri-options style/tri-style)]
+        triangle-data (expand triangle tri-options tri-style)]
     (concat
      triangle-data
      (draw-edge-data A B :e1 line-options)
@@ -299,9 +297,12 @@ a map of options to include"
 
 (defn draw-triangle
   "new draw-tri"
-  [p1 p2 p3 draw-chan tri-options]
-  (let [data (tri-data p1 p2 p3 tri-options)]
+  [[p1 p2 p3] draw-chan tri-options tri-style]
+  (let [data (tri-data p1 p2 p3 tri-options tri-style)]
     (go (>! draw-chan data))))
+
+(defn clear [draw-chan]
+  (go (>! draw-chan clear-style)))
 
 (comment
   (clojure.pprint/pprint style/tri-style)
@@ -312,21 +313,28 @@ a map of options to include"
    (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid :fill}))
 
   (clojure.pprint/pprint
-   (tri-data [0 0] [1 0] [0 1] #{:midpoints :medians :centroid}))
+   (tri-data [0 0] [1 0] [0 1] #{:midpoints :medians :centroid} style/tri-style))
   
-  (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid})
+  (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid} style/tri-style)
 
   (clojure.pprint/pprint
-   (tri-data [0 0] [1 0] [0 1] #{:altitudes :perp-bisector :orthocenter :circumcenter :nine-pt-circle :fill}))
+   (tri-data [0 0] [1 0] [0 1]
+             #{:altitudes :perp-bisector :orthocenter :circumcenter :nine-pt-circle :fill}
+             style/tri-style))
 
   (clojure.pprint/pprint
-   (tri-data [0 0] [1 0] [0 1] #{:ang-bisector :incircle :excircle}))
+   (tri-data [0 0] [1 0] [0 1]
+             #{:ang-bisector :incircle :excircle}
+             style/tri-style))
 
   (clojure.pprint/pprint
    (expand (tri/add-options (tri/triangle [0 0] [1 0] [0 1]) #{:incircle})
            #{:incircle} style/tri-style))
 
   (clojure.pprint/pprint
-   (expand (tri/add-options (tri/triangle [0 0] [1 0] [0 1]) #{:excircle})
+   (expand (tri/add-options
+            (tri/triangle [0 0] [1 0] [0 1])
+            #{:excircle})
            #{:excircle} style/tri-style))
-)
+
+  )

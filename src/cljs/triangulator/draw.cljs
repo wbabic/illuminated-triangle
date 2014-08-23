@@ -9,9 +9,9 @@
   {:red      "rgba(255, 0,   0,   0.8)"
    :green    "rgba(0,   255, 0,   0.8)"
    :blue     "rgba(0,   0,   255, 0.8)"
-   :lt-red   "rgba(255, 0,   0,   0.3)"
-   :lt-green "rgba(0,   255, 0,   0.4)"
-   :lt-blue  "rgba(0,   0,   255, 0.3)"
+   :lt-red   "rgba(255, 0,   0,   0.2)"
+   :lt-green "rgba(0,   255, 0,   0.2)"
+   :lt-blue  "rgba(0,   0,   255, 0.2)"
    :grey     "rgba(200, 200, 200, 0.1)"
    :lt-grey  "rgba(100, 100, 100, 0.3)"
    :grey-2   "rgb(200,200,200)"
@@ -109,4 +109,3 @@
               (render draw-obj context))
             (recur))))
     draw-chan))
-

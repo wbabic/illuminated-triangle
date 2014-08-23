@@ -19,7 +19,7 @@
     (println "defroute: " item)
     (when item
       (println (str "route definition: " (keyword item)))
-      (swap! state/app-state assoc :current-item (keyword item)))))
+      (swap! state/app-state assoc :item (keyword item)))))
 
 (def history (History.))
 

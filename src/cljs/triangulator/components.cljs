@@ -3,8 +3,9 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :as async :refer [>! <! put! chan alts! sliding-buffer]]
-            [triangulator.handlers :as handlers]
+            [triangulator.handlers :as h]
             [triangulator.draw :as draw]
+            [triangulator.render :as render]
             [triangulator.definitions :as d]
             [triangulator.datatypes :as dt]
             [triangulator.geometry :as geom]
@@ -40,130 +41,103 @@
       (apply dom/div nil 
              (om/build-all section (:ui state))))))
 
-(defn item-detail [p owner]
+(defn point-detail [point owner]
   (reify
     om/IRender
     (render [_]
-      (dom/li nil
-              (condp instance? p
-                dt/Point (str (:point p))
-                dt/Line (str (:points p))
-                dt/Triangle (let [p1 (:p1 p)
-                                  p2 (:p2 p)
-                                  p3 (:p3 p)]
-                              (str "[" p1 " " p2 " " p3 "]"))
-                dt/Disk (let [{:keys [center radius]} p]
-                          (str "center: " center " radius:" radius))
-                (str "new value: " p))))))
+      (let [[x y] point]
+        (dom/span nil
+                  (str "[" x  " " y "] "))))))
 
+(defn item-detail [points owner]
+  (reify
+    om/IRender
+    (render [_]
+      (apply dom/p nil (om/build-all point-detail points)))))
 
 (defn item-controller [app owner]
   (reify
     om/IInitState
     (init-state [_]
-      {:point []
-       :line []
-       :triangle []
-       :handler nil
-       :control nil})
+      {:state :none})
+
     om/IWillMount
-    ;; set up event hanndler
-     (will-mount [_]
+    (will-mount [_]
       (let [_ (println "mounting item-controller")
-            {:keys [event-chan draw-chan]} (om/get-shared owner)
-            control-chan (chan)
-            handler-chan (handlers/event-handler
-                          (async/merge [event-chan control-chan])
-                          draw-chan)]
-        (om/set-state! owner :handler handler-chan)
-        (om/set-state! owner :control control-chan)
-        (go (loop []
-              (let [h (<! handler-chan)]
-                (println "handler-chan " h)
-                (condp instance? h
-                  dt/Point
-                  (do
-                    (om/update-state! owner :point #(conj % h))
-                    (recur))
-                  dt/Line
-                  (do
-                    (om/update-state! owner :line #(conj % h))
-                    (recur))
-                  dt/Triangle
-                  (do
-                    (om/update-state! owner :triangle #(conj % h))
-                    (recur))
-                  dt/Disk
-                  (do
-                    (om/update-state! owner :circle #(conj % h))
-                    (recur))
-                  (do
-                    (let [[command item d-chan] h]
-                      (case item
-                        :point
-                        (do
-                          (let [points (om/get-state owner :point)]
-                            (>! d-chan [(dt/style {:fill :green
-                                                   :stroke :red})])
-                            (doseq [point points]
-                              (>! d-chan [point]))))
-                        :line
-                        (do
-                          (let [lines (om/get-state owner :line)
-                                s1 (dt/style {:fill :green
-                                              :stroke :red})
-                                s2 (dt/style {:fill :blue
-                                              :stroke :red})]
-                            (doseq [line lines]
-                              (let [[p1 p2] (:points line)
-                                    m (geom/midpoint p1 p2)]
-                                (>! d-chan [s1 line (dt/point p1) (dt/point p2)
-                                            s2 (dt/point m)])))))
-                        :triangle
-                        (do
-                          (let [triangles (om/get-state owner :triangle)]
-                            (>! d-chan [(dt/style {:fill :green
-                                                   :stroke :red})])
-                            (doseq [triangle triangles]
-                              (>! d-chan [triangle]))))
-                        :circle
-                        (do
-                          (let [circles (om/get-state owner :circle)]
-                            (>! d-chan [(dt/style {:fill :green
-                                                   :stroke :red})])
-                            (doseq [circle circles]
-                              (>! d-chan [circle]))))
-                        :reflection
-                        (do
-                          (println "item-controller will-mount go-loop handler-chan: " h))
-                        (do
-                          (println "item-comtroller: warning: item not handled: " item))))))
-                (recur))))))
-    om/IWillUnmount
-    (will-unmount [_]
-      (println "unmounting ..."))
+            event-chan (om/get-shared owner :event-chan)
+            control-chan (om/get-shared owner :control-chan)]
+
+        (go (loop [type :none state {:step 0}]
+              (let [[event port] (alts! [event-chan control-chan])]
+                (if (= port control-chan)
+                  (recur event {:step 0})
+                  (let [new-state (h/triangle-transitioner event state)]
+                    (om/set-state! owner new-state)
+                    (when (< (:step state) 3)
+                        (recur type new-state)))))))))
+
     om/IRenderState
     (render-state [_ state]
-      (let [item (:current-item app)
-            {:keys [control]} state
-            _ (go (>! control [:control item]))]
+      (let [draw-chan (om/get-shared owner :draw-chan)
+            item (:item app)
+            [p1 p2 p3] (:triangle app)
+            tri-opts (get-in state/prop-map [item :tri-opts])
+            line-opts (get-in state/prop-map [item :line-opts])
+            tri-style state/tri-style]
+
+        ;; render graphics from local state
+        (let [step (:step state)]
+          (condp = step
+            0 (let [p1 (:p1 state)]
+                (when p1
+                  (render/clear draw-chan)
+                  (render/draw-point-coords p1 draw-chan)))
+            
+            1 (let [{:keys [p1 p2]} state]
+                (if p2
+                  (do
+                    (render/clear draw-chan)
+                    (render/draw-edge p1 p2 draw-chan :e1 line-opts))
+                  (do
+                    (render/clear draw-chan)
+                    (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red}))))
+            
+            2 (let [{:keys [p1 p2 p3] :as t} state]
+                (if p3
+                  (do
+                    (render/clear draw-chan)
+                    (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
+                  (do
+                    (render/clear draw-chan)
+                    (render/draw-edge p1 p2 draw-chan :e1 line-opts))))
+
+            3 (let [{:keys [p1 p2 p3] :as t} state]
+                (render/clear draw-chan)
+                (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
+                (println "update app :triangle to " [p1 p2 p3])
+                (om/update! app :triangle [p1 p2 p3]))
+            
+            :none))
+
+        ;; render dom
         (dom/div #js {:className "definition"}
                  (dom/h3 nil (first (item d/definition-text)))
                  (dom/p nil (second (item d/definition-text)))
-                 (apply dom/ul nil (om/build-all item-detail (item state))))))))
+                 (om/build item-detail (get app :triangle))
+                 )))))
 
 (om/root
  item-controller
  state/app-state
  {:target (. js/document (getElementById "definition-box"))
-  :shared (let [{:keys [canvas width height] :as surface} (draw/surface "graphics-box")
+  :shared (let [{:keys [canvas width height]} (draw/surface "graphics-box")
                 click-chan (events/mouse-chan canvas :mouse-down :click)
                 mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
                 draw-chan (draw/drawing-loop canvas width height)
                 events (async/merge [mouse-move-chan click-chan])]
-            {:surface surface
-             :event-chan events
-             :draw-chan draw-chan})})
+            {:event-chan events
+             :draw-chan draw-chan
+             :control-chan (chan)})})
 
 (om/root
  nav-box
