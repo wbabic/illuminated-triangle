@@ -97,7 +97,13 @@
      of two circles
      distinct centers
      unequal radii
-     
+
+     take for two circles
+     the circumcircle and the nine point circle
+     find the two centers of similtude
+
+     combine into a halfturn
+
 *** inversion in a circle
     fixed circle
     let point vary

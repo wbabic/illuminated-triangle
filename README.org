@@ -28,7 +28,7 @@
     incircle, excircles, euler line, nine point circle.
 
 *** Create transform interactively
-    Ttransforms preserving:
+    transforms preserving:
     distance -> isometry,
     ratios of distances -> similarity,
     generalized circles -> linear fractional transformation.
@@ -36,26 +36,6 @@
     Include translation, rotation, reflection,
     homothety and inversion.
 ** Implementation
-*** the event handler
-The event hadler takes an event channel and a drawing channel.
-It handles incomming events by sending messages to the drawing
-channel.
-It also retuns a return message channel and send update state messages
-to the caller.
-
-It contains a local state which gets updates from its logic that
-handles the input events coming in from the event channel.
-
-It also draws the current state by sending graphics related data into
-the draw channel.
-
-It alows the user to create and veiw a triangle by clicking and moving
-the mouse.
-
-However, it is not directly coupled to browser events; any channel
-will do. So testing from the repl is possible.
-
-For an example, see cljx/handlers/util.cljx
 *** the drawing loop
     This is a go loop accepting drawing events as defined in
     datatypes.cljx and converts the data into calls to a graphics

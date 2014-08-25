@@ -74,7 +74,7 @@
                   (let [new-state (h/triangle-transitioner event state)]
                     (om/set-state! owner new-state)
                     (when (< (:step state) 3)
-                        (recur type new-state)))))))))
+                      (recur type new-state)))))))))
 
     om/IRenderState
     (render-state [_ state]
@@ -116,6 +116,12 @@
                 (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
                 (println "update app :triangle to " [p1 p2 p3])
                 (om/update! app :triangle [p1 p2 p3]))
+
+            :complete
+            (let [[p1 p2 p3] (:triangle app)]
+              (render/clear draw-chan)
+              (println "draing tri :step :complete")
+              (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
             
             :none))
 
@@ -124,6 +130,7 @@
                  (dom/h3 nil (first (item d/definition-text)))
                  (dom/p nil (second (item d/definition-text)))
                  (om/build item-detail (get app :triangle))
+                 ;;(om/build selected-properties)
                  )))))
 
 (om/root

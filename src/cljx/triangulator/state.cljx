@@ -41,4 +41,4 @@
    :nine-pt-circle
    {:line-opts (conj line-options :extended)
     :tri-opts #{:altitudes :perp-bisector :orthocenter
-               :circumcenter :nine-pt-circle :fill}}})
+               :circumcenter :nine-pt-circle :midpoints :medians :centroid :euler}}})
