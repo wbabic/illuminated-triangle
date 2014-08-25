@@ -72,15 +72,16 @@
                 (if (= port control-chan)
                   (recur event {:step 0})
                   (let [new-state (h/triangle-transitioner event state)]
-                    (om/set-state! owner new-state)
-                    (when (< (:step state) 3)
-                      (recur type new-state)))))))))
+                    (if (= (:step new-state) 3)
+                      (let [{:keys [p1 p2 p3]} new-state]
+                        (om/set-state! owner {:step 4})
+                        (om/
 
     om/IRenderState
     (render-state [_ state]
       (let [draw-chan (om/get-shared owner :draw-chan)
             item (:item app)
-            [p1 p2 p3] (:triangle app)
+            tri (:triangle app)
             tri-opts (get-in state/prop-map [item :tri-opts])
             line-opts (get-in state/prop-map [item :line-opts])
             tri-style state/tri-style]
@@ -92,37 +93,27 @@
                 (when p1
                   (render/clear draw-chan)
                   (render/draw-point-coords p1 draw-chan)))
-            
             1 (let [{:keys [p1 p2]} state]
+                (render/clear draw-chan)
                 (if p2
-                  (do
-                    (render/clear draw-chan)
-                    (render/draw-edge p1 p2 draw-chan :e1 line-opts))
-                  (do
-                    (render/clear draw-chan)
-                    (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red}))))
-            
+                  (render/draw-edge p1 p2 draw-chan :e1 line-opts)
+                  (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red})))
             2 (let [{:keys [p1 p2 p3] :as t} state]
+                (render/clear draw-chan)
                 (if p3
-                  (do
-                    (render/clear draw-chan)
-                    (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
-                  (do
-                    (render/clear draw-chan)
-                    (render/draw-edge p1 p2 draw-chan :e1 line-opts))))
-
+                  (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
+                  (render/draw-edge p1 p2 draw-chan :e1 line-opts)))
             3 (let [{:keys [p1 p2 p3] :as t} state]
                 (render/clear draw-chan)
-                (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
-                (println "update app :triangle to " [p1 p2 p3])
-                (om/update! app :triangle [p1 p2 p3]))
-
-            :complete
-            (let [[p1 p2 p3] (:triangle app)]
-              (render/clear draw-chan)
-              (println "draing tri :step :complete")
-              (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
-            
+                (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
+            4 (let [[p1 p2 p3] tri
+                    [p1x p1y] p1
+                    [p2x p2y] p2
+                    [p3x p3y] p3]
+                (render/clear draw-chan)
+                (println "draing tri :step :complete: " tri)
+                (render/draw-triangle [[p1x p1y] [p2x p2y] [p3x p3y]]
+                                      draw-chan tri-opts tri-style))
             :none))
 
         ;; render dom
