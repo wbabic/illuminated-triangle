@@ -75,7 +75,10 @@
                     (if (= (:step new-state) 3)
                       (let [{:keys [p1 p2 p3]} new-state]
                         (om/set-state! owner {:step 4})
-                        (om/
+                        (om/update! app :triangle [p1 p2 p3]))
+                      (do
+                        (om/set-state! owner new-state)
+                        (recur type new-state))))))))))
 
     om/IRenderState
     (render-state [_ state]
