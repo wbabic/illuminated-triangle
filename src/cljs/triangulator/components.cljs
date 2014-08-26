@@ -49,13 +49,23 @@
         (dom/span nil
                   (str "[" x  " " y "] "))))))
 
-(defn item-detail [app owner]
+(defn item-detail [app owner opts]
   (reify
     om/IRender
     (render [_]
-      (apply dom/div #js {:className "item-detail"}
-             "vertices "
-             (om/build-all point-detail (:triangle app))))))
+      (let [points (:triangle app)
+            control-chan (:control-chan opts)
+            _ (prn points)]
+        (when points
+          (apply dom/div #js {:className "item-detail"}
+                 (dom/div #js {:className "button"
+                               :onClick #(do
+                                           (om/update! app :triangle nil)
+                                           (put! control-chan :triangle))}
+                          "new triangle")
+                 (dom/div #js {:onClick #(println "redraw triangle")} "redraw triangle")
+                 "vertices "
+                 (om/build-all point-detail points)))))))
 
 (defn item-props [props owner]
   (reify
@@ -77,12 +87,14 @@
       (let [_ (println "mounting item-controller")
             event-chan (:event-chan opts)
             control-chan (:control-chan opts)]
+        (go
+          ;; wait for item from control-chan
+          (let [item (<! control-chan)
+                _ (println "recieved from control-cah: " item)]
 
-        (go (loop [type :none state {:step 0}]
-
-              (let [[event port] (alts! [event-chan control-chan])]
-                (if (= port control-chan)
-                  (recur event {:step 0})
+            (loop [type item]
+              (loop [state {:step 0}]
+                (let [event (<! event-chan)]
                   (let [new-state (h/triangle-transitioner event state)]
                     (if (= (:step new-state) 3)
                       (let [{:keys [p1 p2 p3]} new-state]
@@ -90,7 +102,14 @@
                         (om/update! app :triangle [p1 p2 p3]))
                       (do
                         (om/set-state! owner new-state)
-                        (recur type new-state))))))))))
+                        (recur new-state))))))
+              ;; wait for item form control-chan, again
+              (let [_ (println "waiting for next item from control-chan")
+                    item (<! control-chan)
+                    _ (println "recieved from control-cah: " item)]
+                (recur item)))))
+        ;; start off with :triangle
+        (go (>! control-chan :triangle))))
 
     om/IRenderState
     (render-state [_ state]
@@ -136,8 +155,8 @@
         (dom/div #js {:className "definition"}
                  (dom/h3 nil (first (item d/definition-text)))
                  (dom/p nil (second (item d/definition-text)))
-                 (om/build item-detail app)
-                 (om/build item-props (get-in app [:prop-map (:item app)]))
+                 (om/build item-detail app {:opts opts})
+                 ;; (om/build item-props (get-in app [:prop-map (:item app)]))
                  )))))
 
 (om/root
