@@ -49,13 +49,24 @@
         (dom/span nil
                   (str "[" x  " " y "] "))))))
 
-(defn item-detail [points owner]
+(defn item-detail [app owner]
   (reify
     om/IRender
     (render [_]
-      (apply dom/p nil (om/build-all point-detail points)))))
+      (apply dom/div #js {:className "item-detail"}
+             "vertices "
+             (om/build-all point-detail (:triangle app))))))
 
-(defn item-controller [app owner]
+(defn item-props [props owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [tri-opts (:tri-opts props)
+            _ (prn tri-opts)]
+        (apply dom/div #js {:className "item-props"}
+               (map #(dom/p nil (name %)) tri-opts))))))
+
+(defn item-controller [app owner opts]
   (reify
     om/IInitState
     (init-state [_]
@@ -64,10 +75,11 @@
     om/IWillMount
     (will-mount [_]
       (let [_ (println "mounting item-controller")
-            event-chan (om/get-shared owner :event-chan)
-            control-chan (om/get-shared owner :control-chan)]
+            event-chan (:event-chan opts)
+            control-chan (:control-chan opts)]
 
         (go (loop [type :none state {:step 0}]
+
               (let [[event port] (alts! [event-chan control-chan])]
                 (if (= port control-chan)
                   (recur event {:step 0})
@@ -82,11 +94,12 @@
 
     om/IRenderState
     (render-state [_ state]
-      (let [draw-chan (om/get-shared owner :draw-chan)
+      (let [draw-chan (:draw-chan opts)
             item (:item app)
             tri (:triangle app)
-            tri-opts (get-in state/prop-map [item :tri-opts])
-            line-opts (get-in state/prop-map [item :line-opts])
+            prop-map (:prop-map app)
+            tri-opts (get-in prop-map [item :tri-opts])
+            line-opts (get-in prop-map [item :line-opts])
             tri-style state/tri-style]
 
         ;; render graphics from local state
@@ -123,22 +136,23 @@
         (dom/div #js {:className "definition"}
                  (dom/h3 nil (first (item d/definition-text)))
                  (dom/p nil (second (item d/definition-text)))
-                 (om/build item-detail (get app :triangle))
-                 ;;(om/build selected-properties)
+                 (om/build item-detail app)
+                 (om/build item-props (get-in app [:prop-map (:item app)]))
                  )))))
 
 (om/root
  item-controller
  state/app-state
  {:target (. js/document (getElementById "definition-box"))
-  :shared (let [{:keys [canvas width height]} (draw/surface "graphics-box")
-                click-chan (events/mouse-chan canvas :mouse-down :click)
-                mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
-                draw-chan (draw/drawing-loop canvas width height)
-                events (async/merge [mouse-move-chan click-chan])]
-            {:event-chan events
-             :draw-chan draw-chan
-             :control-chan (chan)})})
+  :opts
+  (let [{:keys [canvas width height]} (draw/surface "graphics-box")
+        click-chan (events/mouse-chan canvas :mouse-down :click)
+        mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
+        draw-chan (draw/drawing-loop canvas width height)
+        events (async/merge [mouse-move-chan click-chan])]
+    {:event-chan events
+     :draw-chan draw-chan
+     :control-chan (chan)})})
 
 (om/root
  nav-box

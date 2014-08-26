@@ -2,12 +2,6 @@
   (:require [triangulator.style :as style]
             [triangulator.definitions :as def]))
 
-(def app-state (atom
-                {:item :triangle
-                 :triangle nil
-                 :transforms nil
-                 :ui def/ui}))
-
 (def tri-style style/tri-style)
 
 (def line-options #{:line :endpoint1 :endpoint2})
@@ -42,3 +36,13 @@
    {:line-opts (conj line-options :extended)
     :tri-opts #{:altitudes :perp-bisector :orthocenter
                :circumcenter :nine-pt-circle :midpoints :medians :centroid :euler}}})
+
+(def app-state
+  (atom
+   {:item :triangle
+    :triangle nil
+    :transforms nil
+    :ui def/ui
+    :tri-style tri-style
+    :prop-map prop-map}))
+
