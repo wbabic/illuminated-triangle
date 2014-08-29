@@ -87,3 +87,9 @@
    apply sequence of transforms to the triangle,
    one at a time or
    all at once.
+
+** redraw triangle
+   a step by step recreation of a triangle, with appropriate
+   properties included
+
+   

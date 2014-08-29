@@ -6,7 +6,8 @@
    {:id :orthocenter :label "orthocenter" :symbol "H"}
    {:id :incircle :label "inccenter and excenters" :symbol "I Ia Ib Ic"}
    {:id :euler-line :label "euler line" :symbol "OH"}
-   {:id :nine-pt-circle :label "nine point center" :symbol "N"}])
+   {:id :nine-pt-circle :label "nine point center" :symbol "N"}
+   {:id :all :label "all" :symbol ""}])
 
 (def triangle-transformations
   [{:id :reflection :label "reflection"}
@@ -80,7 +81,10 @@
    :nine-pt-circle
    ["Nine point circle"
     "The circumcircle of the orthic triangle. The orthic triangle is the triangle made of the feet of the altitudes. This is also the circumcircle of the midpoints of the edges and the circumcircle of the midpoints from the orthocenter to the vertices. Why?"]
-
+   :all
+   ["All"
+    "Show all items at once."]
+   
    :iteration1 ["Dilatations about centroid" "Create a triangle and see the iterations of dilatations of triangle by factors of 1/2 and 2 about centroid G:  G(-1/2) G(2)."]
 
    :iteration2 ["Dilatation about orthocenter" "H(1/2)"]

@@ -34,45 +34,60 @@
                  (dom/p nil header))
                (apply dom/ul nil (om/build-all entry (:data section)))))))
 
-(defn nav-box [state owner]
+(defn nav-box [app owner]
   (reify
     om/IRender
     (render [this]
-      (apply dom/div nil 
-             (om/build-all section (:ui state))))))
+      (apply dom/div nil
+             (println "nav-box")
+             (println "item " (:item app))
+             (om/build-all section (:ui app))))))
 
-(defn point-detail [point owner]
+(defn point [p]
+  (let [[x y] p]
+    (str " [" x " " y "]")))
+
+(defn points [points owner]
   (reify
     om/IRender
     (render [_]
-      (let [[x y] point]
+      (let [[p1 p2 p3] points]
         (dom/span nil
-                  (str "[" x  " " y "] "))))))
+                  (str "[" (point p1)  (point p2) (point p3) "]"))))))
 
-(defn item-detail [app owner opts]
+(defn triangle-detail [triangle owner opts]
   (reify
     om/IRender
     (render [_]
-      (let [points (:triangle app)
-            control-chan (:control-chan opts)]
-        (when points
-          (apply dom/div #js {:className "item-detail"}
-                 (dom/div #js {:className "button"
-                               :onClick #(do
-                                           (om/update! app :triangle nil)
-                                           (put! control-chan :triangle))}
-                          "new triangle")
-                 (dom/div #js {:onClick #(println "redraw triangle")} "redraw triangle")
-                 "vertices "
-                 (om/build-all point-detail points)))))))
+      (let [control-chan (:control-chan opts)]
+        (when triangle
+          (dom/div #js {:className "triangle-detail"}
+                   (om/build points triangle)
+                   (dom/button #js {:className "button"
+                                    :onClick #(do
+                                                (om/update! triangle nil)
+                                                (put! control-chan :triangle))}
+                               "new triangle")
+                   (dom/button #js {:onClick #(println "redraw triangle")}
+                               "redraw triangle")))))))
+
+(defn item-detail [item owner]
+  (reify
+    om/IRender
+    (render [_]
+      (println "item-detail: " item)
+      (when item
+        (dom/div #js {:className "definition"}
+                 (dom/h3 nil (first (item d/definition-text)))
+                 (dom/p nil (second (item d/definition-text))))))))
 
 (defn item-props [props owner]
   (reify
     om/IRender
     (render [_]
       (let [tri-opts (:tri-opts props)]
-        (apply dom/div #js {:className "item-props"}
-               (map #(dom/p nil (name %)) tri-opts))))))
+        (apply dom/ul #js {:className "item-props"}
+               (map #(dom/li nil (name %)) tri-opts))))))
 
 (defn item-controller [app owner opts]
   (reify
@@ -116,7 +131,8 @@
                     _ (println "recieved from control-chan: " item)]
                 (recur item)))))
         ;; start off with :triangle
-        (go (>! control-chan :triangle))))
+        (go (>! control-chan :triangle))
+        ))
 
     om/IRenderState
     (render-state [_ state]
@@ -158,17 +174,19 @@
                 [p2x p2y] p2
                 [p3x p3y] p3]
             (render/clear draw-chan)
-            (println "draing tri :step :complete: " tri)
+            (println "drawing tri from app-state " tri)
             (render/draw-triangle [[p1x p1y] [p2x p2y] [p3x p3y]]
                                   draw-chan tri-opts tri-style)))
         
         ;; render dom
-        (dom/div #js {:className "definition"}
-                 (dom/h3 nil (first (item d/definition-text)))
-                 (dom/p nil (second (item d/definition-text)))
-                 (om/build item-detail app {:opts opts})
-                 ;; (om/build item-props (get-in app [:prop-map (:item app)]))
-                 )))))
+        (dom/div nil
+                 (om/build item-detail item)
+                 (dom/div nil
+                          (dom/h3 nil "Selected properties")
+                          (om/build item-props (get-in app [:prop-map (:item app)])))
+                 (dom/div nil
+                          (dom/h3 nil "Vertices")
+                          (om/build triangle-detail (:triangle app) {:opts opts})))))))
 
 (om/root
  item-controller

@@ -13,7 +13,8 @@
                  [net.mikera/core.matrix "0.18.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/core.match "0.2.1"]
-                 [expresso "0.2.0"]]
+                 [expresso "0.2.0"]
+                 [com.stuartsierra/component "0.2.1"]]
 
   :source-paths ["src/cljs" "target/classes"]
   

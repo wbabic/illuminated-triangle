@@ -4,6 +4,8 @@
 
 (def tri-style style/tri-style)
 
+(def ui def/ui)
+
 (def line-options #{:line :endpoint1 :endpoint2})
 
 (def prop-map
@@ -35,14 +37,22 @@
    :nine-pt-circle
    {:line-opts (conj line-options :extended)
     :tri-opts #{:altitudes :perp-bisector :orthocenter
-               :circumcenter :nine-pt-circle :midpoints :medians :centroid :euler}}})
+               :circumcenter :nine-pt-circle :midpoints :medians :centroid :euler}}
+
+   :all
+   {:line-opts (conj line-options :extended :midpoint :perp-bisector)
+    :tri-opts #{:altitudes :perp-bisector :orthocenter
+                :ang-bisector :incircle :excircle
+                :circumcenter :circumcircle :nine-pt-circle :midpoints :medians :centroid :euler}}})
+
+(def item-list [:triangle :centroid :circumcircle :orthocenter :euler-line :nine-pt-circle :all])
+(def transform-list [:reflection :translation :rotation :dilataion :inversion])
 
 (def app-state
   (atom
-   {:item :triangle
+   {:item nil
     :triangle nil
     :transforms nil
-    :ui def/ui
     :tri-style tri-style
+    :ui ui
     :prop-map prop-map}))
-
