@@ -52,7 +52,7 @@
     (let [p1 (:point (:p1 rect))
           p2 (:point (:p2 rect))]
       (comment (.fillRect context (0 p1) (1 p1) (0 p2) (1 p2)))
-      (.fillRect context 0 0 600 600))))
+      (.fillRect context 0 0 600 700))))
 
 (extend-type dt/Line
   IRender

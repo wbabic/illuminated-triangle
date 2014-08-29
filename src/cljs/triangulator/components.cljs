@@ -54,8 +54,7 @@
     om/IRender
     (render [_]
       (let [points (:triangle app)
-            control-chan (:control-chan opts)
-            _ (prn points)]
+            control-chan (:control-chan opts)]
         (when points
           (apply dom/div #js {:className "item-detail"}
                  (dom/div #js {:className "button"
@@ -71,8 +70,7 @@
   (reify
     om/IRender
     (render [_]
-      (let [tri-opts (:tri-opts props)
-            _ (prn tri-opts)]
+      (let [tri-opts (:tri-opts props)]
         (apply dom/div #js {:className "item-props"}
                (map #(dom/p nil (name %)) tri-opts))))))
 
@@ -90,23 +88,32 @@
         (go
           ;; wait for item from control-chan
           (let [item (<! control-chan)
-                _ (println "recieved from control-cah: " item)]
+                _ (println "recieved from control-chan: " item)
+                collector (get h/collectors item)
+                trans-fn (:transition-fn collector)
+                data-fn (:data-fn collector)
+                init-state (:init-state collector)]
 
             (loop [type item]
-              (loop [state {:step 0}]
+              (loop [state init-state]
                 (let [event (<! event-chan)]
-                  (let [new-state (h/triangle-transitioner event state)]
-                    (if (= (:step new-state) 3)
-                      (let [{:keys [p1 p2 p3]} new-state]
-                        (om/set-state! owner {:step 4})
-                        (om/update! app :triangle [p1 p2 p3]))
+                  (let [new-state (trans-fn event state)]
+                    (if (:complete new-state)
                       (do
+                        ;; we are done
+                        ;; update app state
+                        ;; reset local state
+                        (om/set-state! owner nil)
+                        ;; todo handle triangles and transform
+                        (om/update! app item (data-fn new-state)))
+                      (do
+                        ;; keep going, not done yet
                         (om/set-state! owner new-state)
                         (recur new-state))))))
               ;; wait for item form control-chan, again
               (let [_ (println "waiting for next item from control-chan")
                     item (<! control-chan)
-                    _ (println "recieved from control-cah: " item)]
+                    _ (println "recieved from control-chan: " item)]
                 (recur item)))))
         ;; start off with :triangle
         (go (>! control-chan :triangle))))
@@ -122,35 +129,39 @@
             tri-style state/tri-style]
 
         ;; render graphics from local state
-        (let [step (:step state)]
-          (condp = step
-            0 (let [p1 (:p1 state)]
-                (when p1
+        (let [step (:step state)
+              complete (:complete state)]
+          (if-not complete
+            (condp = step
+              0 (let [p1 (:p1 state)]
+                  (when p1
+                    (render/clear draw-chan)
+                    (render/draw-point-coords p1 draw-chan)))
+              1 (let [{:keys [p1 p2]} state]
                   (render/clear draw-chan)
-                  (render/draw-point-coords p1 draw-chan)))
-            1 (let [{:keys [p1 p2]} state]
-                (render/clear draw-chan)
-                (if p2
-                  (render/draw-edge p1 p2 draw-chan :e1 line-opts)
-                  (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red})))
-            2 (let [{:keys [p1 p2 p3] :as t} state]
-                (render/clear draw-chan)
-                (if p3
-                  (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
-                  (render/draw-edge p1 p2 draw-chan :e1 line-opts)))
-            3 (let [{:keys [p1 p2 p3] :as t} state]
-                (render/clear draw-chan)
-                (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
-            4 (let [[p1 p2 p3] tri
-                    [p1x p1y] p1
-                    [p2x p2y] p2
-                    [p3x p3y] p3]
-                (render/clear draw-chan)
-                (println "draing tri :step :complete: " tri)
-                (render/draw-triangle [[p1x p1y] [p2x p2y] [p3x p3y]]
-                                      draw-chan tri-opts tri-style))
-            :none))
-
+                  (if p2
+                    (render/draw-edge p1 p2 draw-chan :e1 line-opts)
+                    (render/draw-point p1 draw-chan {:stroke :lt-grey :fill :red})))
+              2 (let [{:keys [p1 p2 p3] :as t} state]
+                  (render/clear draw-chan)
+                  (if p3
+                    (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
+                    (render/draw-edge p1 p2 draw-chan :e1 line-opts)))
+              3 (let [{:keys [p1 p2 p3] :as t} state]
+                  (render/clear draw-chan)
+                  (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
+              :none)))
+        
+        (when tri
+          (let [[p1 p2 p3] tri
+                [p1x p1y] p1
+                [p2x p2y] p2
+                [p3x p3y] p3]
+            (render/clear draw-chan)
+            (println "draing tri :step :complete: " tri)
+            (render/draw-triangle [[p1x p1y] [p2x p2y] [p3x p3y]]
+                                  draw-chan tri-opts tri-style)))
+        
         ;; render dom
         (dom/div #js {:className "definition"}
                  (dom/h3 nil (first (item d/definition-text)))

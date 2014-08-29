@@ -11,15 +11,15 @@ li {
 }
 
 h1 {
-    font-size: 175%;
-}
-
-h2 {
     font-size: 150%;
 }
 
-h3 {
+h2 {
     font-size: 125%;
+}
+
+h3 {
+    font-size: 112%;
 }
 
 a:link {
