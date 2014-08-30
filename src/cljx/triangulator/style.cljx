@@ -8,9 +8,9 @@
   {:p1 :red
    :p2 :green
    :p3 :blue
-   :e1-ex :lt-blue
-   :e2-ex :lt-red
-   :e3-ex :lt-green
+   :e1-extended :blue
+   :e2-extended :red
+   :e3-extended :green
    })
 
 ;; edge style
@@ -23,21 +23,21 @@
               {:line {:stroke (:p3 color)}
                :endpoint1 {:stroke :grey-3 :fill (:p1 color)}
                :endpoint2 {:stroke :grey-3 :fill (:p2 color)}
-               :extended {:stroke (:e1-ex color)}})})
+               :extended {:stroke (:e1-extended color)}})})
 
 (def e2
   {:e2 (merge common-edge
               {:line {:stroke (:p1 color)}
                :endpoint1 {:stroke :grey-3 :fill (:p2 color)}
                :endpoint2 {:stroke :grey-3 :fill (:p3 color)}
-               :extended {:stroke (:e2-ex color)}})})
+               :extended {:stroke (:e2-extended color)}})})
 
 (def e3
   {:e3 (merge common-edge
               {:line {:stroke (:p2 color)}
                :endpoint1 {:stroke :grey-3 :fill (:p3 color)}
                :endpoint2 {:stroke :grey-3 :fill (:p1 color)}
-               :extended {:stroke (:e3-ex color)}})})
+               :extended {:stroke (:e3-extended color)}})})
 
 ;; triangle style
 (def common-tri

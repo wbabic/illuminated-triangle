@@ -88,8 +88,10 @@
    one at a time or
    all at once.
 
-** redraw triangle
-   a step by step recreation of a triangle, with appropriate
-   properties included
-
-   
+** todo
+*** redraw triangle
+    a step by step recreation of a triangle, with appropriate
+    properties included
+*** break up style
+    put into map with item keyword
+    one group for each item
