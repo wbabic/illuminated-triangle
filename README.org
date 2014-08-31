@@ -95,3 +95,6 @@
 *** break up style
     put into map with item keyword
     one group for each item
+*** hook up transforms
+    create-transform handlers
+    

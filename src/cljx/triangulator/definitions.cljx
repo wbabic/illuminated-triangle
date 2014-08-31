@@ -1,6 +1,6 @@
 (ns triangulator.definitions)
 
-(def triangle-properties
+(def properties
   [{:id :centroid :label "centroid" :symbol "G"}
    {:id :circumcircle :label "circumcenter" :symbol "O"}
    {:id :orthocenter :label "orthocenter" :symbol "H"}
@@ -9,14 +9,14 @@
    {:id :nine-pt-circle :label "nine point center" :symbol "N"}
    {:id :all :label "all" :symbol ""}])
 
-(def triangle-transformations
+(def transformations
   [{:id :reflection :label "reflection"}
    {:id :translation :label "translation"}
    {:id :rotation :label "rotation"}
    {:id :dilatation :label "dilatation"}
    {:id :inversion :label "inversion"}])
 
-(def triangle-iterations
+(def iterations
   [{:id :iteration1 :label "G(-2) G(-1/2)"}
    {:id :iteration2 :label "H(2) H(1/2)"}])
 
@@ -27,11 +27,11 @@
   [{:section-name "Triangle"
     :data triangle}
    {:section-name "Properties"
-    :data triangle-properties}
+    :data properties}
    {:section-name "Transforms"
-    :data triangle-transformations}
+    :data transformations}
    {:section-name "Iterations"
-    :data triangle-iterations}])
+    :data iterations}])
 
 (def definition-text
   {:triangle
