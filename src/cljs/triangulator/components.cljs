@@ -188,21 +188,21 @@
                           (dom/h3 nil "Vertices")
                           (om/build triangle-detail (:triangle app) {:opts opts})))))))
 
-(om/root
- item-controller
- state/app-state
- {:target (. js/document (getElementById "definition-box"))
-  :opts
-  (let [{:keys [canvas width height]} (draw/surface "graphics-box")
-        click-chan (events/mouse-chan canvas :mouse-down :click)
-        mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
-        draw-chan (draw/drawing-loop canvas width height)
-        events (async/merge [mouse-move-chan click-chan])]
-    {:event-chan events
-     :draw-chan draw-chan
-     :control-chan (chan)})})
+(let [{:keys [canvas width height]} (draw/surface "graphics-box")
+      click-chan (events/mouse-chan canvas :mouse-down :click)
+      mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
+      draw-chan (draw/drawing-loop canvas width height)
+      events (async/merge [mouse-move-chan click-chan])]
 
-(om/root
- nav-box
- state/app-state
- {:target (. js/document (getElementById "definition-list"))})
+  (om/root
+   item-controller
+   state/app-state
+   {:target (. js/document (getElementById "definition-box"))
+    :opts {:event-chan events
+           :draw-chan draw-chan
+           :control-chan (chan)}})
+
+  (om/root
+   nav-box
+   state/app-state
+   {:target (. js/document (getElementById "definition-list"))}))
