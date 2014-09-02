@@ -45,7 +45,7 @@
                 :ang-bisector :incircle :excircle
                 :circumcenter :circumcircle :nine-pt-circle :midpoints :medians :centroid :euler}}})
 
-(def item-list [:triangle :centroid :circumcircle :orthocenter :euler-line :nine-pt-circle :all])
+(def item-list [:triangle :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :all])
 (def transform-list [:reflection :translation :rotation :dilataion :inversion])
 
 (def app-state

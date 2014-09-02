@@ -28,11 +28,19 @@
   (reify
     om/IRender
     (render [this]
-      (dom/div #js {:className "section"}
-               (dom/h2 nil (:section-name section))
-               (when-let [header (:header section)]
-                 (dom/p nil header))
-               (apply dom/ul nil (om/build-all entry (:data section)))))))
+      (let [open? (:open section)
+            name (:section-name section)]
+        (dom/div #js {:className "section"}
+                 (dom/input #js {:type "checkbox"
+                                 :checked open?
+                                 :onChange #(do
+                                              (println "toggle " name)
+                                              (om/transact! section [:open] (fn [o] (not o))))})
+                 (dom/span #js {:className "section-header"} name)
+                 (when-let [header (:header section)]
+                   (dom/p nil header))
+                 (when open?
+                   (apply dom/ul nil (om/build-all entry (:data section)))))))))
 
 (defn nav-box [app owner]
   (reify
@@ -87,7 +95,18 @@
     (render [_]
       (let [tri-opts (:tri-opts props)]
         (apply dom/ul #js {:className "item-props"}
-               (map #(dom/li nil (name %)) tri-opts))))))
+               (map
+                (fn [opt]
+                  (let [name (name opt)
+                        ]
+                    (dom/li nil
+                            (dom/input #js {:type "checkbox"
+                                            :checked true
+                                            :onChange #(do
+                                                         (println "check: " name)
+                                                         (.log js/console %))})
+                            name)))
+                tri-opts))))))
 
 (defn item-controller [app owner opts]
   (reify

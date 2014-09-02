@@ -25,13 +25,17 @@
 
 (def ui
   [{:section-name "Triangle"
-    :data triangle}
+    :data triangle
+    :open true}
    {:section-name "Properties"
-    :data properties}
+    :data properties
+    :open true}
    {:section-name "Transforms"
-    :data transformations}
+    :data transformations
+    :open false}
    {:section-name "Iterations"
-    :data iterations}])
+    :data iterations
+    :open false}])
 
 (def definition-text
   {:triangle

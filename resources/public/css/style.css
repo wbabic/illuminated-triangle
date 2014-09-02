@@ -47,6 +47,11 @@ a:active {
     border-top: 2px solid grey;
 }
 
+.section-header {
+    padding: 2px;
+    font-size: 125%;
+}
+
 .header {
     padding: 10px;
     -webkit-flex: 1 100%;
