@@ -50,7 +50,10 @@
                                             :checked open?
                                             :onChange #(do
                                                          (println "toggle entry " name)
-                                                         (om/transact! app [:ui :open] (fn [o] (not o))))})
+                                                         (om/transact!
+                                                          app
+                                                          [:current-properties :tri-opts]
+                                                          (fn [opts] (conj opts id))))})
                             (dom/a #js {:href (str "#/" name)}
                                    label)
                             (when-let [s (:symbol entry)]
