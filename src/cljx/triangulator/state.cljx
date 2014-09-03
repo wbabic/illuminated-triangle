@@ -55,4 +55,5 @@
     :transforms nil
     :tri-style tri-style
     :ui ui
-    :prop-map prop-map}))
+    :current-properties {:line-opts line-options
+                         :tri-opts #{:fill}}}))
