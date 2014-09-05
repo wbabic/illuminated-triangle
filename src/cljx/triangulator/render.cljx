@@ -274,8 +274,13 @@ Uses geometry styles found in style."
 a merging of style and geometry
 taking the three vertices as input and
 a map of options to include"
-  [A B C tri-options tri-style]
-  (let [triangle (tri/triangle A B C)
+  [A B C tri-opts tri-style]
+  (let [selected-tri-opts (->> tri-opts
+                               (filter (fn [[_ v]] v))
+                               (map first)
+                               set)
+        tri-options (set (keys tri-opts))
+        triangle (tri/triangle A B C)
         line-options #{:line :endpoint1}
         line-options (cond-> line-options
                              (contains? tri-options :perp-bisector)
@@ -288,7 +293,7 @@ a map of options to include"
                              )
         ;; build up any required geometric data into triangle
         triangle (tri/add-options triangle tri-options)
-        triangle-data (expand triangle tri-options tri-style)]
+        triangle-data (expand triangle selected-tri-opts tri-style)]
     (concat
      triangle-data
      (draw-edge-data A B :e1 line-options)

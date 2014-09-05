@@ -1,12 +1,12 @@
 (ns triangulator.definitions)
 
 (def properties
-  [{:id :centroid :label "centroid" :symbol "G" :open false}
-   {:id :circumcircle :label "circumcenter" :symbol "O" :open false}
-   {:id :orthocenter :label "orthocenter" :symbol "H" :open false}
-   {:id :incircle :label "inccenter and excenters" :symbol "I Ia Ib Ic" :open false}
-   {:id :euler-line :label "euler line" :symbol "OH" :open false}
-   {:id :nine-pt-circle :label "nine point center" :symbol "N" :open false}
+  [{:id :centroid :label "centroid" :symbol "G"}
+   {:id :circumcircle :label "circumcenter" :symbol "O"}
+   {:id :orthocenter :label "orthocenter" :symbol "H"}
+   {:id :incircle :label "inccenter and excenters" :symbol "I Ia Ib Ic"}
+   {:id :euler-line :label "euler line" :symbol "OH"}
+   {:id :nine-pt-circle :label "nine point center" :symbol "N"}
    {:id :all :label "all" :symbol ""}])
 
 (def transformations

@@ -14,84 +14,42 @@
 
 (enable-console-print!)
 
-(defn item-props [tri-opts owner]
-  (println "item-props ")
-  (apply dom/ul #js {:className "item-props"}
-         (map
-          (fn [opt]
-            (let [name (name opt)
-                  ]
-              (dom/li nil
-                      name
-                      (dom/input #js {:type "checkbox"
-                                      :checked true
-                                      :onChange #(do
-                                                   (println "check: " name)
-                                                   (.log js/console %))}))))
-          tri-opts)))
-
-(defn entries [app owner opts]
+(defn entry [current-item owner]
   (reify
     om/IRender
     (render [this]
-      (let [current-section (:section opts)
-            _ (println "current-section " current-section)
-            section (:ui app)
-            data (:data current-section)]
-        (apply dom/ul nil
-               (map
-                (fn [entry]
-                  (let [open? (:open entry)
-                        label (:label entry)
-                        id (:id entry)
-                        name (name id)]
-                    (dom/li #js {:className "active"}
-                            (dom/input #js {:type "checkbox"
-                                            :checked open?
-                                            :onChange #(do
-                                                         (println "toggle entry " name)
-                                                         (om/transact!
-                                                          app
-                                                          [:current-properties :tri-opts]
-                                                          (fn [opts] (conj opts id))))})
-                            (dom/a #js {:href (str "#/" name)}
-                                   label)
-                            (when-let [s (:symbol entry)]
-                              (str " " s))
-                            (when open?
-                              (item-props (get-in state/prop-map [:centroid :tri-opts]) owner)))))
-                data))))))
+      (dom/li #js {:className "active"}
+              (dom/a #js {:href (str "#/" (name (:id current-item)))}
+                     (:label current-item))
+              (when-let [s (:symbol current-item)]
+                (str " " s))))))
 
-(defn sections [app owner]
+(defn section [section owner]
   (reify
     om/IRender
     (render [this]
-      (let [sections (:ui app)]
-        (apply dom/div nil
-               (map
-                (fn [section]
-                  (let [open? (:open section)
-                        name (:section-name section)]
-                    (dom/div #js {:className "section"}
-                             (dom/input #js {:type "checkbox"
-                                             :checked open?
-                                             :onChange #(do
-                                                          (println "toggle section " name)
-                                                          (om/transact! section [:open] (fn [o] (not o))))})
-                             (dom/span #js {:className "section-header"} name)
-                             (when-let [header (:header section)]
-                               (dom/p nil header))
-                             (when open?
-                               (om/build entries app {:opts {:section section}})))))
-                sections))))))
+      (let [open? (:open section)
+            name (:section-name section)]
+        (dom/div #js {:className "section"}
+                 (dom/input #js {:type "checkbox"
+                                 :checked open?
+                                 :onChange #(do
+                                              (println "toggle " name)
+                                              (om/transact! section [:open] (fn [o] (not o))))})
+                 (dom/span #js {:className "section-header"} name)
+                 (when-let [header (:header section)]
+                   (dom/p nil header))
+                 (when open?
+                   (apply dom/ul nil (om/build-all entry (:data section)))))))))
 
 (defn nav-box [app owner]
   (reify
     om/IRender
     (render [this]
-      (let [_ (println "nav-box")
-            _ (println "item " (:item app))]
-        (om/build sections app)))))
+      (apply dom/div nil
+             (println "nav-box")
+             (println "item " (:item app))
+             (om/build-all section (:ui app))))))
 
 (defn point [p]
   (let [[x y] p]
@@ -130,6 +88,25 @@
         (dom/div #js {:className "definition"}
                  (dom/h3 nil (first (item d/definition-text)))
                  (dom/p nil (second (item d/definition-text))))))))
+
+(defn item-props [props owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [tri-opts (:tri-opts props)]
+        (apply dom/ul #js {:className "item-props"}
+               (map
+                (fn [[opt checked]]
+                  (let [name (name opt)]
+                    (dom/li nil
+                            (dom/input #js {:type "checkbox"
+                                            :checked checked
+                                            :onChange #(do
+                                                         (println "check: " name)
+                                                         (om/transact! props [:tri-opts opt]
+                                                                       (fn [v] (not v))))})
+                            name)))
+                tri-opts))))))
 
 (defn item-controller [app owner opts]
   (reify
@@ -181,8 +158,9 @@
       (let [draw-chan (:draw-chan opts)
             item (:item app)
             tri (:triangle app)
-            tri-opts  (get-in app [:current-properties :tri-opts])
-            line-opts (get-in app [:current-properties :line-opts])
+            prop-map (:prop-map app)
+            tri-opts (get-in prop-map [item :tri-opts])
+            line-opts (get-in prop-map [item :line-opts])
             tri-style state/tri-style]
 
         ;; render graphics from local state
@@ -222,6 +200,9 @@
         ;; render dom
         (dom/div nil
                  (om/build item-detail item)
+                 (dom/div nil
+                          (dom/h3 nil "Selected properties")
+                          (om/build item-props (get-in app [:prop-map (:item app)])))
                  (dom/div nil
                           (dom/h3 nil "Vertices")
                           (om/build triangle-detail (:triangle app) {:opts opts})))))))
