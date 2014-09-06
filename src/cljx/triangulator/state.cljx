@@ -16,11 +16,12 @@
    
    :centroid
    {:line-opts (conj line-options :midpoint)
-    :tri-opts-keys [:midpoints :medians :centroid :centroid-fill]
+    :tri-opts-keys [:midpoints :medians :centroid :centroid-fill :midpoint-triangle]
     :tri-opts {:midpoints true
                :medians true
                :centroid true
-               :centroid-fill true}}
+               :centroid-fill true
+               :midpoint-triangle true}}
 
    :circumcircle
    {:line-opts (conj line-options :perp-bisector :midpoint)
@@ -34,12 +35,13 @@
 
    :orthocenter
    {:line-opts (conj line-options :extended)
-    :tri-opts-keys [:extended :altitudes :feet :orthocenter :fill]
+    :tri-opts-keys [:extended :altitudes :feet :orthocenter :fill :orthic-triangle]
     :tri-opts {:altitudes true
                :orthocenter true
                :fill true
                :extended true
-               :feet true}}
+               :feet true
+               :orthic-triangle true}}
 
    :incircle
    {:line-opts line-options

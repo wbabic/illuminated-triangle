@@ -26,7 +26,7 @@
     :dependencies [[org.clojure/tools.namespace "0.2.5"]
                    [org.clojure/java.classpath "0.2.0"]
                    [org.clojure/test.check "0.5.7"]
-                   [com.cemerick/piggieback "0.1.3"]
+                   [com.cemerick/austin "0.1.5"]
                    [criterium "0.4.1"]]
     :plugins [[lein-cljsbuild "1.0.3"]
               [com.keminglabs/cljx "0.4.0"]]}}
