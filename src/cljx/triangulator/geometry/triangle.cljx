@@ -154,10 +154,10 @@ assuming the vertices and segments have been added"
                     orthocenter))
 
                 (contains? options :nine-pt-circle)
-                (assoc :orthic-center (try (circumcenter (:altitudes tri))
-                                      #+clj  (catch Exception e nil)
-                                      #+cljs (catch js/Object e nil)
-                                      ))
+                (assoc :nine-pt-center (try (circumcenter (:altitudes tri))
+                                            #+clj  (catch Exception e nil)
+                                            #+cljs (catch js/Object e nil)
+                                            ))
 
                 (contains? options :incircle)
                 (assoc :incircle

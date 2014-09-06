@@ -5,6 +5,7 @@
             [triangulator.geometry.transforms :as trans]
             [triangulator.geometry.complex :as complex]
             [triangulator.style :as style]
+            [triangulator.state :as state]
      #+clj  [clojure.core.async :as async :refer [>! <! chan go]]
      #+cljs [cljs.core.async :as async :refer [>! <! chan]]
      )
@@ -178,7 +179,7 @@ Uses geometry styles found in style."
              (dt/style (:centroid tri-style))
              (dt/point G))
 
-            (contains? options :medians)
+            (contains? options :centroid-fill)
             (conj
              ;; fll sub triangles
              (dt/style (:centroid-fill-1 tri-style))
@@ -188,11 +189,22 @@ Uses geometry styles found in style."
              (dt/style (:centroid-fill-3 tri-style))
              (dt/triangle C G A))
 
+            ;; orthocentric-fill
+            (contains? options :orthocentric-fill)
+            (conj
+             ;; fll sub triangles
+             (dt/style (:centroid-fill-1 tri-style))
+             (dt/triangle A H B)
+             (dt/style (:centroid-fill-2 tri-style))
+             (dt/triangle B H C)
+             (dt/style (:centroid-fill-3 tri-style))
+             (dt/triangle C H A))
+
             ;; draw medians
             (contains? options :medians)
             (into
              (let [;; line options for medians
-                   line-options #{:line :endpoint2}
+                   line-options #{:line}
                    style (:medians tri-style)]
                (concat (draw-line-data A A1 line-options style)
                        (draw-line-data B B1 line-options style)
@@ -201,12 +213,18 @@ Uses geometry styles found in style."
             (contains? options :altitudes)
             (into
              (let [;; line options for altitudes
-                   line-options #{:line :endpoint2 :extended}
+                   line-options #{:line :extended}
                    style (:altitudes tri-style)]
                (concat (draw-line-data A D line-options style)
                        (draw-line-data B E line-options style)
                        (draw-line-data C F line-options style))))
 
+            (contains? options :feet)
+            (conj (dt/style (:feet tri-style))
+                  (dt/point D)
+                  (dt/point E)
+                  (dt/point F))
+            
             (contains? options :orthocenter)
             (conj (dt/style (:orthocenter tri-style))
                   (dt/point H))
@@ -217,36 +235,67 @@ Uses geometry styles found in style."
 
             (contains? options :circumcircle)
             (conj (dt/style (:circumcircle tri-style))
-                  (dt/circle O (geom/distance A O))
+                  (dt/circle O (geom/distance A O)))
+
+            (contains? options :circumradii)
+            (conj (dt/style (:circumradii tri-style))
                   (dt/line [A O])
                   (dt/line [B O])
                   (dt/line [C O]))
-
+            
             (contains? options :euler)
             (conj (dt/style (:euler tri-style))
                   (dt/line [O H]))
 
-            (and (contains? options :nine-pt-circle)
-                 (:orthic-center triangle))
-            (into (let [;; midpoints from vertices to orthocenter H
-                        m1 (geom/midpoint A H)
+            (contains? options :nine-pt-circle)
+            (into (let [orthic-center (:orthic-center triangle)
+                        nine-pt-radius (geom/distance D orthic-center)]
+                    [(dt/style (:nine-pt-circle tri-style))
+                     (dt/circle orthic-center nine-pt-radius)]))
+
+            ;; orthic-triangle
+            (contains? options :orthic-triangle)
+            (conj (dt/style (:orthic-triangle tri-style))
+                  (dt/triangle D E F))
+
+            ;; midpoint-triangle
+            (contains? options :midpoint-triangle)
+            (conj (dt/style (:midpoint-triangle tri-style))
+                  (dt/triangle A1 B1 C1))
+
+            ;; orthocentric-midpoint-triangle
+            (contains? options :orthocentric-midpoint-triangle)
+            (into (let [m1 (geom/midpoint A H)
                         m2 (geom/midpoint B H)
-                        m3 (geom/midpoint C H)
-                        ;; circumcircle of orthic triangle
-                        orthic-center (:orthic-center triangle)
-                        [D E F :as feet] (:altitudes triangle)]
+                        m3 (geom/midpoint C H)]
+                    [(dt/style (:ortho-centric-midpoint-triangle tri-style))
+                     (dt/triangle m1 m2 m3)]))
+
+            ;; :nine-pt-center
+            (contains? options :nine-pt-center)
+            (into (let [;; circumcircle of orthic triangle
+                        orthic-center (:orthic-center triangle)]
+                    [(dt/style (:nine-pt-center tri-style))
+                     (dt/point orthic-center)]))
+
+            ;; :orthocentric-midpoints
+            (contains? options :orthocentric-midpoints)
+            (into (let [m1 (geom/midpoint A H)
+                        m2 (geom/midpoint B H)
+                        m3 (geom/midpoint C H)]
                     [(dt/style (:orthocentric-midpoints tri-style))
                      (dt/point m1)
                      (dt/point m2)
-                     (dt/point m3)
-                     
-                     (dt/point orthic-center)
-                     (dt/style (:nine-pt-circle tri-style))
-                     (dt/circle orthic-center (geom/distance D orthic-center))
+                     (dt/point m3)]))
+            
+            ;; :orthocentric-radii
+            (contains? options :nine-pt-radii)
+            (into (let [orthic-center (:orthic-center triangle)]
+                    [(dt/style (:nine-pt-radii tri-style))
                      (dt/line [orthic-center D])
                      (dt/line [orthic-center E])
                      (dt/line [orthic-center F])]))
-
+            
             (contains? options :ang-bisector)
             (into (let [ang-bi (:ang-bisector triangle)]
                     [(dt/style (:ang-bisector tri-style))
@@ -283,22 +332,23 @@ a map of options to include"
         triangle (tri/triangle A B C)
         line-options #{:line :endpoint1}
         line-options (cond-> line-options
-                             (contains? tri-options :perp-bisector)
-                             (conj :perp-bisector :midpoint)
+                             (contains? selected-tri-opts :perp-bisector)
+                             (conj :perp-bisector)
 
-                             (or (contains? tri-options :orthocenter)
-                                 (contains? tri-options :incircle)
-                                 (contains? tri-options :excircle))
-                             (conj :extended)
-                             )
+                             (contains? selected-tri-opts :midpoints)
+                             (conj :midpoint)
+
+                             (contains? selected-tri-opts :extended)
+                             (conj :extended))
+        
         ;; build up any required geometric data into triangle
         triangle (tri/add-options triangle tri-options)
         triangle-data (expand triangle selected-tri-opts tri-style)]
     (concat
-     triangle-data
      (draw-edge-data A B :e1 line-options)
      (draw-edge-data B C :e2 line-options)
-     (draw-edge-data C A :e3 line-options))))
+     (draw-edge-data C A :e3 line-options)
+     triangle-data)))
 
 (defn draw-triangle
   "new draw-tri"
@@ -313,33 +363,8 @@ a map of options to include"
   (clojure.pprint/pprint style/tri-style)
   ;; here we can check the pure data before we even send it to a channel
 
-  (clojure.pprint/pprint (:altitudes style/tri-style))
-  (clojure.pprint/pprint
-   (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid :fill}))
+    (clojure.pprint/pprint
+     (tri-data [0 0] [1 0] [0 1]  (get-in state/prop-map [:centroid :tri-opts]) state/tri-style))
 
-  (clojure.pprint/pprint
-   (tri-data [0 0] [1 0] [0 1] #{:midpoints :medians :centroid} style/tri-style))
   
-  (tri-data [0 0] [1 0] [0 1] #{:orthocenter :altitudes :centroid} style/tri-style)
-
-  (clojure.pprint/pprint
-   (tri-data [0 0] [1 0] [0 1]
-             #{:altitudes :perp-bisector :orthocenter :circumcenter :nine-pt-circle :fill}
-             style/tri-style))
-
-  (clojure.pprint/pprint
-   (tri-data [0 0] [1 0] [0 1]
-             #{:ang-bisector :incircle :excircle}
-             style/tri-style))
-
-  (clojure.pprint/pprint
-   (expand (tri/add-options (tri/triangle [0 0] [1 0] [0 1]) #{:incircle})
-           #{:incircle} style/tri-style))
-
-  (clojure.pprint/pprint
-   (expand (tri/add-options
-            (tri/triangle [0 0] [1 0] [0 1])
-            #{:excircle})
-           #{:excircle} style/tri-style))
-
-  )
+)

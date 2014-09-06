@@ -45,17 +45,23 @@
    :centroid-fill-1 {:stroke :grey-3 :fill :lt-blue}
    :centroid-fill-2 {:stroke :grey-3 :fill :lt-red}
    :centroid-fill-3 {:stroke :grey-3 :fill :lt-green}
-   :medians {:stroke :grey-3 :fill :cyan}
+   :medians {:line {:stroke :yellow}
+             :extended {:stroke :lt-grey}}
+   :midpoints {:stroke :grey-3 :fill :cyan}
    :orthocenter {:stroke :grey-3 :fill :yellow}
    :orthocentric-midpoints {:stroke :grey-3 :fill :cyan}
+   :orthic-triangle {:fill :lt-green}
+   :midpoint-triangle {:fill :lt-red}
    :nine-pt-circle {:stroke :orange :fill :lt-grey}
+   :nine-pt-center {:stroke :orange :fill :lt-grey}
+   :nine-pt-radii {:stroke :orange :fill :lt-grey}
    :circumcenter {:stroke :cyan :fill :pink}
    :euler {:stroke :pink}
    :circumcircle {:stroke :pink :fill :lt-grey}
+   :circumradii {:stroke :pink :fill :lt-grey}
    :altitudes {:line {:stroke :yellow}
-               :endpoint1 {:stroke :grey-3 :fill :lt-grey}
-               :endpoint2 {:stroke :grey-3 :fill :lt-grey}
                :extended {:stroke :lt-grey}}
+   :feet {:stroke :grey-3 :fill :lt-grey}
    :ang-bisector {:stroke :lt-grey}
    :fill {:fill :lt-blue}
    :incircle {:center {:stroke :grey-3 :fill :yellow}

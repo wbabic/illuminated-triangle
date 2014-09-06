@@ -92,7 +92,8 @@
       (.stroke context)
       (.fill context)
       (.closePath context)
-      (render (dt/point center) context))))
+      ;;(render (dt/point center) context)
+      )))
 
 (defn surface [id]
   (let [canvas (.getElementById js/document id)]
