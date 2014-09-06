@@ -24,7 +24,7 @@
 
    :circumcircle
    {:line-opts (conj line-options :perp-bisector :midpoint)
-    :tri-opts-keys [:circumcenter :circumcircle :circumradii :perp-bisector :midpoints :fill]
+    :tri-opts-keys [:midpoints :perp-bisector:circumcenter :circumradii :circumcircle :fill]
     :tri-opts {:circumcenter true
                :circumcircle true
                :circumradii true
@@ -34,7 +34,7 @@
 
    :orthocenter
    {:line-opts (conj line-options :extended)
-    :tri-opts-keys [:altitudes :orthocenter :fill :extended :feet]
+    :tri-opts-keys [:extended :altitudes :feet :orthocenter :fill]
     :tri-opts {:altitudes true
                :orthocenter true
                :fill true
@@ -83,7 +83,7 @@
                :orthocentric-fill true
                :nine-pt-center true
                :nine-pt-radii true
-               :orthocentric-midpoints true
+               :orthocentric-midpoints false
                :midpoints true
                :medians true
                :centroid true

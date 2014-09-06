@@ -248,10 +248,10 @@ Uses geometry styles found in style."
                   (dt/line [O H]))
 
             (contains? options :nine-pt-circle)
-            (into (let [orthic-center (:orthic-center triangle)
-                        nine-pt-radius (geom/distance D orthic-center)]
+            (into (let [nine-pt-center (:nine-pt-center triangle)
+                        nine-pt-radius (geom/distance D nine-pt-center)]
                     [(dt/style (:nine-pt-circle tri-style))
-                     (dt/circle orthic-center nine-pt-radius)]))
+                     (dt/circle nine-pt-center nine-pt-radius)]))
 
             ;; orthic-triangle
             (contains? options :orthic-triangle)
@@ -274,9 +274,9 @@ Uses geometry styles found in style."
             ;; :nine-pt-center
             (contains? options :nine-pt-center)
             (into (let [;; circumcircle of orthic triangle
-                        orthic-center (:orthic-center triangle)]
+                        nine-pt-center (:nine-pt-center triangle)]
                     [(dt/style (:nine-pt-center tri-style))
-                     (dt/point orthic-center)]))
+                     (dt/point nine-pt-center)]))
 
             ;; :orthocentric-midpoints
             (contains? options :orthocentric-midpoints)
@@ -290,11 +290,11 @@ Uses geometry styles found in style."
             
             ;; :orthocentric-radii
             (contains? options :nine-pt-radii)
-            (into (let [orthic-center (:orthic-center triangle)]
+            (into (let [nine-pt-center (:nine-pt-center triangle)]
                     [(dt/style (:nine-pt-radii tri-style))
-                     (dt/line [orthic-center D])
-                     (dt/line [orthic-center E])
-                     (dt/line [orthic-center F])]))
+                     (dt/line [nine-pt-center D])
+                     (dt/line [nine-pt-center E])
+                     (dt/line [nine-pt-center F])]))
             
             (contains? options :ang-bisector)
             (into (let [ang-bi (:ang-bisector triangle)]
