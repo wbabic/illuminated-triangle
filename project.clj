@@ -4,20 +4,24 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [hiccup "1.0.5"]
-                 [garden "1.2.1"]
+
                  [org.clojure/clojurescript "0.0-2322"]
                  [org.clojure/core.async "0.1.338.0-5c5012-alpha"]
                  [om "0.7.1"]
                  [secretary "1.2.0"]
+
                  [net.mikera/core.matrix "0.18.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/core.match "0.2.1"]
                  [expresso "0.2.0"]
-                 [com.stuartsierra/component "0.2.2"]
+
                  [ring "1.3.1"]
                  [compojure "1.1.9"]
-                 [enlive "1.1.5"]]
+                 [enlive "1.1.5"]
+                 [hiccup "1.0.5"]
+                 [garden "1.2.1"]
+
+                 [com.stuartsierra/component "0.2.2"]]
 
   :source-paths ["src/cljs" "target/classes"]
   
