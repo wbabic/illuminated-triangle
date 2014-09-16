@@ -168,7 +168,8 @@ Uses geometry styles found in style."
         H (:orthocenter triangle)
         O (:circumcenter triangle)
         [A1 B1 C1 :as midpoints] (:midpoints triangle)
-        [D E F :as feet] (:altitudes triangle)]
+        [D E F :as feet] (:altitudes triangle)
+        [L M N] (:centroid-vertex-midpoints triangle)]
     (cond-> []
             (contains? options :fill)
             (conj (dt/style (:fill tri-style))
@@ -188,6 +189,17 @@ Uses geometry styles found in style."
              (dt/triangle B G C)
              (dt/style (:centroid-fill-3 tri-style))
              (dt/triangle C G A))
+
+
+            (contains? options :centroid-vertex-midpoints)
+            (conj (dt/style (:feet tri-style))
+                  (dt/point L)
+                  (dt/point M)
+                  (dt/point N))
+
+            (contains? options :centroid-vertex-triangle)
+            (conj (dt/style (:fill tri-style))
+                  (dt/triangle L M N))
 
             ;; orthocentric-fill
             (contains? options :orthocentric-fill)

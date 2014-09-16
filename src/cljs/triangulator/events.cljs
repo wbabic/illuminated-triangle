@@ -11,7 +11,8 @@
    :mouse-move goog.events.EventType.MOUSEMOVE
    :mouse-up goog.events.EventType.MOUSEUP
    :click goog.events.EventType.CLICK
-   :dblclick goog.events.EventType.DBLCLICK})
+   :dblclick goog.events.EventType.DBLCLICK
+   :key-down goog.events.EventType.KEYDOWN})
 
 (defn listen [el type]
   (let [out (chan)]

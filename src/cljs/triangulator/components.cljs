@@ -101,10 +101,10 @@
                     (dom/li nil
                             (dom/input #js {:type "checkbox"
                                             :checked checked
-                                            :onChange #(do
-                                                         (println "check: " name)
-                                                         (om/transact! props [:tri-opts opt]
-                                                                       (fn [v] (not v))))})
+                                            :onChange
+                                            (fn [_]
+                                              (om/transact! props [:tri-opts opt]
+                                                            (fn [v] (not v))))})
                             name)))
                 tri-opts))))))
 

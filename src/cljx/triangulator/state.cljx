@@ -16,12 +16,14 @@
    
    :centroid
    {:line-opts (conj line-options :midpoint)
-    :tri-opts-keys [:midpoints :medians :centroid :centroid-fill :midpoint-triangle]
+    :tri-opts-keys [:midpoints :medians :centroid :centroid-fill :midpoint-triangle :centroid-vertex-midpoints :centroid-vertex-triangle]
     :tri-opts {:midpoints true
                :medians true
                :centroid true
                :centroid-fill true
-               :midpoint-triangle true}}
+               :midpoint-triangle true
+               :centroid-vertex-midpoints true
+               :centroid-vertex-triangle true}}
 
    :circumcircle
    {:line-opts (conj line-options :perp-bisector :midpoint)
@@ -85,7 +87,7 @@
                :orthocentric-fill true
                :nine-pt-center true
                :nine-pt-radii true
-               :orthocentric-midpoints false
+               :orthocentric-midpoints true
                :midpoints true
                :medians true
                :centroid true

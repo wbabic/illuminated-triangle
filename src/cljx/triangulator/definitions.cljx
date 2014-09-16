@@ -68,7 +68,7 @@
 
    :centroid
    ["Centroid"
-    "The intersection of the medians of a triangle meet in a point, called the centroid. A median is a line from a vertex to the midpoint of the opposite side. The medians are drawn in yellow. Midpoints of edges are drawn in grey. The centroid is also drawn in yellow. Why are the three medians concurrent?"]
+    "A median is a line from a vertex to the midpoint of the opposite side. The intersection of the medians of a triangle meet in a point, called the centroid. The medians are concurrent and trisect each other. Why? Need: A line joining the midpoints of a triangle is parallel to and half the distance of the opposite side and perpendiculars of a rectangle bisect each other."]
 
    :incircle
    ["Incircle and excircles"
@@ -76,7 +76,7 @@
 
    :orthocenter
    ["Orthocenter"
-    "The intersection of the altitudes of a triangle meet in a point called the orthocenter. An altitude is a line from a vertex perpendicular to the opposite edge. The altititudes and their feet are drawn in yellow and the orthocenter in pink. When the orthocenter coincides with the centroid, we have an equilateral triangle. When the orthocenter coincides with a vertex, we have a right triangle."]
+    "An altitude is a line from a vertex perpendicular to the opposite edge. The intersection of the altitudes of a triangle meet in a point called the orthocenter. When the orthocenter coincides with the centroid, we have an equilateral triangle. When the orthocenter coincides with a vertex, we have a right triangle. The orthic triangle is the triangle consisting of the feet of the altitides."]
 
    :euler-line
    ["Euler line"

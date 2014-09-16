@@ -128,6 +128,11 @@ assuming the vertices and segments have been added"
                 (contains? options :centroid)
                 (assoc :centroid (centroid t))
 
+                (contains? options :centroid)
+                (assoc :centroid-vertex-midpoints
+                  (let [G (centroid t)]
+                    (midpoints [[A G] [B G] [C G]])))
+
                 (contains? options :midpoints)
                 (assoc :midpoints (midpoints (:segments tri)))
 
