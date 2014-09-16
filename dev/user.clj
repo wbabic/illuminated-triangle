@@ -1,18 +1,11 @@
 (ns user
-  (:require [clojure.repl :refer :all]
+  (:require [clojure.repl :refer (apropos dir doc find-doc pst source)]
             [clojure.pprint :refer (pprint)]
+            [clojure.set :as set]
+            [clojure.string :as str]
             [clojure.test :refer :all]
-;;            [triangulator.geometry :as geom]
-;;            [triangulator.geometry-test]
-;;            [triangulator.transforms :as trans]
-;;            [triangulator.transforms-test]
-;;            [triangulator.triangle :as tri]
-;;            [triangulator.triangle-test]
-            ))
-
-(comment
-  (cemerick.piggieback/cljs-repl)
-  )
+            [clojure.tools.namespace.repl :refer (refresh refresh-all)]
+            [com.stuartsierra.component :refer :all]))
 
 (defn quick-test []
   (run-tests 'triangulator.geometry-test))

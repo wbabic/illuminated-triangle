@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [garden "1.2.1"]
-                 [org.clojure/clojurescript "0.0-2311"]
+                 [org.clojure/clojurescript "0.0-2322"]
                  [org.clojure/core.async "0.1.338.0-5c5012-alpha"]
                  [om "0.7.1"]
                  [secretary "1.2.0"]
@@ -14,7 +14,10 @@
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/core.match "0.2.1"]
                  [expresso "0.2.0"]
-                 [com.stuartsierra/component "0.2.1"]]
+                 [com.stuartsierra/component "0.2.2"]
+                 [ring "1.3.1"]
+                 [compojure "1.1.9"]
+                 [enlive "1.1.5"]]
 
   :source-paths ["src/cljs" "target/classes"]
   
@@ -23,13 +26,13 @@
   :profiles
   {:dev
    {:source-paths ["test/clj" "dev"]
-    :dependencies [[org.clojure/tools.namespace "0.2.5"]
+    :dependencies [[org.clojure/tools.namespace "0.2.6"]
                    [org.clojure/java.classpath "0.2.0"]
                    [org.clojure/test.check "0.5.7"]
-                   [com.cemerick/austin "0.1.5"]
                    [criterium "0.4.1"]]
     :plugins [[lein-cljsbuild "1.0.3"]
-              [com.keminglabs/cljx "0.4.0"]]}}
+              [com.keminglabs/cljx "0.4.0"]
+              [com.cemerick/austin "0.1.5"]]}}
 
   :hooks [cljx.hooks]
     

@@ -17,10 +17,10 @@ goog.addDependency("../triangulator/geometry.js", ['triangulator.geometry'], ['c
 goog.addDependency("../triangulator/geometry/triangle.js", ['triangulator.geometry.triangle'], ['triangulator.geometry', 'cljs.core']);
 goog.addDependency("../triangulator/geometry/transforms.js", ['triangulator.geometry.transforms'], ['triangulator.geometry.triangle', 'triangulator.geometry', 'cljs.core']);
 goog.addDependency("../triangulator/draw.js", ['triangulator.draw'], ['triangulator.datatypes', 'cljs.core', 'cljs.core.async']);
+goog.addDependency("../triangulator/state.js", ['triangulator.state'], ['cljs.core', 'triangulator.style', 'triangulator.definitions']);
 goog.addDependency("../triangulator/protocols.js", ['triangulator.protocols'], ['cljs.core']);
 goog.addDependency("../triangulator/geometry/complex.js", ['triangulator.geometry.complex'], ['triangulator.geometry', 'cljs.core', 'triangulator.protocols']);
-goog.addDependency("../triangulator/render.js", ['triangulator.render'], ['triangulator.datatypes', 'triangulator.geometry.triangle', 'triangulator.geometry', 'cljs.core', 'cljs.core.async', 'triangulator.geometry.transforms', 'triangulator.style', 'triangulator.geometry.complex']);
-goog.addDependency("../triangulator/state.js", ['triangulator.state'], ['cljs.core', 'triangulator.style', 'triangulator.definitions']);
+goog.addDependency("../triangulator/render.js", ['triangulator.render'], ['triangulator.datatypes', 'triangulator.geometry.triangle', 'triangulator.geometry', 'cljs.core', 'triangulator.state', 'cljs.core.async', 'triangulator.geometry.transforms', 'triangulator.style', 'triangulator.geometry.complex']);
 goog.addDependency("../om/core.js", ['om.core'], ['cljs.core', 'om.dom', 'goog.ui.IdGenerator']);
 goog.addDependency("../triangulator/components.js", ['triangulator.components'], ['triangulator.datatypes', 'triangulator.render', 'triangulator.draw', 'triangulator.geometry', 'triangulator.handlers', 'cljs.core', 'om.dom', 'triangulator.state', 'cljs.core.async', 'om.core', 'triangulator.definitions', 'triangulator.events']);
 goog.addDependency("../clojure/string.js", ['clojure.string'], ['goog.string', 'cljs.core', 'goog.string.StringBuffer']);
