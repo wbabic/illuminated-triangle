@@ -33,9 +33,7 @@
         (dom/div #js {:className "section"}
                  (dom/input #js {:type "checkbox"
                                  :checked open?
-                                 :onChange #(do
-                                              (println "toggle " name)
-                                              (om/transact! section [:open] (fn [o] (not o))))})
+                                 :onChange #(om/transact! section [:open] (fn [o] (not o)))})
                  (dom/span #js {:className "section-header"} name)
                  (when-let [header (:header section)]
                    (dom/p nil header))
@@ -200,9 +198,14 @@
         ;; render dom
         (dom/div nil
                  (om/build item-detail item)
-                 (dom/div nil
-                          (dom/h3 nil "Selected properties")
-                          (om/build item-props (get-in app [:prop-map (:item app)])))
+                 (let [item-properties (get-in app [:prop-map (:item app)])
+                       open? (:open item-properties)]
+                   (dom/div nil
+                            (dom/input #js {:type "checkbox"
+                                            :checked open?
+                                            :onChange #(om/transact! item-properties [:open] (fn [o] (not o)))})
+                            (dom/span nil "Selected properties")
+                            (when open? (om/build item-props item-properties))))
                  (dom/div nil
                           (dom/h3 nil "Vertices")
                           (om/build triangle-detail (:triangle app) {:opts opts})))))))

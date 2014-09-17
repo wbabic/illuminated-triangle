@@ -22,7 +22,9 @@
 (defn mouse-chan [element event-type key]
   (async/map
    (fn [e] (let [px (.-offsetX e)
-                py (.-offsetY e)]
+                py (.-offsetY e)
+                ;; _ (.log js/console e)
+                ]
             [key [px py]]))
    [(listen element (event-type event-map))]))
 

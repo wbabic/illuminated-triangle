@@ -2,10 +2,6 @@ body, h1, h2, h3, p, li {
     padding: 10px;
 }
 
-p {
-    text-align: left;
-}
-
 li {
     padding: 5px;
 }
@@ -38,7 +34,7 @@ a:active {
     display: -webkit-flex;
     -webkit-flex-flow: row wrap;
   
-    text-align: center;
+    text-align: left;
     font: normal 16px verdana,sans-serif;
 }
 
@@ -55,6 +51,7 @@ a:active {
 .header {
     padding: 10px;
     -webkit-flex: 1 100%;
+    text-align: center;
 }
 
 .nav {
@@ -70,6 +67,7 @@ a:active {
 .footer {
     padding: 10px;
     -webkit-flex: 1 100%;
+    text-align: center;
 }
 
 .main {
@@ -82,6 +80,7 @@ a:active {
 .canvas {
     border: 2px solid rgba(156, 80, 172, 0.75);
     border-radius: 5px;
+    width: 600px;
 }
 
 .aside-1 {

@@ -12,7 +12,8 @@
   {:triangle
    {:line-opts line-options
     :tri-opts-keys [:fill]
-    :tri-opts {:fill true}}
+    :tri-opts {:fill true}
+    :open true}
    
    :centroid
    {:line-opts (conj line-options :midpoint)
@@ -23,27 +24,32 @@
                :centroid-fill true
                :midpoint-triangle true
                :centroid-vertex-midpoints true
-               :centroid-vertex-triangle true}}
+               :centroid-vertex-triangle true}
+    :open true}
 
    :circumcircle
    {:line-opts (conj line-options :perp-bisector :midpoint)
-    :tri-opts-keys [:midpoints :perp-bisector:circumcenter :circumradii :circumcircle :fill]
+    :tri-opts-keys [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle :fill :midpoint-triangle]
     :tri-opts {:circumcenter true
                :circumcircle true
                :circumradii true
                :perp-bisector true
                :midpoints true
-               :fill true}}
+               :midpoint-triangle true
+               :fill true}
+    :open true}
 
    :orthocenter
    {:line-opts (conj line-options :extended)
-    :tri-opts-keys [:extended :altitudes :feet :orthocenter :fill :orthic-triangle]
+    :tri-opts-keys [:extended :altitudes :feet :orthocenter :fill :orthic-triangle :orthocentric-fill]
     :tri-opts {:altitudes true
                :orthocenter true
                :fill true
                :extended true
                :feet true
-               :orthic-triangle true}}
+               :orthic-triangle true
+               :orthocentric-fill true}
+    :open true}
 
    :incircle
    {:line-opts line-options
@@ -52,12 +58,13 @@
                :incircle true
                :excircle true
                :fill true
-               :extended true}}
+               :extended true}
+    :open true}
 
    :euler-line
    {:line-opts (conj line-options :extended)
     :tri-opts-keys [:altitudes :perp-bisector :orthocenter :extended :feet
-                    :circumcenter :midpoints :medians :centroid :euler]
+                    :circumcenter :midpoints :medians :centroid :euler :centroid-fill]
     :tri-opts {:altitudes true
                :perp-bisector true
                :orthocenter true
@@ -67,12 +74,14 @@
                :midpoints true
                :medians true
                :centroid true
-               :euler true}}
+               :euler true
+               :centroid-fill true}
+    :open true}
 
    :nine-pt-circle
    {:line-opts (conj line-options :extended)
     :tri-opts-keys [:altitudes :perp-bisector :orthocenter :feet :extended
-                    :circumcenter :nine-pt-circle :midpoints :medians :centroid :euler
+                    :circumcenter :circumcircle :nine-pt-circle :midpoints :medians :centroid :euler
                     :nine-pt-center :nine-pt-radii :orthocentric-midpoints]
     :tri-opts {:altitudes true
                :perp-bisector true
@@ -80,6 +89,7 @@
                :feet true
                :extended true
                :circumcenter true
+               :circumcircle true
                :nine-pt-circle true
                :orthic-triangle true
                :midpoint-triangle true
@@ -91,7 +101,8 @@
                :midpoints true
                :medians true
                :centroid true
-               :euler true}}
+               :euler true}
+    :open true}
 
    :all
    {:line-opts (conj line-options :extended :midpoint :perp-bisector)
@@ -115,7 +126,8 @@
                :centroid true
                :euler true
                :fill true
-               :extended true}}})
+               :extended true}
+    :open false}})
 
 (def item-list [:triangle :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :all])
 

@@ -21,7 +21,15 @@
    {:id :iteration2 :label "H(2) H(1/2)"}])
 
 (def triangle
-  [{:id :triangle :label "Create a triangle" :symbol "ABC"}])
+  [{:id :triangle :label "triangle" :symbol "ABC"}])
+
+(def theorems
+  [{:id :centroid :label "centroid"}
+   {:id :circumcircle :label "circumcenter"}
+   {:id :orthocenter :label "orthocenter"}
+   {:id :incircle :label "inccenter and excenters"}
+   {:id :euler-line :label "euler line"}
+   {:id :nine-pt-circle :label "nine point center"}])
 
 (def ui
   [{:section-name "Triangle"
@@ -30,6 +38,9 @@
    {:section-name "Properties"
     :data properties
     :open true}
+   {:section-name "Theorems"
+    :data theorems
+    :open false}
    {:section-name "Transforms"
     :data transformations
     :open false}
