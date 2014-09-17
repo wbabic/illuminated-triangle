@@ -44,7 +44,7 @@
 *** Step through theorems
     Theorems include:
     
-    The centroi is concurrent and trisects the medians.
+    The centroid is concurrent and trisects the medians.
 
     The centroid and orthocenter divide the Euler line externally and
     internally in the ratio of 1:2. 
@@ -52,8 +52,8 @@
     The circumcircle of the orthic triangle contains the midpoints of the
     triangle as well as orthocentric-midpoints triangle (nine point circle).
 
-    The centroid and orthocenter are centers of similtude of circumcircle
-    and nine point circle andthe radius of the circumcircle is twice
+    The centroid and orthocenter are centers of similtude of the circumcircle
+    and the nine point circle and the radius of the circumcircle is twice
     the radius of the nine point circle.
     
 ** Implementation
