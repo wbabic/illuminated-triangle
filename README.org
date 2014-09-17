@@ -29,7 +29,7 @@
     centroid, circumcircle, orthocenter,
     incircle, excircles, euler line, nine point circle.
 
-*** Create transform interactively
+*** Create transforms interactively
     transforms preserving:
     distance -> isometry,
     ratios of distances -> similarity,
@@ -37,6 +37,20 @@
 
     Include translation, rotation, reflection,
     homothety and inversion.
+
+*** Step through theorems
+    Theorems include:
+    Centroid is concurrent and trisects the medians.
+
+    The centroid and orthocenter divide the Euler line externally and
+    internally in the ratio of 1:2. 
+
+    Circumcircle of the orthic triangle contains the midpoints of the
+    triangle as well as orthocentric midpoint triangle (nine point circle)..
+
+    Centroid and orthocenter are centers of similtude of circumcircle
+    and nine point circle.
+    
 ** Implementation
 *** the drawing loop
     This is a core.async go loop accepting drawing events as defined in
