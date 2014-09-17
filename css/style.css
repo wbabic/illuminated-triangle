@@ -2,24 +2,20 @@ body, h1, h2, h3, p, li {
     padding: 10px;
 }
 
-p {
-    text-align: left;
-}
-
 li {
     padding: 5px;
 }
 
 h1 {
-    font-size: 175%;
-}
-
-h2 {
     font-size: 150%;
 }
 
-h3 {
+h2 {
     font-size: 125%;
+}
+
+h3 {
+    font-size: 112%;
 }
 
 a:link {
@@ -38,7 +34,7 @@ a:active {
     display: -webkit-flex;
     -webkit-flex-flow: row wrap;
   
-    text-align: center;
+    text-align: left;
     font: normal 16px verdana,sans-serif;
 }
 
@@ -47,9 +43,15 @@ a:active {
     border-top: 2px solid grey;
 }
 
+.section-header {
+    padding: 2px;
+    font-size: 125%;
+}
+
 .header {
     padding: 10px;
     -webkit-flex: 1 100%;
+    text-align: center;
 }
 
 .nav {
@@ -65,19 +67,20 @@ a:active {
 .footer {
     padding: 10px;
     -webkit-flex: 1 100%;
+    text-align: center;
 }
 
 .main {
     display: -webkit-flex;
     -webkit-flex-flow: column;
-    -webkit-justify-content: center;
+    -webkit-justify-content: flex-start;
     -webkit-flex: 0 0 50%;
 }
 
 .canvas {
     border: 2px solid rgba(156, 80, 172, 0.75);
     border-radius: 5px;
-    margin: auto;
+    width: 600px;
 }
 
 .aside-1 {
