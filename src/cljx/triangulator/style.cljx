@@ -50,6 +50,7 @@
    :midpoints {:stroke :grey-3 :fill :cyan}
    :orthocenter {:stroke :grey-3 :fill :yellow}
    :orthocentric-midpoints {:stroke :grey-3 :fill :cyan}
+   :orthocentric-midpoint-triangle {:fill :pink}
    :orthic-triangle {:fill :lt-green}
    :midpoint-triangle {:fill :lt-red}
    :nine-pt-circle {:stroke :orange :fill :lt-grey}

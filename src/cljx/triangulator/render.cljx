@@ -158,10 +158,9 @@ returned as a vector"
   "Returns a vector of rendering operations for given triangle geometry
 and given set of options,
 or returns empty vector if no options handled, ignoring any unkwown options.
-Options handled: :orthocenter, :altitudes, fill,
+Options handled include: :orthocenter, :altitudes, fill,
 :centroid :medians :circumcenter, :circumcircle.
-Assumes the geometry in triangle has already been built.
-Uses geometry styles found in style."
+Assumes the geometry in triangle has already been built."
   [triangle options tri-style]
   (let [[A B C] (:vertices triangle)
         G (:centroid triangle)
@@ -280,7 +279,7 @@ Uses geometry styles found in style."
             (into (let [m1 (geom/midpoint A H)
                         m2 (geom/midpoint B H)
                         m3 (geom/midpoint C H)]
-                    [(dt/style (:ortho-centric-midpoint-triangle tri-style))
+                    [(dt/style (:orthocentric-midpoint-triangle tri-style))
                      (dt/triangle m1 m2 m3)]))
 
             ;; :nine-pt-center
