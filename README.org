@@ -39,7 +39,7 @@
     generalized circles -> linear fractional transformation.
 
     Transforms include translation, rotation, reflection,
-    dilataion and inversion.
+    dilatation and inversion.
 
 *** Step through theorems
     Theorems include:
