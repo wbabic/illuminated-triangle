@@ -40,13 +40,26 @@
                  (when open?
                    (apply dom/ul nil (om/build-all entry (:data section)))))))))
 
-(defn nav-box [app owner]
+(defn nav-box [app owner opts]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      (let [_ (println "mounting nav-box")
+            keys-chan (:keys-chan opts)]
+        (go
+          (loop []
+            (let [command (<! keys-chan)
+                  current-item (:item @app)
+                  next-item (if (= command :next)
+                              (state/next-item current-item)
+                              (state/previous-item current-item))]
+              (om/update! app :item next-item)
+              (recur))))))
+    
     om/IRender
     (render [this]
       (apply dom/div nil
-             (println "nav-box")
-             (println "item " (:item app))
+             (println "nav-box: item " (:item app))
              (om/build-all section (:ui app))))))
 
 (defn point [p]
@@ -191,7 +204,6 @@
                 [p2x p2y] p2
                 [p3x p3y] p3]
             (render/clear draw-chan)
-            (println "drawing tri from app-state " tri)
             (render/draw-triangle [[p1x p1y] [p2x p2y] [p3x p3y]]
                                   draw-chan tri-opts tri-style)))
         
@@ -210,8 +222,12 @@
                           (dom/h3 nil "Vertices")
                           (om/build triangle-detail (:triangle app) {:opts opts})))))))
 
+(defn by-id [id]
+  (. js/document (getElementById id)))
+
 (let [{:keys [canvas width height]} (draw/surface "graphics-box")
       click-chan (events/mouse-chan canvas :mouse-down :click)
+      keys-chan (events/keys-chan)
       mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
       draw-chan (draw/drawing-loop canvas width height)
       events (async/merge [mouse-move-chan click-chan])]
@@ -219,7 +235,7 @@
   (om/root
    item-controller
    state/app-state
-   {:target (. js/document (getElementById "definition-box"))
+   {:target (by-id "definition-box")
     :opts {:event-chan events
            :draw-chan draw-chan
            :control-chan (chan)}})
@@ -227,4 +243,5 @@
   (om/root
    nav-box
    state/app-state
-   {:target (. js/document (getElementById "definition-list"))}))
+   {:target (by-id "definition-list")
+    :opts {:keys-chan keys-chan}}))

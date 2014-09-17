@@ -133,6 +133,26 @@
 
 (def transform-list [:reflection :translation :rotation :dilataion :inversion])
 
+(defn next-item
+  "given an item-list keyword, return the next item, looping around to beginning if at end"
+  [item]
+  (let [item-index-map (zipmap item-list (range))
+        count (count item-list)
+        index (item item-index-map)
+        next-index (mod (inc index) count)
+        next-item (get item-list next-index)]
+    next-item))
+
+(defn previous-item
+  "given an item-list keyword, return the next item, looping around to beginning if at end"
+  [item]
+  (let [item-index-map (zipmap item-list (range))
+        count (count item-list)
+        index (item item-index-map)
+        next-index (mod (dec index) count)
+        next-item (get item-list next-index)]
+    next-item))
+
 (def app-state
   (atom
    {:item nil
@@ -141,3 +161,4 @@
     :tri-style tri-style
     :ui ui
     :prop-map prop-map}))
+
