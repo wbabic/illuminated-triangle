@@ -30,48 +30,48 @@
    :circumcircle
    {:line-opts (conj line-options :perp-bisector :midpoint)
     :tri-opts-keys [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle :fill :midpoint-triangle]
-    :tri-opts {:circumcenter true
-               :circumcircle true
-               :circumradii true
+    :tri-opts {:midpoints true
                :perp-bisector true
-               :midpoints true
-               :midpoint-triangle true
-               :fill true}
+               :circumcenter true
+               :circumradii true
+               :circumcircle true
+               :fill true
+               :midpoint-triangle true}
     :open true}
 
    :orthocenter
    {:line-opts (conj line-options :extended)
     :tri-opts-keys [:extended :altitudes :feet :orthocenter :fill :orthic-triangle :orthocentric-fill]
-    :tri-opts {:altitudes true
+    :tri-opts {:extended true
+               :altitudes true
+               :feet true
                :orthocenter true
                :fill true
-               :extended true
-               :feet true
-               :orthic-triangle true
-               :orthocentric-fill true}
+               :orthocentric-fill true
+               :orthic-triangle true}
     :open true}
 
    :incircle
    {:line-opts line-options
-    :tri-opts-keys [:ang-bisector :incircle :excircle :fill :extended ]
-    :tri-opts {:ang-bisector true
+    :tri-opts-keys [ :extended :ang-bisector :incircle :excircle :fill]
+    :tri-opts {:extended true
+               :ang-bisector true
                :incircle true
                :excircle true
-               :fill true
-               :extended true}
+               :fill true}
     :open true}
 
    :euler-line
    {:line-opts (conj line-options :extended)
-    :tri-opts-keys [:altitudes :perp-bisector :orthocenter :extended :feet
-                    :circumcenter :midpoints :medians :centroid :euler :centroid-fill]
-    :tri-opts {:altitudes true
-               :perp-bisector true
-               :orthocenter true
-               :extended true
+    :tri-opts-keys [:extended :altitudes :feet :orthocenter :midpoints :perp-bisector
+                    :circumcenter :euler :medians :centroid :centroid-fill]
+    :tri-opts {:extended true
+               :altitudes true
                :feet true
-               :circumcenter true
+               :orthocenter true
                :midpoints true
+               :perp-bisector true
+               :circumcenter true
                :medians true
                :centroid true
                :euler true

@@ -104,20 +104,22 @@
   (reify
     om/IRender
     (render [_]
-      (let [tri-opts (:tri-opts props)]
+      (let [tri-opts-keys (:tri-opts-keys props)
+            tri-opts (:tri-opts props)]
         (apply dom/ul #js {:className "item-props"}
                (map
-                (fn [[opt checked]]
-                  (let [name (name opt)]
+                (fn [key]
+                  (let [checked (key tri-opts)
+                        name (name key)]
                     (dom/li nil
                             (dom/input #js {:type "checkbox"
                                             :checked checked
                                             :onChange
                                             (fn [_]
-                                              (om/transact! props [:tri-opts opt]
+                                              (om/transact! props [:tri-opts key]
                                                             (fn [v] (not v))))})
                             name)))
-                tri-opts))))))
+                tri-opts-keys))))))
 
 (defn item-controller [app owner opts]
   (reify
@@ -145,24 +147,19 @@
                   (let [new-state (trans-fn event state)]
                     (if (:complete new-state)
                       (do
-                        ;; we are done
                         ;; update app state
                         ;; reset local state
                         (om/set-state! owner nil)
-                        ;; todo handle triangles and transform
                         (om/update! app item (data-fn new-state)))
                       (do
-                        ;; keep going, not done yet
                         (om/set-state! owner new-state)
                         (recur new-state))))))
-              ;; wait for item form control-chan, again
               (let [_ (println "waiting for next item from control-chan")
                     item (<! control-chan)
                     _ (println "recieved from control-chan: " item)]
                 (recur item)))))
         ;; start off with :triangle
-        (go (>! control-chan :triangle))
-        ))
+        (go (>! control-chan :triangle))))
 
     om/IRenderState
     (render-state [_ state]
@@ -215,7 +212,8 @@
                    (dom/div nil
                             (dom/input #js {:type "checkbox"
                                             :checked open?
-                                            :onChange #(om/transact! item-properties [:open] (fn [o] (not o)))})
+                                            :onChange #(om/transact! item-properties [:open]
+                                                                     (fn [o] (not o)))})
                             (dom/span nil "Selected properties")
                             (when open? (om/build item-props item-properties))))
                  (dom/div nil
