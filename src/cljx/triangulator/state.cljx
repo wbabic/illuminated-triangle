@@ -82,7 +82,9 @@
    {:line-opts (conj line-options :extended)
     :tri-opts-keys [:altitudes :perp-bisector :orthocenter :feet :extended
                     :circumcenter :circumcircle :nine-pt-circle :midpoints :medians :centroid :euler
-                    :nine-pt-center :nine-pt-radii :orthocentric-midpoints]
+                    :nine-pt-center :nine-pt-radii :orthocentric-midpoints
+                    :orthic-triangle :midpoint-triangle :orthocentric-midpoint-triangle
+                    :orthocentric-fill]
     :tri-opts {:altitudes true
                :perp-bisector true
                :orthocenter true
