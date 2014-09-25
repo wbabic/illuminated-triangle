@@ -3,8 +3,8 @@
   (:require [clojure.core.matrix :as m])
   (:require [clojure.core.matrix.operators :as o])  
   (:use [triangulator.geometry])
-  (:use [triangulator.transforms])
-  (:use [triangulator.triangle]))
+  (:use [triangulator.geometry.transforms])
+  (:use [triangulator.geometry.triangle]))
 
 (defn equals
   ([m n] (o/== m n))

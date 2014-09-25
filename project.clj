@@ -8,7 +8,7 @@
                  [org.clojure/clojurescript "0.0-2322"]
                  [org.clojure/core.async "0.1.338.0-5c5012-alpha"]
                  [om "0.7.1"]
-                 [secretary "1.2.0"]
+                 [secretary "1.2.1"]
 
                  [net.mikera/core.matrix "0.18.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]

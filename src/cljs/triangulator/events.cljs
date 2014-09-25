@@ -38,6 +38,8 @@
 (defn keys-chan []
   (events->chan js/window :key-down
                 (chan 1 (comp (map #(.-keyCode %))
-                              (filter #{37 39})
+                              (filter #{37 38 39 40})
                               (map {37 :previous
-                                    39 :next})))))
+                                    38 :up
+                                    39 :next
+                                    40 :down})))))

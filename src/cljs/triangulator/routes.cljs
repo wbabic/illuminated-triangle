@@ -1,30 +1,48 @@
 (ns triangulator.routes
   (:require [goog.events :as gevents]
             [secretary.core :as secretary :include-macros true :refer [defroute]]
-            [triangulator.components :as c]
             [triangulator.state :as state])
   (:import [goog History]
            [goog.history EventType]))
 
 (enable-console-print!)
 
-(defroute "/" []
-  (println "redirecting ...")
-  (secretary/dispatch! "/centroid"))
-
-(defroute "/:definition" {:as params}
-  (let [item (:definition params)]
-    (println "defroute: " item)
-    (when item
-      (println (str "route definition: " (keyword item)))
-      (swap! state/app-state assoc :item (keyword item)))))
-
 (def history (History.))
+
+(defroute "/" []
+  (secretary/dispatch! "/triangles")
+  (.setToken history "/triangles"))
+
+(defroute "/:section" {:as params}
+  (let [current-selection
+        {:section (keyword (:section params))
+         :entry nil
+         :item nil}]
+    (swap! state/app-state assoc-in [:ui :current-selection] current-selection)))
+
+(defroute "/:section/:entry" {:as params}
+  (let [current-selection
+        {:section (keyword (:section params))
+         :entry (keyword (:entry params))
+         :item nil}]
+    (swap! state/app-state assoc-in [:ui :current-selection] current-selection)))
+
+(defroute "/:section/:entry/:item" {:as params}
+  (let [current-selection
+        {:section (keyword (:section params))
+         :entry (keyword (:entry params))
+         :item (keyword (:item params))}]
+    (swap! state/app-state assoc-in [:ui :current-selection] current-selection)))
 
 (gevents/listen history "navigate"
   (fn [e] (secretary/dispatch! (.-token e))))
 
 (.setEnabled history true)
 
-(comment
-  (secretary/dispatch! "/perp-bisector"))
+(defn dispatch
+  "change url to given selection"
+  [selection]
+  (let [uri (state/selection->uri selection)
+        _ (println "dispatching " selection " to uri " uri)]
+    (secretary/dispatch! uri)
+    (.setToken history uri)))

@@ -1,6 +1,5 @@
 (ns triangulator.geometry.complex
-  (:require [triangulator.protocols :as p]
-            [triangulator.geometry :as geom]))
+  (:require [triangulator.geometry :as geom]))
 
 ;; inspired by Deux
 ;; introduction to the geometry of complex numbers
@@ -8,8 +7,20 @@
 ;; fundamental operations
 ;; fundamental transformations
 
+(defprotocol Complex
+  "A protocol for complex numbers"
+  (length [z])
+  (angle [z])
+  (coords [z])
+  (add [z w])
+  (scale-mult [z k])
+  (multiply [z w])
+  (minus [z])
+  (div [z])
+  (conjugate [z]))
+
 (defrecord complex [x y]
-   p/Complex
+   Complex
    (angle [z] (Math/atan2 (:x z) (:y z)))
    (length [z] (let [x (:x z)
                      y (:y z)]
@@ -17,12 +28,12 @@
                                (* y y)))))
    (coords [z] [(:x z) (:y z)])
    (add [z w] (let [[x1 y1] [(:x z) (:y z)]
-                    [x2 y2] (p/coords w)]
+                    [x2 y2] (coords w)]
                 (complex. (+ x1 x2) (+ y1 y2))))
    (scale-mult [z k] (let [[x1 y1] [(:x z) (:y z)]]
                        (complex. (* k x1) (* k y1))))
    (multiply [z w] (let [[x1 y1] [(:x z) (:y z)]
-                         [x2 y2] (p/coords w)]
+                         [x2 y2] (coords w)]
                      (complex. (- (* x1 x2) (* y1 y2))
                                 (+ (* x1 y2) (* x2 y1)))))
    (minus [z] (let [[x y] [(:x z) (:y z)]]
@@ -31,7 +42,7 @@
                   k (+ (* x x) (* y y))
                   ki (/ k)
                   b (complex. x (- y))]
-              (p/scale-mult
+              (scale-mult
                b
                ki)))
    (conjugate [z] (complex. (:x z) (- (:y z)))))
@@ -42,16 +53,16 @@
 (comment
   (let [e1 (make-rect [1 0])
         e2 (make-rect [0 1])]
-    [(p/length e1) (p/angle e1) (p/add e1 e2) (p/multiply e1 e2)])
+    [(length e1) (angle e1) (add e1 e2) (multiply e1 e2)])
 
-  (p/coords (make-rect [1 0]))
+  (coords (make-rect [1 0]))
   )
 
 (defn mod-tau [x]
      (mod x geom/tau))
 
 (defrecord polar [length angle]
-  p/Complex
+  Complex
   (length [z] (:length z))
   (angle [z] (:angle z))
   (coords [z] (let [r (:length z)
@@ -59,14 +70,14 @@
                     s (Math/sin (:angle z))]
                 [(* r c)
                  (* r s)]))
-  (add [z w] (p/add (make-rect (p/coords z)) w))
+  (add [z w] (add (make-rect (coords z)) w))
   (scale-mult [z k] (let [r (:length z)
                           a (:angle z)]
                       (polar. (* k r) a)))
   (multiply [z w] (let [r1 (:length z)
                         a1 (:angle z)
-                        r2 (p/length w)
-                        a2 (p/angle w)]
+                        r2 (length w)
+                        a2 (angle w)]
                     (polar. (* r1 r2) (+ a1 a2))))
   (minus [z] (let [l (:length z)
                    a (:angle z)]
@@ -83,18 +94,17 @@
   (polar. r a))
 
 (defn scalar-product [z w]
-  (let [p1 (p/coords z)
-        p2 (p/coords w)]
+  (let [p1 (coords z)
+        p2 (coords w)]
     (geom/dot p1 p2)))
-
 
 (comment
   (let [e1 (make-polar 1 0)
         e2 (make-polar 1 (* (/ 4) geom/tau))]
-    [(p/angle e1) (p/angle e2)])
+    [(angle e1) (angle e2)])
 
-  (p/multiply (make-rect [0 1]) (make-rect [0 1]))
-  (p/multiply (make-polar 1 (* (/ 2) geom/tau)) (make-rect [0 1]))
+  (multiply (make-rect [0 1]) (make-rect [0 1]))
+  (multiply (make-polar 1 (* (/ 2) geom/tau)) (make-rect [0 1]))
   (let [z (make-rect [1 0])
         w (make-polar 1 (* (/ 4) geom/tau))]
     (geom/almost-equals 0 (scalar-product z w) (/ 1e10)))
@@ -104,11 +114,11 @@
 ;; special complex numbers
 (def one
   (reify
-    p/Complex
+    Complex
     (length [_] 1)
     (angle [_] 0)
     (coords [_] [1 0])
-    (add [_ z] (p/add z (complex. 1 0)))
+    (add [_ z] (add z (complex. 1 0)))
     (scale-mult [_ k] (complex. k 0))
     (multiply [_ w] w)
     (minus [_] (complex. -1 0))
@@ -117,7 +127,7 @@
 
 (def infinity
   (reify
-    p/Complex
+    Complex
     (div [_] zero)
     (multiply [this _] this)
     (scale-mult [this _] this)
@@ -125,7 +135,7 @@
 
 (def zero
   (reify
-    p/Complex
+    Complex
     (length [_] 0)
     (coords [_] [0 0])
     (add [_ w] w)
@@ -135,22 +145,22 @@
     (conjugate [_] zero)))
 
 (comment
-  (p/length one)
-  (p/angle one)
-  (p/multiply one (make-polar 4 0))
-  (p/coords one)
-  (p/minus one)
-  (identical? (p/div one) one)
-  (p/add one one)
-  (p/add one (make-rect [4 0]))
-  (p/add one (make-polar 4 0))
+  (length one)
+  (angle one)
+  (multiply one (make-polar 4 0))
+  (coords one)
+  (minus one)
+  (identical? (div one) one)
+  (add one one)
+  (add one (make-rect [4 0]))
+  (add one (make-polar 4 0))
 
-  (identical? infinity (p/div zero))
-  (identical? zero (p/div infinity))
-  (p/coords (p/multiply zero one))
-  (p/coords (p/multiply one zero))
-  (identical? zero (p/multiply zero (make-rect [100 200])))
-  (geom/equals (p/coords zero) (p/coords (p/multiply (make-rect [100 200]) zero)))
+  (identical? infinity (div zero))
+  (identical? zero (div infinity))
+  (coords (multiply zero one))
+  (coords (multiply one zero))
+  (identical? zero (multiply zero (make-rect [100 200])))
+  (geom/equals (coords zero) (coords (multiply (make-rect [100 200]) zero)))
   
   )
 
@@ -168,8 +178,8 @@
   [a]
   (fn [z] (let [z (make-rect z)
                a (make-rect a)
-               res (p/add z a)]
-           (p/coords res))))
+               res (add z a)]
+           (coords res))))
 
 (comment
   (let [t (translation (make-rect [1 1]))
@@ -187,12 +197,12 @@ by given angle about given point"
     (let [r (make-polar 1 angle)
           a (make-rect point)
           z (make-rect z)
-          rz (p/multiply z r)
-          res (p/add rz (p/multiply a (p/add one (p/minus r))))]
-      (p/coords res))))
+          rz (multiply z r)
+          res (add rz (multiply a (add one (minus r))))]
+      (coords res))))
 
 (comment
-  (p/multiply (make-polar 1 0) (make-rect [0 0]))
+  (multiply (make-polar 1 0) (make-rect [0 0]))
   (identical? zero (make-polar 0 geom/tau))
   (identical? zero (make-polar (/ 1e9) geom/tau))
   ;;=> false
@@ -209,7 +219,7 @@ by given angle about given point"
         angle (* (/ 4) geom/tau)
         rot (rotation point angle)
         res (rot (make-rect [1 0]))
-        coords (p/coords res)]
+        coords (coords res)]
     [(geom/equals [0 1] coords (/ 1e10))
      (geom/almost-equals 0  (first coords) (/ 1e16))
      (== 1 (second coords))])
@@ -219,7 +229,7 @@ by given angle about given point"
         angle geom/pi
         rot (rotation point angle)
         res (rot (make-rect [1 0]))
-        coords (p/coords (rot (make-rect [1 0])))]
+        coords (coords (rot (make-rect [1 0])))]
     [res
      ;(geom/equals [0 1] coords (/ 1e10))
      (geom/almost-equals 0 (first coords) (/ 1e10))
@@ -232,40 +242,40 @@ by given angle about given point"
   "return homothety about point by factor"
   [point k]
   (let [a (make-rect point)
-        ma (p/minus a)]
+        ma (minus a)]
     (fn [z] (let [z (make-rect z)
-                 res (p/add a
-                            (p/scale-mult
-                             (p/add z ma)
+                 res (add a
+                            (scale-mult
+                             (add z ma)
                              k))]
-             (p/coords res)))))
+             (coords res)))))
 
 (comment
   (let [h (homothety [0 0] 1)
         p (make-rect [1 1])
         res (h p)
-        coords (p/coords res)]
+        coords (coords res)]
     coords)
   ;;=> [1 1]
 
   (let [h (homothety [0 0] 2)
         p (make-rect [1 1])
         res (h p)
-        coords (p/coords res)]
+        coords (coords res)]
     coords)
   ;;=> [2 2]
 
   (let [h (homothety [1 1] 2)
         p (make-rect [2 2])
         res (h p)
-        coords (p/coords res)]
+        coords (coords res)]
     coords)
   ;;=> [3 3]
 
   (let [h (homothety [1 1] -2)
         p (make-rect [2 2])
         res (h p)
-        coords (p/coords res)]
+        coords (coords res)]
     coords)
   ;;=> [-1 -1]
   
@@ -278,24 +288,24 @@ by given angle about given point"
   "return reflection in line through a and b"
   [a b]
   (fn [z]
-    (let [ac (p/conjugate a)
-          bc (p/conjugate b)
-          denom (p/div (p/add ac (p/minus bc)))
-          t1 (p/add a (p/minus b))
-          t2 (p/add (p/multiply a bc)
-                    (p/minus (p/multiply ac b)))
-          zc (p/conjugate z)]
-      (p/multiply denom
-                  (p/add (p/multiply t1 zc) (p/minus t2))))))
+    (let [ac (conjugate a)
+          bc (conjugate b)
+          denom (div (add ac (minus bc)))
+          t1 (add a (minus b))
+          t2 (add (multiply a bc)
+                    (minus (multiply ac b)))
+          zc (conjugate z)]
+      (multiply denom
+                  (add (multiply t1 zc) (minus t2))))))
 
 
 (comment
   (let [ref (reflection (make-rect [0 0]) (make-rect [1 0]))]
-    (mapv p/coords [(ref (make-rect [1 -1]))
+    (mapv coords [(ref (make-rect [1 -1]))
                     (ref (make-rect [1 0]))]))
 
   (let [ref (reflection (make-rect [0 0]) (make-rect [1 1]))]
-    (mapv p/coords [(ref (make-rect [1 -1]))
+    (mapv coords [(ref (make-rect [1 -1]))
                     (ref (make-rect [1 0]))]))
   
   )
@@ -309,19 +319,19 @@ by given angle about given point"
   [center power]
   (fn [z] 
     (let [center (make-rect center)
-          cbar (p/conjugate center)
-          zbar (p/conjugate (make-rect z))
+          cbar (conjugate center)
+          zbar (conjugate (make-rect z))
           ;; denom = one over (zbar minus mbar)
-          denom (p/div (p/add zbar (p/minus cbar)))
-          term1 (p/scale-mult denom (* power power))
-          res (p/add center term1)]
-      (p/coords res))))
+          denom (div (add zbar (minus cbar)))
+          term1 (scale-mult denom (* power power))
+          res (add center term1)]
+      (coords res))))
 
 
 (comment
   (clojure.pprint/pprint
    (let [inv (inversion (make-rect [1 1]) 1)
-         f (fn [p] (p/coords
+         f (fn [p] (coords
                    (inv (make-rect p))))
          pre-image [[1 -1] [1 (/ 2)] [1 0] [1 2] [2 2] [3 3] [0 0]]
          image (mapv f pre-image)]
@@ -337,7 +347,7 @@ by given angle about given point"
   (let [r1 ()
         r2 ()
         pre-image []
-        f (comp p/coords r2 r1 make-rect)
+        f (comp coords r2 r1 make-rect)
         image (mapv f pre-image)]
     (zipmap pre-image image))
 
@@ -345,7 +355,7 @@ by given angle about given point"
   (let [r1 (translation (make-rect [1 1]))
         r2 (translation (make-rect [1 2]))
         pre-image [[0 0] [1 0] [0 1]]
-        f (comp p/coords r2 r1 make-rect)
+        f (comp coords r2 r1 make-rect)
         image (mapv f pre-image)]
     (zipmap pre-image image))
   ;;=> {[0 1] [2 4], [1 0] [3 3], [0 0] [2 3]}
@@ -356,7 +366,7 @@ by given angle about given point"
   (let [r1 (rotation [1 1] (/ geom/tau 4))
         r2 (rotation [0 0] (/ geom/tau 4))
         pre-image [[0 0] [1 0] [0 1]]
-        f (comp p/coords r2 r1 make-rect)
+        f (comp coords r2 r1 make-rect)
         image (mapv f pre-image)]
     (zipmap pre-image image))
   ;;=> 
@@ -374,7 +384,7 @@ by given angle about given point"
         r1 (reflection o e1)
         r2 (reflection o e2)
         pre-image [[1 0] [1 1]]
-        f (comp p/coords r2 r1 make-rect)
+        f (comp coords r2 r1 make-rect)
         image (mapv f pre-image)]
     (zipmap pre-image image))
   ;;=> {[1 1] [-1 -1], [1 0] [-1 0]}

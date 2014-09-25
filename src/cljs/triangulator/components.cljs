@@ -7,38 +7,69 @@
             [triangulator.draw :as draw]
             [triangulator.render :as render]
             [triangulator.definitions :as d]
-            [triangulator.datatypes :as dt]
-            [triangulator.geometry :as geom]
             [triangulator.events :as events]
+            [triangulator.routes :as routes]
             [triangulator.state :as state]))
 
 (enable-console-print!)
 
-(defn entry [current-item owner]
-  (reify
-    om/IRender
-    (render [this]
-      (dom/li #js {:className "active"}
-              (dom/a #js {:href (str "#/" (name (:id current-item)))}
-                     (:label current-item))
-              (when-let [s (:symbol current-item)]
-                (str " " s))))))
+(defn items
+  "display items for given entry id and current item id"
+  [entry-id current-item-id]
+  (let [items-list (entry-id state/entry-item-map)]
+    (apply dom/ul #js {:className "items"}
+         (map
+          (fn [item-id]
+            (let [entry (name entry-id)
+                  item (name item-id)
+                  active? (= item-id current-item-id)
+                  class-name (if active? "active" "not-active")]
+              (dom/li #js {:className class-name}
+                      (dom/a #js {:href (str "#/" entry "/" item)}
+                             item))))
+          items-list))))
 
-(defn section [section owner]
+(defn entries
+  "display entries for given section data and current entry id"
+  [section-data current-entry-id current-item-id]
+  (apply dom/ul #js {:className "entries"}
+         (map
+          (fn [entry]
+            (let [entry-id (:id entry)
+                  active? (= entry-id current-entry-id)
+                  class-name (if active? "active" "not-active")]
+              (dom/li #js {:className class-name}
+                      (dom/a #js {:href (str "#/" (name entry-id))}
+                             (:label entry))
+                      (when-let [s (:symbol entry)]
+                        (str " " s))
+                      (when active?
+                        (items entry-id current-item-id)))))
+          section-data)))
+
+(defn sections [ui owner]
   (reify
     om/IRender
     (render [this]
-      (let [open? (:open section)
-            name (:section-name section)]
-        (dom/div #js {:className "section"}
-                 (dom/input #js {:type "checkbox"
-                                 :checked open?
-                                 :onChange #(om/transact! section [:open] (fn [o] (not o)))})
-                 (dom/span #js {:className "section-header"} name)
-                 (when-let [header (:header section)]
-                   (dom/p nil header))
-                 (when open?
-                   (apply dom/ul nil (om/build-all entry (:data section)))))))))
+      (let [{:keys [section entry item] :as current-selection} (:current-selection ui)
+            sections (:sections ui)
+            current-section (:section current-selection)]
+        (apply dom/div #js {:className "sections"}
+               (map
+                (fn [section-name-keyowrd]
+                  (let [section-data (section-name-keyowrd sections)
+                        section-name (:section-name section-data)
+                        open? (:open section-data)]
+                    (dom/div #js {:className "section"}
+                             (dom/input #js {:type "checkbox"
+                                             :checked open?
+                                             :onChange #(om/transact! section-data [:open]
+                                                                      (fn [o] (not o)))})
+                             (dom/span #js {:className "section-header"}
+                                       section-name)
+                             (when open?
+                               (entries (:data section-data) entry item)))))
+                state/section-list))))))
 
 (defn nav-box [app owner opts]
   (reify
@@ -49,18 +80,16 @@
         (go
           (loop []
             (let [command (<! keys-chan)
-                  current-item (:item @app)
-                  next-item (if (= command :next)
-                              (state/next-item current-item)
-                              (state/previous-item current-item))]
-              (om/update! app :item next-item)
+                  _ (println "command: " command)
+                  current-selection (get-in @app [:ui :current-selection])
+                  next-selection (state/next-selection command current-selection)]
+              (routes/dispatch next-selection)
               (recur))))))
     
     om/IRender
     (render [this]
-      (apply dom/div nil
-             (println "nav-box: item " (:item app))
-             (om/build-all section (:ui app))))))
+      (dom/div #js {:className "nav-box"}
+               (om/build sections (:ui app))))))
 
 (defn point [p]
   (let [[x y] p]
@@ -74,14 +103,13 @@
         (dom/span nil
                   (str "[" (point p1)  (point p2) (point p3) "]"))))))
 
-(defn triangle-detail [triangle owner opts]
+(defn triangle-controls [triangle owner opts]
   (reify
     om/IRender
     (render [_]
       (let [control-chan (:control-chan opts)]
         (when triangle
-          (dom/div #js {:className "triangle-detail"}
-                   (om/build points triangle)
+          (dom/div #js {:className "triangle-controls"}
                    (dom/button #js {:className "button"
                                     :onClick #(do
                                                 (om/update! triangle nil)
@@ -90,23 +118,22 @@
                    (dom/button #js {:onClick #(println "redraw triangle")}
                                "redraw triangle")))))))
 
-(defn item-detail [item owner]
+(defn entry-detail [item owner]
   (reify
     om/IRender
     (render [_]
-      (println "item-detail: " item)
       (when item
         (dom/div #js {:className "definition"}
                  (dom/h3 nil (first (item d/definition-text)))
                  (dom/p nil (second (item d/definition-text))))))))
 
-(defn item-props [props owner]
+(defn entry-props [props owner]
   (reify
     om/IRender
     (render [_]
       (let [tri-opts-keys (:tri-opts-keys props)
             tri-opts (:tri-opts props)]
-        (apply dom/ul #js {:className "item-props"}
+        (apply dom/ul #js {:className "entry-props"}
                (map
                 (fn [key]
                   (let [checked (key tri-opts)
@@ -133,15 +160,15 @@
             event-chan (:event-chan opts)
             control-chan (:control-chan opts)]
         (go
-          ;; wait for item from control-chan
-          (let [item (<! control-chan)
-                _ (println "recieved from control-chan: " item)
-                collector (get h/collectors item)
+          ;; wait for control-type from control-chan
+          (let [control-type (<! control-chan)
+                _ (println "recieved from control-chan: " control-type)
+                collector (get h/collectors control-type)
                 trans-fn (:transition-fn collector)
                 data-fn (:data-fn collector)
                 init-state (:init-state collector)]
 
-            (loop [type item]
+            (loop [type control-type]
               (loop [state init-state]
                 (let [event (<! event-chan)]
                   (let [new-state (trans-fn event state)]
@@ -150,25 +177,25 @@
                         ;; update app state
                         ;; reset local state
                         (om/set-state! owner nil)
-                        (om/update! app item (data-fn new-state)))
+                        (om/update! app [:geometry control-type] (data-fn new-state)))
                       (do
                         (om/set-state! owner new-state)
                         (recur new-state))))))
-              (let [_ (println "waiting for next item from control-chan")
-                    item (<! control-chan)
-                    _ (println "recieved from control-chan: " item)]
-                (recur item)))))
-        ;; start off with :triangle
+              (let [_ (println "waiting for next control-type from control-chan")
+                    control-type (<! control-chan)
+                    _ (println "recieved from control-chan: " control-type)]
+                (recur control-type)))))
+        ;; start off with a control-type of :triangle
         (go (>! control-chan :triangle))))
 
     om/IRenderState
     (render-state [_ state]
       (let [draw-chan (:draw-chan opts)
-            item (:item app)
-            tri (:triangle app)
-            prop-map (:prop-map app)
-            tri-opts (get-in prop-map [item :tri-opts])
-            line-opts (get-in prop-map [item :line-opts])
+            entry (get-in app [:ui :current-selection :entry])
+            tri (get-in app [:geometry :triangle])
+            prop-map (get-in app [:geometry :prop-map])
+            tri-opts (get-in prop-map [entry :tri-opts])
+            line-opts (get-in prop-map [entry :line-opts])
             tri-style state/tri-style]
 
         ;; render graphics from local state
@@ -206,19 +233,22 @@
         
         ;; render dom
         (dom/div nil
-                 (om/build item-detail item)
-                 (let [item-properties (get-in app [:prop-map (:item app)])
-                       open? (:open item-properties)]
-                   (dom/div nil
-                            (dom/input #js {:type "checkbox"
-                                            :checked open?
-                                            :onChange #(om/transact! item-properties [:open]
-                                                                     (fn [o] (not o)))})
-                            (dom/span nil "Selected properties")
-                            (when open? (om/build item-props item-properties))))
-                 (dom/div nil
-                          (dom/h3 nil "Vertices")
-                          (om/build triangle-detail (:triangle app) {:opts opts})))))))
+                 (when entry
+                   (om/build entry-detail entry))
+                 (when entry
+                   (let [entry-properties (entry prop-map)
+                         open? (:open entry-properties)]
+                     (dom/div nil
+                              (dom/input #js {:type "checkbox"
+                                              :checked open?
+                                              :onChange #(om/transact! entry-properties [:open]
+                                                                       (fn [o] (not o)))})
+                              (dom/span nil "Selected properties")
+                              (when open? (om/build entry-props entry-properties)))))
+                 (when entry
+                   (om/build triangle-controls
+                             (get-in app [:geometry :triangle])
+                             {:opts opts})))))))
 
 (defn by-id [id]
   (. js/document (getElementById id)))

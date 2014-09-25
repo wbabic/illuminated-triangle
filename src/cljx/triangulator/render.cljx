@@ -2,8 +2,6 @@
   (:require [triangulator.datatypes :as dt]
             [triangulator.geometry :as geom]
             [triangulator.geometry.triangle :as tri]
-            [triangulator.geometry.transforms :as trans]
-            [triangulator.geometry.complex :as complex]
             [triangulator.style :as style]
             [triangulator.state :as state]
      #+clj  [clojure.core.async :as async :refer [>! <! chan go]]
@@ -91,38 +89,6 @@ a pure function"
   [p1 p2 draw-chan side options]
   (let [data (draw-edge-data p1 p2 side options)]
     (go (>! draw-chan data))))
-
-(defn draw-line
-  "draw line from p1 to p2 using given style and options"
-  [p1 p2 draw-chan options style]
-  (let [data (draw-line-data p1 p2 options style)]
-    (go (>! draw-chan data))))
-
-(defn draw-circle
-  "draw item draw point and coords of value"
-  [p1 p2 draw-chan]
-  (go (>! draw-chan
-          [(dt/style {:stroke :red
-                      :fill :grey-2})
-           (dt/circle p1 (geom/distance p1 p2))
-           (dt/point p1)
-           (dt/point p2)
-           (dt/line [p1 p2])])))
-
-(defn draw-circle-2
-  "clear-screen draw item draw point and coords of value"
-  [center radius draw-chan style]
-  (go (>! draw-chan
-          [(dt/style style)
-           (dt/circle center radius)
-           (dt/point center)])))
-
-(defn fill-tri
-  "fill given triangle with given color"
-  [p1 p2 p3 draw-chan color]
-  (go (>! draw-chan
-          [(dt/style {:fill color})
-           (dt/triangle p1 p2 p3)])))
 
 (defn style-circle
   "merge style and geometry of a circle into drawing commands
