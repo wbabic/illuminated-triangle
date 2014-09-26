@@ -123,10 +123,6 @@
                       :class/title)]
     new-title)
   
-  ;; run tests from the repl
-  (clojure.test/run-tests 'om-tut.db-test)
-  (clojure.test/run-tests 'om-tut.customer-test)
-
   )
 
 (comment

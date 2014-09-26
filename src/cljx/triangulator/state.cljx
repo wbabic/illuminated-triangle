@@ -1,10 +1,13 @@
 (ns triangulator.state
   (:require [triangulator.style :as style]
-            [triangulator.definitions :as def]))
+            [triangulator.definitions :as definitions]
+            [triangulator.state.ui :as newstate]))
 
 (def tri-style style/tri-style)
 
-(def ui def/ui)
+(def ui definitions/ui)
+
+(def uinew newstate/ui)
 
 (def line-options #{:line :endpoint1 :endpoint2})
 
@@ -291,7 +294,8 @@ item is nil"
 
 (def app-state
   (atom
-   {:ui ui
+   {:uinew uinew
+    :ui ui
     :geometry
     {:triangle nil
      :transforms nil

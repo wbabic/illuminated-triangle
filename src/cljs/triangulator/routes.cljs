@@ -10,8 +10,8 @@
 (def history (History.))
 
 (defroute "/" []
-  (secretary/dispatch! "/triangles")
-  (.setToken history "/triangles"))
+  (secretary/dispatch! "/triangles/triangle")
+  (.setToken history "/triangles/triangle"))
 
 (defroute "/:section" {:as params}
   (let [current-selection

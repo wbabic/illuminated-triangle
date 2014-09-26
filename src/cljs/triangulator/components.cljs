@@ -47,29 +47,35 @@
                         (items entry-id current-item-id)))))
           section-data)))
 
-(defn sections [ui owner]
+(defn sections [uinew owner]
   (reify
     om/IRender
     (render [this]
-      (let [{:keys [section entry item] :as current-selection} (:current-selection ui)
-            sections (:sections ui)
+      (let [{:keys [section entry item] :as current-selection} (:selection uinew)
+            _ (println "uinew")
+            _ (prn uinew)
+            _ (println "sections")
+            _ (prn current-selection)
+            sections (:sections uinew)
+            sections-data (:section-data uinew)
+            section-keywords (mapv :id sections)
+            _ (prn section-keywords)
             current-section (:section current-selection)]
         (apply dom/div #js {:className "sections"}
                (map
-                (fn [section-name-keyowrd]
-                  (let [section-data (section-name-keyowrd sections)
-                        section-name (:section-name section-data)
-                        open? (:open section-data)]
+                (fn [section-id]
+                  (let [section-data (section-id sections-data)
+                        section-name (:name section-data)
+                        open? (= section-id current-section)]
                     (dom/div #js {:className "section"}
-                             (dom/input #js {:type "checkbox"
-                                             :checked open?
-                                             :onChange #(om/transact! section-data [:open]
-                                                                      (fn [o] (not o)))})
                              (dom/span #js {:className "section-header"}
-                                       section-name)
+                                       (dom/a #js {:href (str "#/" (name section-id))}
+                                              section-name))
                              (when open?
-                               (entries (:data section-data) entry item)))))
-                state/section-list))))))
+                               (println "section " section-id " open? " open?)
+                               ;;(entries (:data section-data) entry item)
+                               ))))
+                section-keywords))))))
 
 (defn nav-box [app owner opts]
   (reify
@@ -81,7 +87,7 @@
           (loop []
             (let [command (<! keys-chan)
                   _ (println "command: " command)
-                  current-selection (get-in @app [:ui :current-selection])
+                  current-selection (get-in @app [:uinew :selection])
                   next-selection (state/next-selection command current-selection)]
               (routes/dispatch next-selection)
               (recur))))))
@@ -89,7 +95,10 @@
     om/IRender
     (render [this]
       (dom/div #js {:className "nav-box"}
-               (om/build sections (:ui app))))))
+               (prn app)
+               (prn (:uinew app))
+               (prn (:ui app))
+               (om/build sections (:uinew app))))))
 
 (defn point [p]
   (let [[x y] p]
