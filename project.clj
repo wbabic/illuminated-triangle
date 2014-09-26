@@ -3,6 +3,9 @@
   :url "http://wbabic.github.io"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+
+  :source-paths ["src/clj" "target/generated/src/clj"]
+  
   :dependencies [[org.clojure/clojure "1.6.0"]
 
                  [org.clojure/clojurescript "0.0-2322"]
@@ -21,15 +24,13 @@
                  [hiccup "1.0.5"]
                  [garden "1.2.1"]
 
-                 [com.stuartsierra/component "0.2.2"]]
-
-  :source-paths ["src/cljs" "target/classes"]
-  
-  :resource-paths ["resources"]
+                 [com.stuartsierra/component "0.2.2"]
+                 [liberator "0.10.0"]
+                 [com.datomic/datomic-free "0.9.4899"]]
 
   :profiles
   {:dev
-   {:source-paths ["test/clj" "dev"]
+   {:source-paths ["src/clj" "test/clj" "dev"]
     :dependencies [[org.clojure/tools.namespace "0.2.6"]
                    [org.clojure/java.classpath "0.2.0"]
                    [org.clojure/test.check "0.5.7"]
@@ -41,23 +42,23 @@
   :hooks [cljx.hooks]
     
   :cljx {:builds [{:source-paths ["src/cljx"]
-                   :output-path "target/classes"
+                   :output-path "target/generated/src/clj"
                    :rules :clj}
 
                   {:source-paths ["src/cljx"]
-                   :output-path "target/classes"
+                   :output-path "target/generated/src/cljs"
                    :rules :cljs}]}
   
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src/cljs" "target/classes"]
+              :source-paths ["src/cljs" "target/generated/src/cljs"]
               :compiler {
                          :output-to "resources/public/js/main.js"
                          :output-dir "resources/public/js/out"
                          :optimizations :none
                          :source-map true}}
              {:id "release"
-              :source-paths ["src/cljs" "target/classes"]
+              :source-paths ["src/cljs" "target/generated/src/cljs"]
               :compiler {
                          :output-to "demo/main.js"
                          :optimizations :advanced
