@@ -1,13 +1,14 @@
 (ns triangulator.state
   (:require [triangulator.style :as style]
             [triangulator.definitions :as definitions]
-            [triangulator.state.ui :as newstate]))
+            [triangulator.state.triangles :as triangles]
+            [triangulator.state.iterations :as iterations]
+            [triangulator.state.transforms :as transforms]))
 
 (def tri-style style/tri-style)
 
 (def ui definitions/ui)
 
-(def uinew newstate/ui)
 
 (def line-options #{:line :endpoint1 :endpoint2})
 
@@ -292,9 +293,36 @@ item is nil"
     :previous (prev-sel selection)
     :up (outof-sel selection)))
 
+(def sections
+  [{:id :triangles
+    :entries
+    [:triangle :centroid :circumcenter :orthocenter :incircle :euler-line :nine-pt-circle :all]}
+   {:id :transforms
+    :entries
+    [:reflection :translation :rotation :dilatation :inversion]}
+   {:id :iterations
+    :entries
+    [:iteration1 :iteration2]}])
+
+(def section-data
+  {:triangles triangles/section
+   :iterations iterations/section
+   :transforms transforms/section})
+
+(def initial-selection
+  {:section :triangles
+   :entry :triangle
+   :item nil})
+
+(def uin
+  {:selection initial-selection
+   :sections sections
+   :section-data section-data})
+
+
 (def app-state
   (atom
-   {:uinew uinew
+   {:uinew uin
     :ui ui
     :geometry
     {:triangle nil

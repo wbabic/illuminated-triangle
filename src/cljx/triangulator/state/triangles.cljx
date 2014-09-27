@@ -85,7 +85,7 @@
 
 ;; section
 (def section
-  {:name "Trinagles"
+  {:name "Triangles"
    :text "Proerties of a triangle."
    :triangle triangle
    :centroid centroid

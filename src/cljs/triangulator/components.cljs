@@ -52,13 +52,10 @@
     om/IRender
     (render [this]
       (let [{:keys [section entry item] :as current-selection} (:selection uinew)
-            _ (println "uinew")
-            _ (prn uinew)
-            _ (println "sections")
-            _ (prn current-selection)
             sections (:sections uinew)
             sections-data (:section-data uinew)
             section-keywords (mapv :id sections)
+            _ (println "section-keywords:")
             _ (prn section-keywords)
             current-section (:section current-selection)]
         (apply dom/div #js {:className "sections"}
@@ -66,8 +63,9 @@
                 (fn [section-id]
                   (let [section-data (section-id sections-data)
                         section-name (:name section-data)
-                        open? (= section-id current-section)]
-                    (dom/div #js {:className "section"}
+                        open? (= section-id current-section)
+                        class-name (if open? "section active" "section")]
+                    (dom/div #js {:className class-name}
                              (dom/span #js {:className "section-header"}
                                        (dom/a #js {:href (str "#/" (name section-id))}
                                               section-name))
@@ -88,6 +86,7 @@
             (let [command (<! keys-chan)
                   _ (println "command: " command)
                   current-selection (get-in @app [:uinew :selection])
+                  _ (println "current-selection: " current-selection)
                   next-selection (state/next-selection command current-selection)]
               (routes/dispatch next-selection)
               (recur))))))
@@ -95,9 +94,6 @@
     om/IRender
     (render [this]
       (dom/div #js {:className "nav-box"}
-               (prn app)
-               (prn (:uinew app))
-               (prn (:ui app))
                (om/build sections (:uinew app))))))
 
 (defn point [p]
@@ -200,14 +196,17 @@
     om/IRenderState
     (render-state [_ state]
       (let [draw-chan (:draw-chan opts)
-            entry (get-in app [:ui :current-selection :entry])
             tri (get-in app [:geometry :triangle])
+            tri-style state/tri-style
             prop-map (get-in app [:geometry :prop-map])
-            tri-opts (get-in prop-map [entry :tri-opts])
-            line-opts (get-in prop-map [entry :line-opts])
-            tri-style state/tri-style]
 
-        ;; render graphics from local state
+            section (get-in app [:uinew :selection :section])
+            entry   (get-in app [:uinew :selection :entry])
+
+            tri-opts (get-in prop-map [entry :tri-opts])
+            line-opts (get-in prop-map [entry :line-opts])]
+
+        ;; render graphics from local state when not complete
         (let [step (:step state)
               complete (:complete state)]
           (if-not complete
@@ -230,7 +229,7 @@
                   (render/clear draw-chan)
                   (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
               :none)))
-        
+        ;; render app-state triangle when it exists
         (when tri
           (let [[p1 p2 p3] tri
                 [p1x p1y] p1

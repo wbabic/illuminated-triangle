@@ -24,7 +24,7 @@
    :entry :triangle
    :item nil})
 
-(def ui
+(def uin
   {:selection initial-selection
    :sections sections
    :section-data section-data})
