@@ -9,7 +9,6 @@
 
 (def ui definitions/ui)
 
-
 (def line-options #{:line :endpoint1 :endpoint2})
 
 (def prop-map
@@ -141,7 +140,7 @@
   [:triangle :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :all])
 
 (def entry-item-map
-  {:triangle [:vertices :edges]
+  {:triangle [:vertices :edges :midpoints]
    :centroid [:midpoints :medians :centroid :centroid-fill :midpoint-triangle
               :centroid-vertex-midpoints :centroid-vertex-triangle]
    :circumcircle [:midpoints :perp-bisector :circumcenter :circumradii
@@ -151,8 +150,6 @@
    :euler-line [:centroid :orthocenter :circumcenter]
    :nine-pt-circle [:orthic-triangle :midpoint-triangle :orthocentric-midpoints
                     :orthocentric-midpoint-triangle]})
-
-(def transform-list [:reflection :translation :rotation :dilataion :inversion])
 
 (defn selection->uri
   "convert selection to uri"
@@ -294,15 +291,14 @@ item is nil"
     :up (outof-sel selection)))
 
 (def sections
-  [{:id :triangles
-    :entries
-    [:triangle :centroid :circumcenter :orthocenter :incircle :euler-line :nine-pt-circle :all]}
-   {:id :transforms
-    :entries
-    [:reflection :translation :rotation :dilatation :inversion]}
-   {:id :iterations
-    :entries
-    [:iteration1 :iteration2]}])
+  {:ids [:triangles :transforms :iterations]
+   :entry-map
+   {:triangles
+    [:triangle :centroid :circumcenter :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :all]
+    :transforms
+    [:reflection :translation :rotation :dilatation :inversion]
+    :iterations
+    [:iteration1 :iteration2]}})
 
 (def section-data
   {:triangles triangles/section
@@ -318,7 +314,6 @@ item is nil"
   {:selection initial-selection
    :sections sections
    :section-data section-data})
-
 
 (def app-state
   (atom

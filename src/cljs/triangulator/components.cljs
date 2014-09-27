@@ -15,55 +15,56 @@
 
 (defn items
   "display items for given entry id and current item id"
-  [entry-id current-item-id]
-  (let [items-list (entry-id state/entry-item-map)]
-    (apply dom/ul #js {:className "items"}
+  [item-ids entry-data current-selection]
+  (apply dom/ul #js {:className "items"}
          (map
           (fn [item-id]
-            (let [entry (name entry-id)
-                  item (name item-id)
-                  active? (= item-id current-item-id)
-                  class-name (if active? "active" "not-active")]
+            (let [{:keys [section entry item]} current-selection
+                  active? (= item-id item)
+                  class-name (if active? "active" "not-active")
+                  item-data (item-id entry-data)]
               (dom/li #js {:className class-name}
-                      (dom/a #js {:href (str "#/" entry "/" item)}
-                             item))))
-          items-list))))
+                      (dom/a #js {:href
+                                  (str "#/" (name section) "/" (name entry) "/" (name item-id))}
+                             (:label item-data))
+                      (when-let [s (:symbol item-data)]
+                        (str " " (pr-str s))))))
+          item-ids)))
 
 (defn entries
   "display entries for given section data and current entry id"
-  [section-data current-entry-id current-item-id]
+  [entry-ids section-data current-selection]
   (apply dom/ul #js {:className "entries"}
          (map
-          (fn [entry]
-            (let [entry-id (:id entry)
-                  active? (= entry-id current-entry-id)
-                  class-name (if active? "active" "not-active")]
+          (fn [entry-id]
+            (let [{:keys [section entry item]} current-selection
+                  active? (= entry-id entry)
+                  class-name (if active? "active" "not-active")
+                  entry-data (entry-id  section-data)]
               (dom/li #js {:className class-name}
-                      (dom/a #js {:href (str "#/" (name entry-id))}
-                             (:label entry))
-                      (when-let [s (:symbol entry)]
+                      (dom/a #js {:href (str "#/" (name section) "/" (name entry-id))}
+                             (:label entry-data))
+                      (when-let [s (:symbol entry-data)]
                         (str " " s))
                       (when active?
-                        (items entry-id current-item-id)))))
-          section-data)))
+                        (items (get-in section-data [:item-map entry])
+                               entry-data
+                               current-selection)))))
+          entry-ids)))
 
 (defn sections [uinew owner]
   (reify
     om/IRender
     (render [this]
       (let [{:keys [section entry item] :as current-selection} (:selection uinew)
-            sections (:sections uinew)
-            sections-data (:section-data uinew)
-            section-keywords (mapv :id sections)
-            _ (println "section-keywords:")
-            _ (prn section-keywords)
-            current-section (:section current-selection)]
+            section-ids (get-in uinew [:sections :ids])            
+            sections-data (:section-data uinew)]
         (apply dom/div #js {:className "sections"}
                (map
                 (fn [section-id]
                   (let [section-data (section-id sections-data)
                         section-name (:name section-data)
-                        open? (= section-id current-section)
+                        open? (= section-id section)
                         class-name (if open? "section active" "section")]
                     (dom/div #js {:className class-name}
                              (dom/span #js {:className "section-header"}
@@ -71,9 +72,10 @@
                                               section-name))
                              (when open?
                                (println "section " section-id " open? " open?)
-                               ;;(entries (:data section-data) entry item)
-                               ))))
-                section-keywords))))))
+                               (entries (get-in uinew [:sections :entry-map section-id])
+                                        section-data
+                                        current-selection)))))
+                section-ids))))))
 
 (defn nav-box [app owner opts]
   (reify
@@ -123,14 +125,25 @@
                    (dom/button #js {:onClick #(println "redraw triangle")}
                                "redraw triangle")))))))
 
-(defn entry-detail [item owner]
+(defn section-detail [uinew owner]
   (reify
     om/IRender
     (render [_]
-      (when item
-        (dom/div #js {:className "definition"}
-                 (dom/h3 nil (first (item d/definition-text)))
-                 (dom/p nil (second (item d/definition-text))))))))
+      (let [{:keys [section entry item] :as current-selection} (:selection uinew)
+            sections-data (:section-data uinew)
+            section-text (get-in sections-data [section :text])
+            entry-text   (get-in sections-data [section entry :text])
+            item-text    (get-in sections-data [section entry item :text])
+            item-symbol  (get-in sections-data [section entry item :symbol])]
+        (when section-text
+          (dom/div #js {:className "definition"}
+                   (dom/h2 nil section-text)
+                   (when entry-text
+                     (dom/p nil entry-text))
+                   (when item-text
+                     (dom/p nil item-text))
+                   (when item-symbol
+                     (dom/p nil (prn item-symbol)))))))))
 
 (defn entry-props [props owner]
   (reify
@@ -229,7 +242,8 @@
                   (render/clear draw-chan)
                   (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
               :none)))
-        ;; render app-state triangle when it exists
+
+        ;; render app-state triangle to draw-chan, when it exists
         (when tri
           (let [[p1 p2 p3] tri
                 [p1x p1y] p1
@@ -241,8 +255,7 @@
         
         ;; render dom
         (dom/div nil
-                 (when entry
-                   (om/build entry-detail entry))
+                 (om/build section-detail (:uinew app))
                  (when entry
                    (let [entry-properties (entry prop-map)
                          open? (:open entry-properties)]
