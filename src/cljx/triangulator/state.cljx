@@ -294,7 +294,7 @@ item is nil"
   {:ids [:triangles :transforms :iterations]
    :entry-map
    {:triangles
-    [:triangle :centroid :circumcenter :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :all]
+    [:triangle :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :all]
     :transforms
     [:reflection :translation :rotation :dilatation :inversion]
     :iterations
