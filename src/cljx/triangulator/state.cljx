@@ -49,6 +49,5 @@
    {:ui ui
     :geometry
     {:triangle nil
-     :transforms nil
-     :prop-map entry-prop-map}
+     :transforms nil}
     :style tri-style}))

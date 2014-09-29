@@ -48,13 +48,13 @@
                                current-selection)))))
           entry-ids)))
 
-(defn sections [uinew owner]
+(defn sections [ui owner]
   (reify
     om/IRender
     (render [this]
-      (let [{:keys [section entry item] :as current-selection} (:selection uinew)
-            section-ids (get-in uinew [:sections :ids])            
-            sections-data (:section-data uinew)]
+      (let [{:keys [section entry item] :as current-selection} (:selection ui)
+            section-ids (get-in ui [:sections :ids])            
+            sections-data (:section-data ui)]
         (apply dom/div #js {:className "sections"}
                (map
                 (fn [section-id]
@@ -68,7 +68,7 @@
                                               section-name))
                              (when open?
                                (println "section " section-id " open? " open?)
-                               (entries (get-in uinew [:sections :entry-map section-id])
+                               (entries (get-in ui [:sections :entry-map section-id])
                                         section-data
                                         current-selection)))))
                 section-ids))))))
@@ -122,12 +122,12 @@
                    (dom/button #js {:onClick #(println "redraw triangle")}
                                "redraw triangle")))))))
 
-(defn section-detail [uinew owner]
+(defn section-detail [ui owner]
   (reify
     om/IRender
     (render [_]
-      (let [{:keys [section entry item] :as current-selection} (:selection uinew)
-            sections-data (:section-data uinew)
+      (let [{:keys [section entry item] :as current-selection} (:selection ui)
+            sections-data (:section-data ui)
             section-text (get-in sections-data [section :text])
             entry-text   (get-in sections-data [section entry :text])
             item-text    (get-in sections-data [section entry item :text])
@@ -140,36 +140,35 @@
                    (when item-text
                      (dom/p nil item-text))
                    (when item-symbol
-                     (dom/p nil (pr-str item-symbol)))))))))
+                     (dom/p nil item-symbol))))))))
 
-(defn entry-props [props owner]
+(defn section-props [ui owner]
   (reify
     om/IRender
     (render [_]
-      (let [tri-opts-keys (:tri-opts-keys props)
-            tri-opts (:tri-opts props)
-            open? (:open props)]
+      (let [_ (println "section-props")
+            {:keys [section entry item] :as current-selection} (get-in ui [:selection])
+            section-data (get-in ui [:section-data section])
+            _ (println "section-data: ")
+            entry-opts (get-in section-data [:props :entry entry :tri-opts])
+            _ (println "entry-opts:" entry-opts)
+            item-props (get-in section-data [:props :item entry item])
+            _ (println "item-props: " item-props)]
         (dom/div nil
-                 (dom/input #js {:type "checkbox"
-                                 :checked open?
-                                 :onChange #(om/transact! props [:open]
-                                                          (fn [o] (not o)))})
-                 (dom/span nil "Selected properties")
-                 (when open?
-                   (apply dom/ul #js {:className "entry-props"}
-                          (map
-                           (fn [key]
-                             (let [checked (key tri-opts)
-                                   name (name key)]
-                               (dom/li nil
-                                       (dom/input #js {:type "checkbox"
-                                                       :checked checked
-                                                       :onChange
-                                                       (fn [_]
-                                                         (om/transact! props [:tri-opts key]
-                                                                       (fn [v] (not v))))})
-                                       name)))
-                           tri-opts-keys))))))))
+                 (apply dom/ul #js {:className "item-props"}
+                        (map
+                         (fn [key]
+                           (let [checked (get-in entry-opts [key])
+                                 name (name key)]
+                             (dom/li nil
+                                     (dom/input #js {:type "checkbox"
+                                                     :checked checked
+                                                     :onChange
+                                                     (fn [_]
+                                                       (om/transact! entry-opts [key]
+                                                                     (fn [v] (not v))))})
+                                     name)))
+                         item-props)))))))
 
 (defn item-controller [app owner opts]
   (reify
@@ -216,10 +215,12 @@
       (let [draw-chan (:draw-chan opts)
             tri (get-in app [:geometry :triangle])
             tri-style state/tri-style
-            prop-map (get-in app [:geometry :prop-map])
 
             section (get-in app [:ui :selection :section])
             entry   (get-in app [:ui :selection :entry])
+            item    (get-in app [:ui :selection :item])
+
+            prop-map (get-in app [:ui :section-data :triangles :props :entry])
 
             tri-opts (get-in prop-map [entry :tri-opts])
             line-opts (get-in prop-map [entry :line-opts])]
@@ -261,9 +262,8 @@
         ;; render dom
         (dom/div nil
                  (om/build section-detail (:ui app))
-                 (when entry
-                   (let [entry-properties (entry prop-map)]
-                     (om/build entry-props entry-properties)))
+                 (when item
+                   (om/build section-props (:ui app)))
                  (when entry
                    (om/build triangle-controls
                              (get-in app [:geometry :triangle])
