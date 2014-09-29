@@ -18,21 +18,21 @@
         {:section (keyword (:section params))
          :entry nil
          :item nil}]
-    (swap! state/app-state assoc-in [:uinew :selection] current-selection)))
+    (swap! state/app-state assoc-in [:ui :selection] current-selection)))
 
 (defroute "/:section/:entry" {:as params}
   (let [current-selection
         {:section (keyword (:section params))
          :entry (keyword (:entry params))
          :item nil}]
-    (swap! state/app-state assoc-in [:uinew :selection] current-selection)))
+    (swap! state/app-state assoc-in [:ui :selection] current-selection)))
 
 (defroute "/:section/:entry/:item" {:as params}
   (let [current-selection
         {:section (keyword (:section params))
          :entry (keyword (:entry params))
          :item (keyword (:item params))}]
-    (swap! state/app-state assoc-in [:uinew :selection] current-selection)))
+    (swap! state/app-state assoc-in [:ui :selection] current-selection)))
 
 (gevents/listen history "navigate"
   (fn [e] (secretary/dispatch! (.-token e))))

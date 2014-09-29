@@ -6,10 +6,10 @@
             [triangulator.handlers :as h]
             [triangulator.draw :as draw]
             [triangulator.render :as render]
-            [triangulator.definitions :as d]
             [triangulator.events :as events]
             [triangulator.routes :as routes]
-            [triangulator.state :as state]))
+            [triangulator.state :as state]
+            [triangulator.state.navigation :as nav]))
 
 (enable-console-print!)
 
@@ -26,9 +26,7 @@
               (dom/li #js {:className class-name}
                       (dom/a #js {:href
                                   (str "#/" (name section) "/" (name entry) "/" (name item-id))}
-                             (:label item-data))
-                      (when-let [s (:symbol item-data)]
-                        (str " " (pr-str s))))))
+                             (:label item-data)))))
           item-ids)))
 
 (defn entries
@@ -44,8 +42,6 @@
               (dom/li #js {:className class-name}
                       (dom/a #js {:href (str "#/" (name section) "/" (name entry-id))}
                              (:label entry-data))
-                      (when-let [s (:symbol entry-data)]
-                        (str " " s))
                       (when active?
                         (items (get-in section-data [:item-map entry])
                                entry-data
@@ -87,16 +83,17 @@
           (loop []
             (let [command (<! keys-chan)
                   _ (println "command: " command)
-                  current-selection (get-in @app [:uinew :selection])
+                  current-selection (get-in @app [:ui :selection])
                   _ (println "current-selection: " current-selection)
-                  next-selection (state/next-selection command current-selection)]
+                  next-selection (nav/next-selection command current-selection (:ui @app))
+                  _ (println "next-selection: " next-selection)]
               (routes/dispatch next-selection)
               (recur))))))
     
     om/IRender
     (render [this]
       (dom/div #js {:className "nav-box"}
-               (om/build sections (:uinew app))))))
+               (om/build sections (:ui app))))))
 
 (defn point [p]
   (let [[x y] p]
@@ -143,28 +140,36 @@
                    (when item-text
                      (dom/p nil item-text))
                    (when item-symbol
-                     (dom/p nil (prn item-symbol)))))))))
+                     (dom/p nil (pr-str item-symbol)))))))))
 
 (defn entry-props [props owner]
   (reify
     om/IRender
     (render [_]
       (let [tri-opts-keys (:tri-opts-keys props)
-            tri-opts (:tri-opts props)]
-        (apply dom/ul #js {:className "entry-props"}
-               (map
-                (fn [key]
-                  (let [checked (key tri-opts)
-                        name (name key)]
-                    (dom/li nil
-                            (dom/input #js {:type "checkbox"
-                                            :checked checked
-                                            :onChange
-                                            (fn [_]
-                                              (om/transact! props [:tri-opts key]
-                                                            (fn [v] (not v))))})
-                            name)))
-                tri-opts-keys))))))
+            tri-opts (:tri-opts props)
+            open? (:open props)]
+        (dom/div nil
+                 (dom/input #js {:type "checkbox"
+                                 :checked open?
+                                 :onChange #(om/transact! props [:open]
+                                                          (fn [o] (not o)))})
+                 (dom/span nil "Selected properties")
+                 (when open?
+                   (apply dom/ul #js {:className "entry-props"}
+                          (map
+                           (fn [key]
+                             (let [checked (key tri-opts)
+                                   name (name key)]
+                               (dom/li nil
+                                       (dom/input #js {:type "checkbox"
+                                                       :checked checked
+                                                       :onChange
+                                                       (fn [_]
+                                                         (om/transact! props [:tri-opts key]
+                                                                       (fn [v] (not v))))})
+                                       name)))
+                           tri-opts-keys))))))))
 
 (defn item-controller [app owner opts]
   (reify
@@ -213,8 +218,8 @@
             tri-style state/tri-style
             prop-map (get-in app [:geometry :prop-map])
 
-            section (get-in app [:uinew :selection :section])
-            entry   (get-in app [:uinew :selection :entry])
+            section (get-in app [:ui :selection :section])
+            entry   (get-in app [:ui :selection :entry])
 
             tri-opts (get-in prop-map [entry :tri-opts])
             line-opts (get-in prop-map [entry :line-opts])]
@@ -255,17 +260,10 @@
         
         ;; render dom
         (dom/div nil
-                 (om/build section-detail (:uinew app))
+                 (om/build section-detail (:ui app))
                  (when entry
-                   (let [entry-properties (entry prop-map)
-                         open? (:open entry-properties)]
-                     (dom/div nil
-                              (dom/input #js {:type "checkbox"
-                                              :checked open?
-                                              :onChange #(om/transact! entry-properties [:open]
-                                                                       (fn [o] (not o)))})
-                              (dom/span nil "Selected properties")
-                              (when open? (om/build entry-props entry-properties)))))
+                   (let [entry-properties (entry prop-map)]
+                     (om/build entry-props entry-properties)))
                  (when entry
                    (om/build triangle-controls
                              (get-in app [:geometry :triangle])
