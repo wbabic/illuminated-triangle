@@ -95,18 +95,6 @@
       (dom/div #js {:className "nav-box"}
                (om/build sections (:ui app))))))
 
-(defn point [p]
-  (let [[x y] p]
-    (str " [" x " " y "]")))
-
-(defn points [points owner]
-  (reify
-    om/IRender
-    (render [_]
-      (let [[p1 p2 p3] points]
-        (dom/span nil
-                  (str "[" (point p1)  (point p2) (point p3) "]"))))))
-
 (defn triangle-controls [triangle owner opts]
   (reify
     om/IRender
@@ -149,25 +137,22 @@
       (let [_ (println "section-props")
             {:keys [section entry item] :as current-selection} (get-in ui [:selection])
             section-data (get-in ui [:section-data section])
-            _ (println "section-data: ")
             entry-opts (get-in section-data [:props :entry entry :tri-opts])
-            _ (println "entry-opts:" entry-opts)
-            item-props (get-in section-data [:props :item entry item])
-            _ (println "item-props: " item-props)]
+            item-props (get-in section-data [:props :item entry item])]
         (dom/div nil
                  (apply dom/ul #js {:className "item-props"}
                         (map
-                         (fn [key]
-                           (let [checked (get-in entry-opts [key])
-                                 name (name key)]
+                         (fn [prop-key]
+                           (let [checked (prop-key entry-opts)
+                                 prop-name (name key)]
                              (dom/li nil
                                      (dom/input #js {:type "checkbox"
                                                      :checked checked
                                                      :onChange
                                                      (fn [_]
-                                                       (om/transact! entry-opts [key]
+                                                       (om/transact! entry-opts [prop-key]
                                                                      (fn [v] (not v))))})
-                                     name)))
+                                     prop-name)))
                          item-props)))))))
 
 (defn item-controller [app owner opts]
@@ -274,10 +259,10 @@
 
 (let [{:keys [canvas width height]} (draw/surface "graphics-box")
       click-chan (events/mouse-chan canvas :mouse-down :click)
-      keys-chan (events/keys-chan)
       mouse-move-chan (events/mouse-chan canvas :mouse-move :move)
-      draw-chan (draw/drawing-loop canvas width height)
-      events (async/merge [mouse-move-chan click-chan])]
+      events (async/merge [mouse-move-chan click-chan])
+      keys-chan (events/keys-chan)
+      draw-chan (draw/drawing-loop canvas width height)]
 
   (om/root
    item-controller

@@ -74,7 +74,6 @@
           p2 (:p2 triangle)
           p3 (:p3 triangle)]
       ;; fill the triangle
-      ;; don't draw lines and points here
       (.beginPath context)
       (.moveTo context (p1 0) (p1 1))
       (.lineTo context (p2 0) (p2 1))
@@ -91,9 +90,7 @@
       (.arc context (center 0) (center 1) radius 0 (* 2 Math/PI) false)
       (.stroke context)
       (.fill context)
-      (.closePath context)
-      ;;(render (dt/point center) context)
-      )))
+      (.closePath context))))
 
 (defn surface [id]
   (let [canvas (.getElementById js/document id)]

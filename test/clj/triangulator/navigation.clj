@@ -1,4 +1,4 @@
-(ns triangulator.navigation-test
+(ns triangulator.navigation
   (:require [clojure.test :refer :all]
             [triangulator.state :as state]
             [triangulator.state.navigation :as nav]

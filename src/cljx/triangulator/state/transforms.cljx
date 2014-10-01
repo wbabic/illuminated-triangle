@@ -4,12 +4,13 @@
   {:name "Transforms"
    :text "Transforms in the plane."
    :reflection
-   {:text "Refelction in a line." }
+   {:text "Refelction in a line."
+    :label "reflection"}
    :translation
    {:text "Translation by a vector."
     :label "translation"}
    :rotation
-   {:text "Rotation about a point by ab angle."
+   {:text "Rotation about a point by an angle."
     :label "rotation"}
    :dilatation
    {:text "Dilatation about center by a factor."

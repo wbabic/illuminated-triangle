@@ -1,12 +1,12 @@
 * The Triangulator
   An interactive definition viewer
-  for triangle properties
+  for triangle properties and transformations,
   with textual definitions and interactive graphics.
-
-  A work in progress.
 
   For demo see http://wbabic.github.io/illuminated-triangle
   (use google chrome for now)
+
+  
   
 ** Overview
    Illuminate geometric properties of a triangle
@@ -58,32 +58,75 @@
     
 ** Implementation
 *** the drawing loop
-    This is a core.async go loop accepting drawing events as defined in
-    datatypes.cljx and converts the data into calls to a graphics
-    context.
+    There is a method in draw.cljs, drawing-loop, that creates and
+    returns a drawing channel and takes canvas, width and height as
+    arguments. It has a core.async go-loop which accepts drawing data
+    from the drawing channel and calls render on the drawing data,
+    passing in a graphics context created from the canvas argument.
+    The render method is defined in the IRender protocal which has a
+    single method, render, which accepts a canvas graphics context.
 
-    It just understands a few basic types, like Style, Point, Line,
-    Circle and has no state.
+    The data types that implement the IRender protocal are Style,
+    Point, Line, Circle, Triangle and Rectangle and they provide the
+    means to render themselves to the canvas.
 
-    The Graphics context on the other hand does have state.
-
-    For now it is up to the caller to track where it is at. Currently,
-    it just sends redundent data. Like, always setting the style.
-
-    So far, the styke only has fil and stroke properties.
-
-    This is an area in need of improvement.
-
-    But for now, it is working, sort of. 
+    So far, the Style handles fill, stroke, lineWidth and lineDash properties.
 
 *** notes
-    abstact data
-    separate style from geometry
-    easy to change style
-    easy to change options
+    Graphics are represented as data and can be sent to a channel to
+    be rendered. Geometry is separate from style, merged when it is time
+    to render. This allows for testing of geometry and rendering
+    methohds without a graphics context. Also, it would be possible
+    to provide rendering to other contexts, like svg, with out
+    changing the geometry and style code.
+
+    Also, since the geometry, style and handlers are in cljx form,
+    they can be used on the server and tested from clojure and
+    inspected from a clojure repl.
+
 *** technologies used
     This app makes use of clojure, clojurescript, om and react,
-    and core.async, lein cljsbuild and cljx, and  html canvas. 
+    core.async, lein cljsbuild and cljx, and html canvas.
+** Animation
+*** animate properties of an item
+    Animate geometric properties when visiting an item.
+    Toggle each property in turn.
+
+*** redraw triangle
+    Redraw triangle, one property at a time.
+    
+    A step by step recreation of a triangle, with appropriate
+    properties included, pausing between each one.
+
+*** iterations
+    Perform sequence of iterations for the given triangle until the
+    canvas space is filled.
+
+** Navigation
+   Arraw keys provide navigation through section, entries and items.
+   Up and Down moves between sections, entries and items,
+   Left and Right cycles through elements in current level.
+
+   When a section is selected, Left and Right cycles between
+   selections.
+
+   Down moves into the entries of the current slection. Then Left and
+   Right cycles through the entries.
+
+   Down again will move to the item level where Left and Right will
+   then cycle through the items of the curent entry.
+
+   Up will then move to the entry level and Up again will go to the
+   section level.
+
+** Selection
+   While viewing an item, checking the displayed properties will set
+   them for the current entry.
+
+   Different entries have separate properties.
+
+   All will display properties of all the entries
+   
 ** The play
    Click a definition link.
    Make a triangle.
@@ -110,12 +153,6 @@
 ** Reference
    Coxeter's Intro to Geametry.
 ** Todo
-*** redraw triangle
-    a step by step recreation of a triangle, with appropriate
-    properties included
-*** break up style
-    put into map with item keyword
-    one group for each item
 *** hook up transforms
     create-transform handlers
     

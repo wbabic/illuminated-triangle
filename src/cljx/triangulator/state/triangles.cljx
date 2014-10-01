@@ -219,6 +219,7 @@
                :extended false
                :circumcenter false
                :circumcircle false
+               :circumradii false
                :nine-pt-circle false
                :orthic-triangle false
                :midpoint-triangle false
@@ -258,7 +259,7 @@
   {:triangle
    {:vertices []
     :edges []
-    :midpoints []}
+    :midpoints [:midpoints]}
 
    :centroid
    {:midpoints [:midpoints]
@@ -298,8 +299,8 @@
     :nine-pt-circle [:nine-pt-circle :nine-pt-center :nine-pt-radii]
     :midpoint-triangle [:midpoints :midpoint-triangle]
     :orthocentric-midpoint-triangle
-    [:midpoints :altitudes :feet :orthocenter :orthocentric-midpoints]
-    :euler-line [:centroid :orthocenter :circumcenter :nine-pt-center :euler]
+    [:midpoints :altitudes :feet :orthocenter :orthocentric-midpoints :orthocentric-midpoint-triangle]
+    :euler [:centroid :orthocenter :circumcenter :nine-pt-center :euler]
     :circumcircle [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle]}
 
    :all
