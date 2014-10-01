@@ -82,11 +82,8 @@
         (go
           (loop []
             (let [command (<! keys-chan)
-                  _ (println "command: " command)
                   current-selection (get-in @app [:ui :selection])
-                  _ (println "current-selection: " current-selection)
-                  next-selection (nav/next-selection command current-selection (:ui @app))
-                  _ (println "next-selection: " next-selection)]
+                  next-selection (nav/next-selection command current-selection (:ui @app))]
               (routes/dispatch next-selection)
               (recur))))))
     
@@ -144,7 +141,7 @@
                         (map
                          (fn [prop-key]
                            (let [checked (prop-key entry-opts)
-                                 prop-name (name key)]
+                                 prop-name (name prop-key)]
                              (dom/li nil
                                      (dom/input #js {:type "checkbox"
                                                      :checked checked
