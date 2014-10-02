@@ -104,7 +104,9 @@
                                                 (om/update! triangle nil)
                                                 (put! control-chan :triangle))}
                                "new triangle")
-                   (dom/button #js {:onClick #(println "redraw triangle")}
+                   (dom/button #js {:onClick #(do
+                                                (println "redraw triangle")
+                                                (put! control-chan :redraw))}
                                "redraw triangle")))))))
 
 (defn section-detail [ui owner]
@@ -131,8 +133,7 @@
   (reify
     om/IRender
     (render [_]
-      (let [_ (println "section-props")
-            {:keys [section entry item] :as current-selection} (get-in ui [:selection])
+      (let [{:keys [section entry item] :as current-selection} (get-in ui [:selection])
             section-data (get-in ui [:section-data section])
             entry-opts (get-in section-data [:props :entry entry :tri-opts])
             item-props (get-in section-data [:props :item entry item])]
@@ -160,35 +161,30 @@
 
     om/IWillMount
     (will-mount [_]
-      (let [_ (println "mounting item-controller")
-            event-chan (:event-chan opts)
-            control-chan (:control-chan opts)]
+      (let [event-chan (:event-chan opts)
+            control-chan (:control-chan opts)
+            draw-chan (:draw-chan opts)
+            ret-chan (chan)
+            redraw-chan (chan)]
         (go
-          ;; wait for control-type from control-chan
-          (let [control-type (<! control-chan)
-                _ (println "recieved from control-chan: " control-type)
-                collector (get h/collectors control-type)
-                trans-fn (:transition-fn collector)
-                data-fn (:data-fn collector)
-                init-state (:init-state collector)]
+          (loop []
+            (let [control-type (<! control-chan)]
+              (condp = control-type
+                :triangle
+                (h/handle-event owner event-chan ret-chan)
+                :redraw
+                (let [tri (get-in @app [:geometry :triangle])
+                      _ (println "redrawing tri " tri)]
+                  (render/clear draw-chan)
+                  (om/update! app [:geometry :triangle] nil)
+                  (h/handle-event owner redraw-chan ret-chan)
+                  (h/update-state tri redraw-chan)))
 
-            (loop [type control-type]
-              (loop [state init-state]
-                (let [event (<! event-chan)]
-                  (let [new-state (trans-fn event state)]
-                    (if (:complete new-state)
-                      (do
-                        ;; update app state
-                        ;; reset local state
-                        (om/set-state! owner nil)
-                        (om/update! app [:geometry control-type] (data-fn new-state)))
-                      (do
-                        (om/set-state! owner new-state)
-                        (recur new-state))))))
-              (let [_ (println "waiting for next control-type from control-chan")
-                    control-type (<! control-chan)
-                    _ (println "recieved from control-chan: " control-type)]
-                (recur control-type)))))
+              ;; wait for return value from return channel
+              (let [ret-val (<! ret-chan)]
+                (om/set-state! owner nil)
+                (om/update! app [:geometry :triangle] ret-val)
+                (recur)))))
         ;; start off with a control-type of :triangle
         (go (>! control-chan :triangle))))
 
@@ -196,6 +192,8 @@
     (render-state [_ state]
       (let [draw-chan (:draw-chan opts)
             tri (get-in app [:geometry :triangle])
+            _ (println "render-sate tri: " tri)
+            _ (println "state: " state)
             tri-style state/tri-style
 
             section (get-in app [:ui :selection :section])
@@ -246,7 +244,7 @@
                  (om/build section-detail (:ui app))
                  (when item
                    (om/build section-props (:ui app)))
-                 (when entry
+                 (when (and (= section :triangles) entry)
                    (om/build triangle-controls
                              (get-in app [:geometry :triangle])
                              {:opts opts})))))))

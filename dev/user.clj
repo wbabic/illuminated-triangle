@@ -154,3 +154,7 @@
   ;; triad: returns three colors equidistant from given
   ;; shades 
   )
+
+(comment
+  (refresh)
+  )
