@@ -174,8 +174,7 @@
                 :triangle
                 (h/handle-event owner event-chan ret-chan)
                 :redraw
-                (let [tri (get-in @app [:geometry :triangle])
-                      _ (println "redrawing tri " tri)]
+                (let [tri (get-in @app [:geometry :triangle])]
                   (render/clear draw-chan)
                   (om/update! app [:geometry :triangle] nil)
                   (h/handle-event owner redraw-chan ret-chan)
@@ -193,8 +192,6 @@
     (render-state [_ state]
       (let [draw-chan (:draw-chan opts)
             tri (get-in app [:geometry :triangle])
-            _ (println "render-sate tri: " tri)
-            _ (println "state: " state)
             tri-style state/tri-style
 
             section (get-in app [:ui :selection :section])

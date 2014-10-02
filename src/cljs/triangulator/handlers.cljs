@@ -45,7 +45,6 @@
           m1 (geom/midpoint p1 p2)
           m2 (geom/midpoint p2 p3)]
 
-      (println "updating state p1 " p1)
       (>! chan [:click p1])
 
       (doseq [t (range 25)]
@@ -54,7 +53,6 @@
           (<! (timeout 80))
           (>! chan [:move p])))
 
-      (println "updating state p2 " p2)
       (<! (timeout 80))
       (>! chan [:click p2])
 
@@ -64,8 +62,5 @@
           (<! (timeout 80))
           (>! chan [:move p])))
 
-      (println "updating state p3 " p3)
       (<! (timeout 80))
-      (>! chan [:click p3])
-
-      (println "updated state"))))
+      (>! chan [:click p3]))))
