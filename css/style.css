@@ -43,6 +43,15 @@ a:active {
     border-top: 2px solid grey;
 }
 
+.items {
+    padding-left: 20px;
+}
+
+.active {
+    border: 1px solid grey;
+    border-radius: 3px;
+}
+
 .section-header {
     padding: 2px;
     font-size: 125%;
