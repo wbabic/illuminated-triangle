@@ -40,18 +40,32 @@
 (defn update-state [tri chan]
   (go
     (let [[p1 p2 p3] tri
+          l1 (geom/param-line p1 p2)
+          l2 (geom/param-line p2 p3)
           m1 (geom/midpoint p1 p2)
           m2 (geom/midpoint p2 p3)]
+
       (println "updating state p1 " p1)
       (>! chan [:click p1])
-      (<! (timeout 500))
-      (>! chan [:move m1])
+
+      (doseq [t (range 25)]
+        (let [t1 (* t (/ 24))
+              p (l1 t1)]
+          (<! (timeout 80))
+          (>! chan [:move p])))
+
       (println "updating state p2 " p2)
-      (<! (timeout 500))
+      (<! (timeout 80))
       (>! chan [:click p2])
-      (<! (timeout 500))
-      (>! chan [:move m2])
+
+      (doseq [t (range 25)]
+        (let [t1 (* t (/ 24))
+              p (l2 t1)]
+          (<! (timeout 80))
+          (>! chan [:move p])))
+
       (println "updating state p3 " p3)
-      (<! (timeout 500))
+      (<! (timeout 80))
       (>! chan [:click p3])
+
       (println "updated state"))))

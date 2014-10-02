@@ -145,6 +145,7 @@
                                  prop-name (name prop-key)]
                              (dom/li nil
                                      (dom/input #js {:type "checkbox"
+                                                     :autoFocus "autofocus"
                                                      :checked checked
                                                      :onChange
                                                      (fn [_]
