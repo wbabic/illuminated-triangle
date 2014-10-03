@@ -19,7 +19,7 @@
                  [expresso "0.2.0"]
 
                  [ring "1.3.1"]
-                 [compojure "1.1.9"]
+                 [compojure "1.2.0"]
                  [enlive "1.1.5"]
                  [hiccup "1.0.5"]
                  [garden "1.2.1"]
