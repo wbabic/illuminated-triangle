@@ -37,7 +37,8 @@
 (def initial-selection
   {:section :triangles
    :entry :triangle
-   :item nil})
+   :item nil
+   :redraw false})
 
 (def ui
   {:selection initial-selection

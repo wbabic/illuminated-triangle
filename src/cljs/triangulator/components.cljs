@@ -99,6 +99,7 @@
       (let [control-chan (:control-chan opts)]
         (when triangle
           (dom/div #js {:className "triangle-controls"}
+                   (dom/h2 nil "Triangle controls")
                    (dom/button #js {:className "button"
                                     :onClick #(do
                                                 (om/update! triangle nil)
@@ -109,25 +110,49 @@
                                                 (put! control-chan :redraw))}
                                "redraw triangle")))))))
 
-(defn section-detail [ui owner]
+(defn section-detail [app owner]
   (reify
     om/IRender
     (render [_]
-      (let [{:keys [section entry item] :as current-selection} (:selection ui)
-            sections-data (:section-data ui)
-            section-text (get-in sections-data [section :text])
-            entry-text   (get-in sections-data [section entry :text])
-            item-text    (get-in sections-data [section entry item :text])
-            item-symbol  (get-in sections-data [section entry item :symbol])]
-        (when section-text
-          (dom/div #js {:className "definition"}
-                   (dom/h2 nil section-text)
-                   (when entry-text
-                     (dom/p nil entry-text))
-                   (when item-text
-                     (dom/p nil item-text))
-                   (when item-symbol
-                     (dom/p nil item-symbol))))))))
+      (let [ui (:ui app)
+            tri (get-in app [:geometry :triangle])
+            {:keys [section entry item] :as current-selection} (:selection ui)
+            section-data (get-in ui [:section-data section])]
+        (if (not (nil? item))
+          (do
+            ;; display item
+            (println "displaying item")
+            (dom/div #js {:className "item-definition"}
+                     (dom/h2 nil (get-in section-data [entry item :title]))
+                     (dom/p nil (get-in section-data [entry item :text]))))
+          (if (not (nil? entry))
+            (let [entry-data (get-in section-data [entry])]
+              ;; display entry
+              (println "displaying entry: " entry)
+              (prn entry)
+              (dom/div #js {:className "entry-definition"}
+                       (dom/h2 nil (get-in section-data [entry :title]))
+                       (dom/p nil (get-in section-data [entry :text]))))
+            (do
+              ;; display section
+              (println "displaying section")
+              (dom/div #js {:className "section-definition"}
+                       (dom/h2 nil (get-in section-data [:title]))
+                       
+                       (when (= section :triangles)
+                         ;; triangles section
+                         (if tri
+                           (dom/div nil
+                                    (dom/p nil (get-in section-data [:existing-text])))
+                           (dom/div nil
+                                    (dom/p nil (get-in section-data [:new-text]))
+                                    (dom/ul nil
+                                            (dom/li nil (dom/a #js {:href (str "#/" )}
+                                                               "Equilateral"))
+                                            (dom/li nil "Isosceles")
+                                            (dom/li nil "Right")
+                                            (dom/li nil "Right Isoceles")
+                                            (dom/li nil "Scalene")))))))))))))
 
 (defn section-props [ui owner]
   (reify
@@ -176,6 +201,7 @@
                 :redraw
                 (let [tri (get-in @app [:geometry :triangle])]
                   (render/clear draw-chan)
+                  (om/update! app [:ui :selection :redraw] true)
                   (om/update! app [:geometry :triangle] nil)
                   (h/handle-event owner redraw-chan ret-chan)
                   (h/update-state tri redraw-chan)))
@@ -183,6 +209,8 @@
               ;; wait for return value from return channel
               (let [ret-val (<! ret-chan)]
                 (om/set-state! owner nil)
+                (if (= :redraw control-type)
+                  (om/update! app [:ui :selection :redraw] false))
                 (om/update! app [:geometry :triangle] ret-val)
                 (recur)))))
         ;; start off with a control-type of :triangle
@@ -197,6 +225,7 @@
             section (get-in app [:ui :selection :section])
             entry   (get-in app [:ui :selection :entry])
             item    (get-in app [:ui :selection :item])
+            redraw? (get-in app [:ui :selection :redraw])
 
             prop-map (get-in app [:ui :section-data :triangles :props :entry])
 
@@ -239,10 +268,10 @@
         
         ;; render dom
         (dom/div nil
-                 (om/build section-detail (:ui app))
+                 (om/build section-detail app)
                  (when item
                    (om/build section-props (:ui app)))
-                 (when (and (= section :triangles) entry)
+                 (when (and (= section :triangles) (not redraw?))
                    (om/build triangle-controls
                              (get-in app [:geometry :triangle])
                              {:opts opts})))))))

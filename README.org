@@ -5,8 +5,6 @@
 
   For demo see http://wbabic.github.io/illuminated-triangle
   (use google chrome for now)
-
-  
   
 ** Overview
    Illuminate geometric properties of a triangle
@@ -89,8 +87,20 @@
     core.async, lein cljsbuild and cljx, and html canvas.
 ** Animation
 *** animate properties of an item
-    Animate geometric properties when visiting an item.
-    Toggle each property in turn.
+    animate geometric properties when visiting an item.
+**** toggle each property in turn.
+
+**** illuminate a basic geometric property
+     perpendicular bisector of a line and midpoint
+     altitudes of a triangle
+     angle bisectors of two intersecting lines
+
+     given a triangle and a property to illuminate,
+     create a sequence of drawing data and
+     send it to a drawing channel
+     to render it to a canvas
+
+     geometry is sepaerate from rendering and style
 
 *** redraw triangle
     Redraw triangle, one property at a time.

@@ -1,82 +1,65 @@
 (ns triangulator.state.triangles)
 
 ;; section triangles
-;; entries and items
 
 ;; entries
 (def triangle
-  {:text "A triangle has three vertices, edges, midpoints."
-   :symbol "ABC"
+  {:title "Basic geometric properties."
+   :text "A triangle has three vertices, edges, midpoints. Associated with each triangle are its perpendicular bisectors, altitudes and angle bisectors."
    :label "triangle"
-   :vertices
-   {:text "The vertices are the points of a triangle."
-    :label "vertices"
-    :symbol "A B C"}
-   :edges
-   {:text "The edges are the three line segments connecting the vertices of a triangle. May be extended."
-    :label "edges"
-    :symbol "a b c"}
-   :midpoints
-   {:text "The midpoints are the points of the edges equidistant from its endpoints"
-    :label "midpoints"
-    :symbol "A' B' C'"}})
+   :perp-bisector
+   {:title "Perpendicular Bisector"
+    :text "The perpendicular bisectors are the lines through the midpoints and perpendicular to the edges"
+    :label "perpendicular bisectors"}
+   :altitudes
+   {:title "Altitude"
+    :text "An altitude is a line from a vertex to the opposite edge that is perpendicular to that edge. It is the shortest distance from a point to a line. The feet are the intersecions of the altitudes with the edges of the triangle."
+    :label "altitudes"}
+   :ang-bisector
+   {:title "Angle Bisector"
+    :text "The angle bisectors are the lines bisecting the extended edges of a triangle.  Each vertex has an interior and an exterior angle bisector."
+    :label "angle bisectors"}})
 
 (def centroid
   {:text "The centroid of a triangle."
-   :symbol "G"
    :label "centroid"
-   :midpoints (:midpoints triangle)
    :medians
    {:text "A median is a line from a vertex to the midpoint of the opposite side."
-    :label "medians"
-    :symbol "AA' BB' CC'"}
+    :label "medians"}
    :centroid
    {:text "The centroid is the intersection of the medians."
-    :label "centroid"
-    :symbol "G"}
+    :label "centroid"}
    :midpoint-triangle
    {:text "The midpoint triangle is the triangle consisting of the midpoints of a triangle."
-    :label "midpoint triangle"
-    :symbol "A'B'C'"}
+    :label "midpoint triangle"}
    :centroid-vertex-midpoints
    {:text "The midpoints of the line segments form the cetroid to the vertices."
-    :label "centroid vertex midpoints"
-    :symbol "L M N"}
+    :label "centroid vertex midpoints"}
    :centroid-vertex-triangle
    {:text "The triangle consisting of the midpoints of centroid vertex line segments."
-    :label "centroid vertex midpoints triangle"
-    :symbol "LMN"}})
+    :label "centroid vertex midpoints triangle"}})
 
 (def circumcircle
   {:text "The circumcircle of a triangle."
    :symbol "O"
    :label "circumcircle"
-   :midpoints (:midpoints triangle)
-   :perp-bisector
-   {:text "The perpendicular bisectors are the lines through the midpoints and perpendicular to the edges"
-    :label "perpendicular bisectors"}
+   :perp-bisector (:perp-bisector triangle)
    :circumcenter
    {:text "The circumcenter is the intersection of the perpendicular bisectors."
-    :label "circumcenter"
-    :symbol "O"}
+    :label "circumcenter"}
    :circumradii
    {:text "The radius of the circumcircle is distance from the circumcenter to any vertex is the circumradius. Three circumradii are shown."
-    :label "circumradius"
-    :symbol "OA OB OC"}
+    :label "circumradius"}
    :circumcircle
    {:text "The circumcircle is the circle centered at the circumcenter with radius equal to the distance between the circumcenter and the vertices. It is the unique circle containing the vertices of the triangle."
     :label "circumcircle"}
-   :midpoint-triangle
-   {:text "The midpoint triangle is the triangle consisting of the midpoints of a triangle."
-    :label "midpoint triangle"}})
+   :midpoint-triangle (:midpoint-triangle centroid)})
 
 (def orthocenter
   {:text "The orthocenter of a triangle."
    :symbol "H"
    :label "orthocenter"
-   :altitudes
-   {:text "An altitude is a line from a vertex to the opposite edge that is perpendicular to that edge."
-    :label "altitudes"}
+   :altitudes (:altitudes triangle)
    :feet
    {:text "The feet are the intersecions of the altitudes with the edges of the triangle."
     :label "feet of altitudes"
@@ -94,9 +77,7 @@
   {:text "The incircle and excircles of a triangle."
    :symbol "I Ia Ib Ic"
    :label "incenter and excenters"
-   :ang-bisector
-   {:text "The angle bisectors are the lines bisecting the extended edges of a triangle.  Each vertex has an interior and an exterior angle bisector."
-    :label "angle bisectors"}
+   :ang-bisector (:ang-bisector triangle)
    :incircle
    {:text "The incenter is the intersection of the interior angle bisectors."
     :label "incenter"}
@@ -130,9 +111,7 @@
    :nine-pt-circle
    {:text "The circumcircle of the orthic triangle."
     :label "nine point circle"}
-   :midpoint-triangle
-   {:text "The midpoint triangle is the triangle consisting of the midpoints of a triangle."
-    :label "midpoints triangle"}
+   :midpoint-triangle (:midpoint-triangle centroid)
    :orthocentric-midpoints
    {:text "The orthocentric midpoints are the midpoints of the line segments from the orthocenter to the vertices"
     :label "orthocentric midpoints"
@@ -150,8 +129,13 @@
 (def entry-prop-map
   {:triangle
    {:line-opts line-options
-    :tri-opts {:fill false}
-    :open false}
+    :tri-opts {:fill false
+               :midpoints false
+               :perp-bisector false
+               :altitudes false
+               :extended false
+               :feet false
+               :ang-bisector false}}
    
    :centroid
    {:line-opts (conj line-options :midpoint)
@@ -161,8 +145,7 @@
                :centroid-fill false
                :midpoint-triangle true
                :centroid-vertex-midpoints false
-               :centroid-vertex-triangle false}
-    :open false}
+               :centroid-vertex-triangle false}}
 
    :circumcircle
    {:line-opts (conj line-options :perp-bisector :midpoint)
@@ -172,8 +155,7 @@
                :circumradii true
                :circumcircle true
                :fill false
-               :midpoint-triangle true}
-    :open false}
+               :midpoint-triangle true}}
 
    :orthocenter
    {:line-opts (conj line-options :extended)
@@ -183,8 +165,7 @@
                :orthocenter true
                :fill false
                :orthocentric-fill false
-               :orthic-triangle true}
-    :open false}
+               :orthic-triangle true}}
 
    :incircle
    {:line-opts line-options
@@ -192,8 +173,7 @@
                :ang-bisector true
                :incircle true
                :excircle false
-               :fill false}
-    :open false}
+               :fill false}}
 
    :euler-line
    {:line-opts (conj line-options :extended)
@@ -207,8 +187,7 @@
                :medians true
                :centroid true
                :euler true
-               :centroid-fill false}
-    :open false}
+               :centroid-fill false}}
 
    :nine-pt-circle
    {:line-opts (conj line-options :extended)
@@ -219,20 +198,19 @@
                :extended true
                :circumcenter true
                :circumcircle true
-               :circumradii true
+               :circumradii false
                :nine-pt-circle true
                :orthic-triangle true
                :midpoint-triangle true
                :orthocentric-midpoint-triangle true
-               :orthocentric-fill true
+               :orthocentric-fill false
                :nine-pt-center true
                :nine-pt-radii false
                :orthocentric-midpoints true
                :midpoints true
                :medians true
                :centroid true
-               :euler true}
-    :open false}
+               :euler true}}
 
    :all
    {:line-opts (conj line-options :extended :midpoint :perp-bisector)
@@ -252,39 +230,30 @@
                :centroid true
                :euler true
                :fill true
-               :extended true}
-    :open false}})
+               :extended true}}})
 
 (def item-prop-map
   {:triangle
-   {:vertices []
-    :edges []
-    :midpoints [:midpoints]}
+   {:perp-bisector [:midpoints :perp-bisector]
+    :altitudes [:altitudes :extended :feet]
+    :ang-bisector [:ang-bisector :extended :fill]}
 
    :centroid
-   {:midpoints [:midpoints]
-    :medians [:medians]
-    :centroid [:centroid :centroid-fill]
+   {:centroid [:midpoints :medians :centroid :centroid-fill]
     :midpoint-triangle [:midpoint-triangle]
-    :centroid-vertex-midpoints [ :centroid-vertex-midpoints]
-    :centroid-vertex-triangle [:centroid-vertex-triangle]}
+    :centroid-vertex-triangle [:centroid-vertex-midpoints :centroid-vertex-triangle]}
 
    :circumcircle
-   {:midpoints [:midpoints]
-    :perp-bisector [:perp-bisector]
-    :circumcenter [:circumcenter]
-    :circumradii [:circumradii]
-    :circumcircle [:circumcircle]
+   {:circumcenter [:midpoints :perp-bisector :circumcenter]
+    :circumcircle [:circumradii :circumcircle]
     :midpoint-triangle [:midpoint-triangle]}
 
    :orthocenter
-   {:altitudes [:extended :altitudes]
-    :feet [:feet]
-    :orthocenter [:orthocenter]
+   {:orthocenter [:extended :altitudes :feet :orthocenter]
     :orthic-triangle [:orthic-triangle :orthocentric-fill]}
 
    :incircle
-   {:ang-bisector [:ang-bisector :extended :fill]
+   {:ang-bisector [:extended :ang-bisector]
     :incircle [:incircle]
     :excircle [:excircle]}
 
@@ -295,7 +264,7 @@
     :euler [:euler]}
 
    :nine-pt-circle
-   {:orthic-triangle [:extended :altitudes :feet :orthic-triangle]
+   {:orthic-triangle [:extended :altitudes :feet :orthic-triangle :orthocentric-fill]
     :nine-pt-circle [:nine-pt-circle :nine-pt-center :nine-pt-radii]
     :midpoint-triangle [:midpoints :midpoint-triangle]
     :orthocentric-midpoint-triangle
@@ -317,7 +286,9 @@
 ;; triangles section
 (def section
   {:name "Triangles"
-   :text "Properties of a triangle."
+   :title "Properties of a triangle."
+   :new-text "Create a triangle by clicking vertices in the canvas or select from an arbtrary one of the following typse:"
+   :existing-text "Explore properties of your triangle."
    :triangle triangle
    :centroid centroid
    :circumcircle circumcircle
@@ -332,13 +303,13 @@
 
    :item-map
    {:triangle
-    [:vertices :edges :midpoints]
+    [:perp-bisector :altitudes :ang-bisector]
     :centroid
-    [:midpoints :medians :centroid :midpoint-triangle :centroid-vertex-midpoints :centroid-vertex-triangle]
+    [:centroid :midpoint-triangle :centroid-vertex-triangle]
     :circumcircle
-    [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle :midpoint-triangle]
+    [:circumcenter :circumcircle :midpoint-triangle]
     :orthocenter
-    [:altitudes :feet :orthocenter :orthic-triangle]
+    [:orthocenter :orthic-triangle]
     :incircle
     [:ang-bisector :incircle :excircle]
     :euler-line
