@@ -2,12 +2,19 @@
 
 (def section
   {:name "Iterations"
-   :text "Iterations of a triangle."
+   :title "Iterations of a triangle"
+   :text "An iterations of a triangle is ...."
+
+   ;; entries
    :iteration1
-   {:text "Iterations by dilations about centroid G"
+   {:title "Iterations by dilations about centroid G"
+    :text "Iterations by dilations about centroid G"
     :label "G(-2) G(-1/2)"}
    :iteration2
-   {:text "Iterations by dilations about orthocenter H"
+   {:title "Iterations by dilations about orthocenter H"
+    :text "Iterations by dilations about orthocenter H"
     :label "H(2) H(1/2)"}
-   :item-map {:iteration1 {} :iteration2 {}}})
+
+   ;; map of ordered item-ids for each entry in this section
+   :item-map {:iteration1 [] :iteration2 []}})
 

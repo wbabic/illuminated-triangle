@@ -1,22 +1,32 @@
 (ns triangulator.state.transforms)
 
 (def section
-  {:name "Transforms"
-   :text "Transforms in the plane."
+  {:name "Transformations"
+   :title "Transformations in the plane"
+   :text "A transformation is ..."
+
+   ;; entries
    :reflection
-   {:text "Refelction in a line."
+   {:title "Refelction in a line"
+    :text "A reflection is ..."
     :label "reflection"}
    :translation
-   {:text "Translation by a vector."
+   {:title "Translation by a vector"
+    :text "A translation is ..."
     :label "translation"}
    :rotation
-   {:text "Rotation about a point by an angle."
+   {:title "Rotation about a point by an angle"
+    :text "A rotation about a point by a given angle is ..."
     :label "rotation"}
    :dilatation
-   {:text "Dilatation about center by a factor."
+   {:title "Dilatation about center by a factor"
+    :text "A dilatation about center by a factor is ..."
     :label "dilatation"}
    :inversion
-   {:text "Inversion in a circle."
+   {:title "Inversion in a circle"
+    :text "An inversion in a circle is ..."
     :label "inversion"}
+
+   ;; map of ordered item-ids for each entry in this section
    :item-map
-   {:reflection {} :translation {} :rotation {} :dilatation {} :inversion {}}})
+   {:reflection [] :translation [] :rotation [] :dilatation [] :inversion []}})

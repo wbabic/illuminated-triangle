@@ -20,10 +20,12 @@
         (str "")))))
 
 (def sections
+  ;; contains ordered section-ids
+  ;; and ordered entry-ids for each section
   {:ids [:triangles :transforms :iterations]
    :entry-map
    {:triangles
-    [:triangle :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :all]
+    [:basic :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :custom]
     :transforms
     [:reflection :translation :rotation :dilatation :inversion]
     :iterations

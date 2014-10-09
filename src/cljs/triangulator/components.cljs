@@ -96,7 +96,8 @@
   (reify
     om/IRender
     (render [_]
-      (let [control-chan (:control-chan opts)]
+      (let [control-chan (:control-chan opts)
+            _ (println "triangle-controls: " triangle)]
         (when triangle
           (dom/div #js {:className "triangle-controls"}
                    (dom/h2 nil "Triangle controls")
@@ -138,21 +139,46 @@
               (println "displaying section")
               (dom/div #js {:className "section-definition"}
                        (dom/h2 nil (get-in section-data [:title]))
-                       
-                       (when (= section :triangles)
-                         ;; triangles section
+                       ;; triangles section
+                       (if (= section :triangles)
                          (if tri
                            (dom/div nil
                                     (dom/p nil (get-in section-data [:existing-text])))
                            (dom/div nil
                                     (dom/p nil (get-in section-data [:new-text]))
                                     (dom/ul nil
-                                            (dom/li nil (dom/a #js {:href (str "#/" )}
-                                                               "Equilateral"))
-                                            (dom/li nil "Isosceles")
-                                            (dom/li nil "Right")
-                                            (dom/li nil "Right Isoceles")
-                                            (dom/li nil "Scalene")))))))))))))
+                                            (dom/li nil
+                                                    (dom/button
+                                                     #js {:className "button"
+                                                          :onClick #(do (println ":equilateral"))}
+                                                     "Equilateral"))
+                                            (dom/li nil
+                                                    (dom/button
+                                                     #js {:className "button"
+                                                          :onClick #(do (println ":isosceles"))}
+                                                     "Isosceles"))
+                                            (dom/li nil
+                                                    (dom/button
+                                                     #js {:className "button"
+                                                          :onClick #(do (println ":right"))}
+                                                     "Right"))
+                                            (dom/li nil
+                                                    (dom/button
+                                                     #js {:className "button"
+                                                          :onClick #(do (println ":rt-isosc"))}
+                                                     "Right Isoceles"))
+                                            (dom/li nil
+                                                    (dom/button
+                                                     #js {:className "button"
+                                                          :onClick #(do (println ":golden"))}
+                                                     "Golden"))
+                                            (dom/li nil
+                                                    (dom/button
+                                                     #js {:className "button"
+                                                          :onClick #(do (println ":scalene"))}
+                                                     "Scalene")))))
+                         (dom/div nil
+                                  (dom/p nil (get-in section-data [:text]))))))))))))
 
 (defn section-props [ui owner]
   (reify
@@ -229,8 +255,21 @@
 
             prop-map (get-in app [:ui :section-data :triangles :props :entry])
 
-            tri-opts (get-in prop-map [entry :tri-opts])
-            line-opts (get-in prop-map [entry :line-opts])]
+            ;; changing tri-opts and line-opts behavior
+            ;; change tri-opts from entry level map to item level
+            ;; vector
+            ;; removing checkboxes
+            ;; enabling item level animations
+            ;; add section level props and custom all
+            ;; mave opts consistent for all levels
+
+            tri-opts (if (and (= section :triangles) entry)
+                       (get-in prop-map [entry :tri-opts])
+                       (get-in prop-map [:custom :tri-opts]))
+            ;; todo derive line-opts from tri-opts?
+            line-opts (if (and (= section :triangles) entry)
+                        (get-in prop-map [entry :line-opts])
+                        (get-in prop-map [:custom :line-opts]))]
 
         ;; render graphics from local state when not complete
         (let [step (:step state)
@@ -249,6 +288,9 @@
               2 (let [{:keys [p1 p2 p3] :as t} state]
                   (render/clear draw-chan)
                   (if p3
+                    ;; need to change the way  draw-triangle handles
+                    ;; its tri-opts
+                    ;; to be more consistent for all levels
                     (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
                     (render/draw-edge p1 p2 draw-chan :e1 line-opts)))
               3 (let [{:keys [p1 p2 p3] :as t} state]
@@ -269,12 +311,16 @@
         ;; render dom
         (dom/div nil
                  (om/build section-detail app)
-                 (when item
-                   (om/build section-props (:ui app)))
-                 (when (and (= section :triangles) (not redraw?))
+                 ;; only show triangle controls while in top level
+                 ;; triangles section when not redrawing
+                 (when (and (= section :triangles)
+                            (nil? entry)
+                            (not redraw?))
                    (om/build triangle-controls
                              (get-in app [:geometry :triangle])
-                             {:opts opts})))))))
+                             {:opts opts}))
+                 (when (and (= section :triangles) (not redraw?) item)
+                   (om/build section-props (:ui app))))))))
 
 (defn by-id [id]
   (. js/document (getElementById id)))
