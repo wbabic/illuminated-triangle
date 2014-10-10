@@ -254,14 +254,10 @@
             redraw? (get-in app [:ui :selection :redraw])
 
             prop-map (get-in app [:ui :section-data :triangles :props :entry])
-
-            ;; changing tri-opts and line-opts behavior
-            ;; change tri-opts from entry level map to item level
-            ;; vector
-            ;; removing checkboxes
-            ;; enabling item level animations
-            ;; add section level props and custom all
-            ;; mave opts consistent for all levels
+            item-prop-map (when item (get-in app [:ui :section-data :triangles :props :item]))
+            item-props (when item (get-in item-prop-map [entry item]))
+            ;; mave opts consistent for entry and item
+            ;; enable item level animations
 
             tri-opts (if (and (= section :triangles) entry)
                        (get-in prop-map [entry :tri-opts])
@@ -291,11 +287,11 @@
                     ;; need to change the way  draw-triangle handles
                     ;; its tri-opts
                     ;; to be more consistent for all levels
-                    (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style)
+                    (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style item-props)
                     (render/draw-edge p1 p2 draw-chan :e1 line-opts)))
               3 (let [{:keys [p1 p2 p3] :as t} state]
                   (render/clear draw-chan)
-                  (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style))
+                  (render/draw-triangle [p1 p2 p3] draw-chan tri-opts tri-style item-props))
               :none)))
 
         ;; render app-state triangle to draw-chan, when it exists
@@ -306,7 +302,7 @@
                 [p3x p3y] p3]
             (render/clear draw-chan)
             (render/draw-triangle [[p1x p1y] [p2x p2y] [p3x p3y]]
-                                  draw-chan tri-opts tri-style)))
+                                  draw-chan tri-opts tri-style item-props)))
         
         ;; render dom
         (dom/div nil
@@ -314,7 +310,7 @@
                  ;; only show triangle controls while in top level
                  ;; triangles section when not redrawing
                  (when (and (= section :triangles)
-                            (nil? entry)
+                            (nil? item)
                             (not redraw?))
                    (om/build triangle-controls
                              (get-in app [:geometry :triangle])

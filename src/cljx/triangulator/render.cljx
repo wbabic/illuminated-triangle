@@ -300,11 +300,14 @@ Assumes the geometry in triangle has already been built."
 a merging of style and geometry
 taking the three vertices as input and
 a map of options to include"
-  [A B C tri-opts tri-style]
-  (let [selected-tri-opts (->> tri-opts
-                               (filter (fn [[_ v]] v))
-                               (map first)
-                               set)
+  [A B C tri-opts tri-style line-opts]
+  (let [selected-tri-opts
+        (if line-opts
+          (set line-opts)
+          (->> tri-opts
+               (filter (fn [[_ v]] v))
+               (map first)
+               set))
         tri-options (set (keys tri-opts))
         triangle (tri/triangle A B C)
         line-options #{:line :endpoint1}
@@ -328,10 +331,11 @@ a map of options to include"
      triangle-data)))
 
 (defn draw-triangle
-  "new draw-tri"
-  [[p1 p2 p3] draw-chan tri-options tri-style]
-  (let [data (tri-data p1 p2 p3 tri-options tri-style)]
-    (go (>! draw-chan data))))
+  ([ps draw-chan tri-options tri-style]
+     (draw-triangle ps draw-chan tri-options tri-style nil))
+  ([[p1 p2 p3] draw-chan tri-options tri-style line-opts]
+     (let [data (tri-data p1 p2 p3 tri-options tri-style line-opts)]
+       (go (>! draw-chan data)))))
 
 (defn clear [draw-chan]
   (go (>! draw-chan clear-style)))

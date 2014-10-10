@@ -138,13 +138,20 @@
   {:title "Custom Properties"
    :text "Select from all properties to customize your triangle. These will be persisted and used in the next section."
    :label "custom"
-   :depends [:centroid :circumcircle :orthocenter :incircle :nine=pt-circle]})
+
+   ;; item-data
+   :centroid (:centroid centroid)
+   :circumcircle (:circumcircle circumcircle)
+   :orthocenter (:orthocenter orthocenter)
+   :incircle incircle
+   :euler-line (:euler euler-line)
+   :nine-pt-circle (:nine-pt-circle nine-pt-circle)})
 
 ;; geometric properties
 (def line-options #{:line :endpoint1 :endpoint2})
 
-;; entry level drawing props
-;; settable 
+;; entry level drawing props for drawing line and triangle
+;; tri props can be set for the entry
 (def entry-prop-map
   {:basic
    {:line-opts line-options
@@ -298,15 +305,12 @@
     :circumcircle [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle]}
 
    :custom
-   {:orthic-triangle [:extended :altitudes :feet :orthic-triangle]
-    :nine-pt-circle [:nine-pt-circle :nine-pt-center :nine-pt-radii]
-    :midpoint-triangle [:midpoints :midpoint-triangle]
-    :orthocentric-midpoint-triangle
-    [:midpoints :altitudes :feet :orthocenter :orthocentric-midpoints :orthocentric-midpoint-triangle]
-    :euler [:centroid :orthocenter :circumcenter :nine-pt-center :euler]
+   {:centroid [:midpoints :medians :centroid :midpoint-triangle :centroid-vertex-midpoints :centroid-vertex-triangle]
     :circumcircle [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle]
-    :incircle [:incircle]
-    :excircle [:excircle]}})
+    :orthocenter [:extended :altitudes :feet :orthocenter :orthic-triangle :orthocentric-midpoints :orthocentric-midpoint-triangle :orthocentric-fill]
+    :incircle [:extended :ang-bisector :incircle :excircle]
+    :euler-line [:euler]
+    :nine-pt-circle [:nine-pt-center :nine-pt-radii :nine-pt-circle ]}})
 
 ;; triangles section
 (def section
@@ -315,7 +319,7 @@
    :new-text "First create a triangle by clicking vertices in the canvas or select from an arbitrary one of the types below."
    :existing-text "Now explore properties of your triangle. This section contains property definitions, animations and theorems for centroid, circumcircle, orthocenter, incircle, excircles, euler line and nine point circle. Some theorems will need to wait till the next section on transformations."
 
-   ;; entires
+   ;; entries
    :basic basic
    :centroid centroid
    :circumcircle circumcircle
@@ -342,7 +346,9 @@
     :euler-line
     [:centroid :orthocenter :circumcenter :euler]
     :nine-pt-circle
-    [:orthic-triangle :nine-pt-circle :midpoint-triangle :orthocentric-midpoint-triangle :circumcircle :euler]}
+    [:orthic-triangle :nine-pt-circle :midpoint-triangle :orthocentric-midpoint-triangle :circumcircle :euler]
+    :custom
+    [:centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle]}
 
    :props {:entry entry-prop-map
            :item item-prop-map}})
