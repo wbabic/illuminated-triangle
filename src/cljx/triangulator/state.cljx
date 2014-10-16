@@ -54,4 +54,3 @@
     {:triangle nil
      :transforms nil}
     :style tri-style}))
-

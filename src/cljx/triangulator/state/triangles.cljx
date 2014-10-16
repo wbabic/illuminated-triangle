@@ -265,44 +265,69 @@
    {:perp-bisector [:midpoints :perp-bisector]
     :medians [:midpoints :medians]
     :altitudes [:altitudes :extended :feet]
-    :ang-bisector [:ang-bisector :extended :fill]}
+    :ang-bisector [:ang-bisector :extended]}
 
    :centroid
    {:medians [:midpoints :medians]
-    :centroid [:midpoints :medians :centroid :centroid-fill]
-    :midpoint-triangle [:midpoints :midpoint-triangle]
-    :centroid-vertex-triangle [:centroid-vertex-midpoints :centroid-vertex-triangle]}
+    :centroid [:midpoints :medians :centroid]
+    :midpoint-triangle [:midpoints :medians :centroid  :midpoint-triangle]
+    :centroid-vertex-triangle [:midpoints :medians :centroid
+                               :centroid-vertex-midpoints :centroid-vertex-triangle]}
 
    :circumcircle
    {:perp-bisector [:midpoints :perp-bisector]
     :circumcenter [:midpoints :perp-bisector :circumcenter]
-    :circumradii [:circumradii]
-    :circumcircle [:circumradii :circumcircle]}
+    :circumradii [:midpoints :perp-bisector :circumcenter :circumradii]
+    :circumcircle [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle]}
 
    :orthocenter
    {:altitudes [:altitudes :extended :feet]
     :orthocenter [:extended :altitudes :feet :orthocenter]
-    :orthic-triangle [:orthic-triangle :orthocentric-fill]}
+    :orthic-triangle [:altitudes :extended :feet
+                      :altitudes :orthocenter :orthic-triangle]}
 
    :incircle
    {:ang-bisector [:extended :ang-bisector]
-    :incircle [:incircle]
-    :excircle [:excircle]}
+    :incircle [:extended :ang-bisector :incircle]
+    :excircle [:extended :ang-bisector :incircle :excircle]}
 
    :euler-line
-   {:centroid [:midpoints :medians :centroid :centroid-fill]
-    :orthocenter [:extended :altitudes :feet :orthocenter]
-    :circumcenter [:perp-bisector :circumcenter]
-    :euler [:euler]}
+   {:orthocenter [:extended :altitudes :feet :orthocenter]
+    :centroid [:extended :altitudes :feet :orthocenter
+               :midpoints :medians :centroid]
+    :circumcenter [:extended :altitudes :feet :orthocenter
+                   :midpoints :medians :centroid
+                   :perp-bisector :circumcenter]
+    :euler [:midpoints :medians :centroid
+            :extended :altitudes :feet :orthocenter
+            :perp-bisector :circumcenter
+            :euler]}
 
    :nine-pt-circle
-   {:orthic-triangle [:extended :altitudes :feet :orthic-triangle :orthocentric-fill]
-    :nine-pt-circle [:nine-pt-circle :nine-pt-center :nine-pt-radii]
-    :midpoint-triangle [:midpoints :midpoint-triangle]
+   {:orthic-triangle [:extended :altitudes :feet :orthocenter :orthic-triangle]
+    :nine-pt-circle [:extended :altitudes :feet :orthic-triangle
+                     :nine-pt-circle :nine-pt-center :nine-pt-radii]
+    :midpoint-triangle [:extended :altitudes :feet :orthic-triangle
+                        :nine-pt-circle :nine-pt-center :nine-pt-radii
+                        :midpoints :midpoint-triangle]
     :orthocentric-midpoint-triangle
-    [:midpoints :altitudes :feet :orthocenter :orthocentric-midpoints :orthocentric-midpoint-triangle]
-    :euler [:centroid :orthocenter :circumcenter :nine-pt-center :euler]
-    :circumcircle [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle]}
+    [:extended :altitudes :feet :orthocenter :orthic-triangle
+     :nine-pt-circle :nine-pt-center :nine-pt-radii
+     :midpoints :midpoint-triangle
+     :altitudes :feet :orthocentric-midpoints :orthocentric-midpoint-triangle]
+    :circumcircle
+    [:extended :altitudes :feet :orthocenter :orthic-triangle
+     :nine-pt-circle :nine-pt-center :nine-pt-radii
+     :midpoints :midpoint-triangle
+     :altitudes :feet :orthocentric-midpoints :orthocentric-midpoint-triangle
+     :perp-bisector :circumcenter :circumcircle]
+    :euler
+    [:extended :altitudes :feet :orthocenter :orthic-triangle
+     :nine-pt-circle :nine-pt-center :nine-pt-radii
+     :midpoints :midpoint-triangle
+     :altitudes :feet :orthocentric-midpoints :orthocentric-midpoint-triangle
+     :perp-bisector :circumcenter :circumcircle
+     :centroid :nine-pt-center :euler]}
 
    :custom
    {:centroid [:midpoints :medians :centroid :midpoint-triangle :centroid-vertex-midpoints :centroid-vertex-triangle]
@@ -334,7 +359,7 @@
    ;; each item-id is used to look up its data in the entry
    :item-map
    {:basic
-    [:perp-bisector :medians :altitudes :ang-bisector]
+    [:medians :perp-bisector :altitudes :ang-bisector]
     :centroid
     [:medians :centroid :midpoint-triangle :centroid-vertex-triangle]
     :circumcircle
@@ -344,7 +369,7 @@
     :incircle
     [:ang-bisector :incircle :excircle]
     :euler-line
-    [:centroid :orthocenter :circumcenter :euler]
+    [:orthocenter :centroid :circumcenter :euler]
     :nine-pt-circle
     [:orthic-triangle :nine-pt-circle :midpoint-triangle :orthocentric-midpoint-triangle :circumcircle :euler]
     :custom
