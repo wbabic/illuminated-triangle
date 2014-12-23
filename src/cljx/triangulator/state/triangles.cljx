@@ -5,32 +5,35 @@
 ;; entries
 (def basic
   {:title "Basic geometric concepts"
-   :text "A triangle has three vertices, edges, midpoints. Associated with each triangle are its perpendicular bisectors, altitudes and angle bisectors. These concepts are used to derive the properties to follow."
+   :text "A triangle has three vertices, edges, midpoints. Associated with each triangle are its perpendicular bisectors, altitudes, and angle bisectors. These concepts are used to derive the properties to follow."
    :label "basic"
 
    ;; item data keyed by item-id
    ;; each item has title, text and label
    ;; label for nav-box, title and text for deefinition-box
-   :perp-bisector
-   {:title "Perpendicular Bisectors"
-    :text "The perpendicular bisectors are the lines through the midpoints and perpendicular to the edges"
-    :label "perpendicular bisectors"}
    :medians
    {:title "Medians"
-    :text "A median is a line from a vertex to the midpoint of the opposite side."
+    :text "A median is a line from a vertex to the midpoint of the opposite side. Medians are used to define the centroid"
     :label "medians"}
+
+   :perp-bisector
+   {:title "Perpendicular Bisectors"
+    :text "The perpendicular bisectors are the lines through the midpoints and perpendicular to the edges. Perpendicular bisectors will be used to define the circumcircle."
+    :label "perpendicular bisectors"}
+
    :altitudes
    {:title "Altitudes"
-    :text "An altitude is a line from a vertex to the opposite edge that is perpendicular to that edge. It is the shortest distance from a point to a line. The feet are the intersecions of the altitudes with the edges of the triangle."
+    :text "An altitude is a line from a vertex to the opposite edge that is perpendicular to that edge. It is the shortest distance from a point to a line. The feet are the intersecions of the altitudes with the edges of the triangle. Altitudes will be used to define the orthocenter."
     :label "altitudes"}
+
    :ang-bisector
    {:title "Angle Bisectors"
-    :text "The angle bisectors are the lines bisecting the extended edges of a triangle.  Each vertex has an interior and an exterior angle bisector."
+    :text "The angle bisectors are the lines bisecting the extended edges of a triangle.  Each vertex has an interior and an exterior angle bisector. Angle bisectors will be used to define the incircle and excircles."
     :label "angle bisectors"}})
 
 (def centroid
   {:title "Centroid"
-   :text "The centroid of a triangle is the intersection of the medians where a median is a line from a vertex to the midpoint of the opposite side. It will be proved that the medians are concurrent and that the centroid trisects the medians."
+   :text "The centroid of a triangle is the intersection of the medians. The medians are concurrent and the centroid trisects the medians."
    :label "centroid"
 
    ;; item data
@@ -134,19 +137,6 @@
    :euler (:euler euler-line)
    :circumcircle (:circumcircle circumcircle)})
 
-(def custom
-  {:title "Custom Properties"
-   :text "Select from all properties to customize your triangle. These will be persisted and used in the next section."
-   :label "custom"
-
-   ;; item-data
-   :centroid (:centroid centroid)
-   :circumcircle (:circumcircle circumcircle)
-   :orthocenter (:orthocenter orthocenter)
-   :incircle incircle
-   :euler-line (:euler euler-line)
-   :nine-pt-circle (:nine-pt-circle nine-pt-circle)})
-
 ;; geometric properties
 (def line-options #{:line :endpoint1 :endpoint2})
 
@@ -198,7 +188,7 @@
     :tri-opts {:extended true
                :ang-bisector true
                :incircle true
-               :excircle false
+               :excircle true
                :fill false}}
 
    :euler-line
@@ -327,22 +317,14 @@
      :midpoints :midpoint-triangle
      :altitudes :feet :orthocentric-midpoints :orthocentric-midpoint-triangle
      :perp-bisector :circumcenter :circumcircle
-     :centroid :nine-pt-center :euler]}
-
-   :custom
-   {:centroid [:midpoints :medians :centroid :midpoint-triangle :centroid-vertex-midpoints :centroid-vertex-triangle]
-    :circumcircle [:midpoints :perp-bisector :circumcenter :circumradii :circumcircle]
-    :orthocenter [:extended :altitudes :feet :orthocenter :orthic-triangle :orthocentric-midpoints :orthocentric-midpoint-triangle :orthocentric-fill]
-    :incircle [:extended :ang-bisector :incircle :excircle]
-    :euler-line [:euler]
-    :nine-pt-circle [:nine-pt-center :nine-pt-radii :nine-pt-circle ]}})
+     :centroid :nine-pt-center :euler]}})
 
 ;; triangles section
 (def section
   {:name "Triangles"
    :title "Properties of a triangle"
    :new-text "First create a triangle by clicking vertices in the canvas or select from an arbitrary one of the types below."
-   :existing-text "Now explore properties of your triangle. This section contains property definitions, animations and theorems for centroid, circumcircle, orthocenter, incircle, excircles, euler line and nine point circle. Some theorems will need to wait till the next section on transformations."
+   :existing-text "Explore properties of your triangle. This section contains property definitions, animations and theorems for centroid, circumcircle, orthocenter, incircle, excircles, euler line and nine point circle. Some theorems will need to wait till the next section on transformations."
 
    ;; entries
    :basic basic
@@ -352,7 +334,6 @@
    :incircle incircle
    :euler-line euler-line
    :nine-pt-circle nine-pt-circle
-   :custom custom
 
    ;; map of ordered item-ids for each entry
    ;; ordered for nav bax
@@ -371,9 +352,7 @@
     :euler-line
     [:orthocenter :centroid :circumcenter :euler]
     :nine-pt-circle
-    [:orthic-triangle :nine-pt-circle :midpoint-triangle :orthocentric-midpoint-triangle :circumcircle :euler]
-    :custom
-    [:centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle]}
+    [:orthic-triangle :nine-pt-circle :midpoint-triangle :orthocentric-midpoint-triangle :circumcircle :euler]}
 
    :props {:entry entry-prop-map
            :item item-prop-map}})

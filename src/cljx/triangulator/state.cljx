@@ -6,8 +6,6 @@
 
 (def tri-style style/tri-style)
 
-(def entry-prop-map triangles/entry-prop-map)
-
 (defn selection->uri
   "convert selection to uri"
   [{:keys [section entry item] :as selection}]
@@ -25,7 +23,7 @@
   {:ids [:triangles :transforms :iterations]
    :entry-map
    {:triangles
-    [:basic :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle :custom]
+    [:basic :centroid :circumcircle :orthocenter :incircle :euler-line :nine-pt-circle]
     :transforms
     [:reflection :translation :rotation :dilatation :inversion]
     :iterations
@@ -52,5 +50,4 @@
    {:ui ui
     :geometry
     {:triangle nil
-     :transforms nil}
-    :style tri-style}))
+     :transforms nil}}))

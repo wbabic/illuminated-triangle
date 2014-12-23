@@ -2,13 +2,9 @@
   (:require [triangulator.datatypes :as dt]
             [triangulator.geometry :as geom]
             [triangulator.geometry.triangle :as tri]
-            [triangulator.style :as style]
-            [triangulator.state :as state]
      #+clj  [clojure.core.async :as async :refer [>! <! chan go]]
-     #+cljs [cljs.core.async :as async :refer [>! <! chan]]
-     )
-#+cljs(:require-macros [cljs.core.async.macros :refer [go]])
-)
+     #+cljs [cljs.core.async :as async :refer [>! <! chan]])
+#+cljs(:require-macros [cljs.core.async.macros :refer [go]]))
 
 #+cljs (enable-console-print!)
 
@@ -80,14 +76,14 @@ a pure function"
   "data to draw line between p1 and p2
 using style from options,
 a pure function"
-  [p1 p2 side options]
-  (let [style (get style/tri-style side)]
+  [p1 p2 side options tri-style]
+  (let [style (get tri-style side)]
     (draw-line-data p1 p2 options style)))
 
 (defn draw-edge
   "draw given edge with given options"
-  [p1 p2 draw-chan side options]
-  (let [data (draw-edge-data p1 p2 side options)]
+  [p1 p2 draw-chan side options tri-style]
+  (let [data (draw-edge-data p1 p2 side options tri-style)]
     (go (>! draw-chan data))))
 
 (defn style-circle
@@ -325,9 +321,9 @@ a map of options to include"
         triangle (tri/add-options triangle tri-options)
         triangle-data (expand triangle selected-tri-opts tri-style)]
     (concat
-     (draw-edge-data A B :e1 line-options)
-     (draw-edge-data B C :e2 line-options)
-     (draw-edge-data C A :e3 line-options)
+     (draw-edge-data A B :e1 line-options tri-style)
+     (draw-edge-data B C :e2 line-options tri-style)
+     (draw-edge-data C A :e3 line-options tri-style)
      triangle-data)))
 
 (defn draw-triangle
@@ -339,13 +335,3 @@ a map of options to include"
 
 (defn clear [draw-chan]
   (go (>! draw-chan clear-style)))
-
-(comment
-  (clojure.pprint/pprint style/tri-style)
-  ;; here we can check the pure data before we even send it to a channel
-
-    (clojure.pprint/pprint
-     (tri-data [0 0] [1 0] [0 1]  (get-in state/prop-map [:centroid :tri-opts]) state/tri-style))
-
-  
-)

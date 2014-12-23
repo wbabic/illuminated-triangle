@@ -112,6 +112,12 @@
     Perform sequence of iterations for the given triangle until the
     canvas space is filled.
 
+*** tilings
+    right isosceles
+    30 60 90
+    equilateral
+    scalene
+
 ** Navigation
    Arraw keys provide navigation through section, entries and items.
    Up and Down moves between sections, entries and items,
@@ -170,5 +176,82 @@
     apply sequence of transforms to the triangle,
     one at a time or
     all at once.
+
 *** add theorems
 *** add iterations
+*** add tilings
+
+** Changes
+   remove custom entry in triangles section
+   remove displaying of section props
+   update text
+
+*** current
+    add animate button in triangle controls for item in triangles section
+    instead of redrawing triangle,
+    animate the drawing of its components
+
+    new method:
+    handle-redraw
+    in handlers.cljs
+
+    new method:
+    animate-triangle
+    that returns a vector of sequences of animations
+    in render.cljs
+    
+    in render.cljs
+    pass in tri-style to draw-edge method
+    called in components.cljs
+    
+
+    create a data sequence
+    send it to draaw chan
+
+
+    in centroid, for example,
+    first draw the midpoints, one at a time, then
+    draw each line from a vertex to the midpoint of the opposite side
+    the midpoints can be constructed using circles,
+    need the intersection of two circles, or,
+    use linear algebra to find the midpoints
+
+    in circumcircle,
+    show that perp bisectors are concurrent and find the circumradius
+    
+    in orthocenter,
+    construct altitudes, find intersection, 
+
+*** todo
+    add basic constructions section containing perpendicular bisectors
+    and midpoints and angle bisectors
+    show geometric construction and algebraic algorithm and code that
+    performs the calculation
+
+    change current basic entry in triangles section to show
+    concurrency
+    
+    have ret-chan return a vector like [:triangle tri-data] 
+    instead of just tri-data
+    extend it to  [:reflection ref-data]
+    to handle trasformations too
+    in handlers/handle event
+    called from item-controller/will-mount
+    
+    fix mouse clicks that accumulate
+    in canvas and show up when new triangle button
+    is pressed
+
+    handle dragging of points of existing triangle
+
+    clean up draw-triangle in render.cljx
+** Usage
+   lein cljx once
+   lein cljsbuild once dev
+   lein repl
+
+   ;; start server from clojure repl
+   user=> (go)
+
+   open url in browser
+   

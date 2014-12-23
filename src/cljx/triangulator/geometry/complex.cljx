@@ -100,11 +100,11 @@
 
 (comment
   (let [e1 (make-polar 1 0)
-        e2 (make-polar 1 (* (/ 4) geom/tau))]
+        e2 (make-polar 1 (/ geom/tau 4) )]
     [(angle e1) (angle e2)])
 
   (multiply (make-rect [0 1]) (make-rect [0 1]))
-  (multiply (make-polar 1 (* (/ 2) geom/tau)) (make-rect [0 1]))
+  (multiply (make-polar 1 (/ geom/tau 2)) (make-rect [0 1]))
   (let [z (make-rect [1 0])
         w (make-polar 1 (* (/ 4) geom/tau))]
     (geom/almost-equals 0 (scalar-product z w) (/ 1e10)))

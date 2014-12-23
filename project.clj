@@ -15,7 +15,7 @@
 
                  [net.mikera/core.matrix "0.18.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
-                 [org.clojure/core.match "0.2.1"]
+                 [org.clojure/core.match "0.2.2"]
                  [expresso "0.2.0"]
 
                  [ring "1.3.1"]
@@ -26,7 +26,8 @@
 
                  [com.stuartsierra/component "0.2.2"]
                  [liberator "0.10.0"]
-                 [com.datomic/datomic-free "0.9.4899"]]
+                 [com.datomic/datomic-free "0.9.4899"]
+                 [com.velisco/herbert "0.6.6"]]
 
   :profiles
   {:dev

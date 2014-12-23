@@ -170,26 +170,6 @@ assuming the vertices and segments have been added"
 
                 (contains? options :excircle)
                 (assoc :excircle
-                  (excircles t (:ang-bisector tri)))
-                )]
+                  (excircles t (:ang-bisector tri))))]
     tri))
 
-(comment
-  (def t [[0 0] [1 0] [0 1]])
-  (def tri (apply triangle t))
-  (clojure.pprint/pprint tri)
-
-  (def tri-1 (add-options tri #{:circumcenter :orthocenter :altitudes :centroid :nine-pt-circle}))
-  (clojure.pprint/pprint tri-1)
-
-  (def tri-2 (add-options tri #{:midpoints :medians :centroid}))
-  (clojure.pprint/pprint tri-2)
-
-  (ang-bisector-segment t)
-  (ang-bisectors t)
-  (clojure.pprint/pprint (add-options tri #{:ang-bisector}))
-
-  (keys (add-options tri #{:ang-bisector}))
-
-  (clojure.pprint/pprint (add-options tri #{:incircle :excircle}))
-  )
