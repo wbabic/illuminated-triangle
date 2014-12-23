@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :source-paths ["src/clj" "target/generated/src/clj"]
-  
+
   :dependencies [[org.clojure/clojure "1.6.0"]
 
                  [org.clojure/clojurescript "0.0-2322"]
@@ -40,8 +40,8 @@
               [com.keminglabs/cljx "0.4.0"]
               [com.cemerick/austin "0.1.5"]]}}
 
-  :hooks [cljx.hooks]
-    
+;;  :hooks [cljx.hooks]
+
   :cljx {:builds [{:source-paths ["src/cljx"]
                    :output-path "target/generated/src/clj"
                    :rules :clj}
@@ -49,7 +49,7 @@
                   {:source-paths ["src/cljx"]
                    :output-path "target/generated/src/cljs"
                    :rules :cljs}]}
-  
+
   :cljsbuild {
     :builds [{:id "dev"
               :source-paths ["src/cljs" "target/generated/src/cljs"]

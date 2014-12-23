@@ -48,7 +48,7 @@
 (comment
   (require '[garden.core :refer [css]])
   (css [:h1 :h2 {:font-weight "none"}])
-  
+
   (require '[garden.color :as color :refer [ hsl rgb]])
   (def red (hsl 0 100 50))
   (color/darken red 25)
@@ -72,7 +72,7 @@
   ;; complement rotate hue by 180
   ;; analogous, returns 3 colors separated by 0 30 and 60 from given color
   ;; triad: returns three colors equidistant from given
-  ;; shades 
+  ;; shades
   )
 
 ;; cljs repl
@@ -113,7 +113,7 @@
   (db/transact
    db-comp
    (db/update-class db-val "1806" "new title"))
-  
+
   ;; perform speculative transaction
   (let [db-after (->> (db/update-class db-val "6001" "new title")
                       (d/with db-val)
@@ -122,13 +122,13 @@
                       first
                       :class/title)]
     new-title)
-  
+
   )
 
 (comment
   (require '[garden.core :refer [css]])
   (css [:h1 :h2 {:font-weight "none"}])
-  
+
   (require '[garden.color :as color :refer [ hsl rgb]])
   (def red (hsl 0 100 50))
   (color/darken red 25)
@@ -152,7 +152,7 @@
   ;; complement rotate hue by 180
   ;; analogous, returns 3 colors separated by 0 30 and 60 from given color
   ;; triad: returns three colors equidistant from given
-  ;; shades 
+  ;; shades
   )
 
 (comment

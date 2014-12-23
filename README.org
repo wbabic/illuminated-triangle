@@ -5,7 +5,7 @@
 
   For demo see http://wbabic.github.io/illuminated-triangle
   (use google chrome for now)
-  
+
 ** Overview
    Illuminate geometric properties of a triangle
    and apply basic transformations to a triangle (todo).
@@ -41,11 +41,11 @@
 
 *** Step through theorems
     Theorems include:
-    
+
     The centroid is concurrent and trisects the medians.
 
     The centroid and orthocenter divide the Euler line externally and
-    internally in the ratio of 1:2. 
+    internally in the ratio of 1:2.
 
     The circumcircle of the orthic triangle contains the midpoints of the
     triangle as well as orthocentric-midpoints triangle (nine point circle).
@@ -53,7 +53,7 @@
     The centroid and orthocenter are centers of similtude of the circumcircle
     and the nine point circle and the radius of the circumcircle is twice
     the radius of the nine point circle.
-    
+
 ** Implementation
 *** the drawing loop
     There is a method in draw.cljs, drawing-loop, that creates and
@@ -104,7 +104,7 @@
 
 *** redraw triangle
     Redraw triangle, one property at a time.
-    
+
     A step by step recreation of a triangle, with appropriate
     properties included, pausing between each one.
 
@@ -142,7 +142,7 @@
    Different entries have separate properties.
 
    All will display properties of all the entries
-   
+
 ** The play
    Click a definition link.
    Make a triangle.
@@ -160,7 +160,7 @@
    Move to draw triangle.
    Tap again to fix third point.
    Now you have a triangle.
-   
+
    Depending on the property,
    certain geometric ideas will be draw as the triangle is created.
 
@@ -171,7 +171,7 @@
 ** Todo
 *** hook up transforms
     create-transform handlers
-    
+
     Create multiple transforms and compose them and
     apply sequence of transforms to the triangle,
     one at a time or
@@ -199,11 +199,11 @@
     animate-triangle
     that returns a vector of sequences of animations
     in render.cljs
-    
+
     in render.cljs
     pass in tri-style to draw-edge method
     called in components.cljs
-    
+
 
     create a data sequence
     send it to draaw chan
@@ -218,9 +218,9 @@
 
     in circumcircle,
     show that perp bisectors are concurrent and find the circumradius
-    
+
     in orthocenter,
-    construct altitudes, find intersection, 
+    construct altitudes, find intersection,
 
 *** todo
     add basic constructions section containing perpendicular bisectors
@@ -230,14 +230,14 @@
 
     change current basic entry in triangles section to show
     concurrency
-    
-    have ret-chan return a vector like [:triangle tri-data] 
+
+    have ret-chan return a vector like [:triangle tri-data]
     instead of just tri-data
     extend it to  [:reflection ref-data]
     to handle trasformations too
     in handlers/handle event
     called from item-controller/will-mount
-    
+
     fix mouse clicks that accumulate
     in canvas and show up when new triangle button
     is pressed
@@ -248,10 +248,10 @@
 ** Usage
    lein cljx once
    lein cljsbuild once dev
+   lein do clean, cljsbuild clean, cljx once,cljsbuild once dev
    lein repl
 
    ;; start server from clojure repl
    user=> (go)
 
    open url in browser
-   
