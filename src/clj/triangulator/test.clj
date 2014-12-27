@@ -28,7 +28,7 @@ in a go loop"
 
 (comment
   ;; in a comment so as to be able to run from the repl
-  
+
   ;; create a new drawing channel
   (def draw-chan (chan))
 
@@ -36,7 +36,7 @@ in a go loop"
                       [:click [0 0]]
                       [:click [1 0]]
                       [:click [0 1]]])
-  
+
   (send-data-to-chan triangle-data draw-chan)
 
   (collector draw-chan :draw-chan)
@@ -78,7 +78,7 @@ in a go loop"
             (do
               (println ":not-complete " ret-state)
               (recur))))))
-    
+
     (go (<! (timeout 1000))
         (>! event-chan [1 2])
         (<! (timeout 1000))
@@ -99,7 +99,7 @@ in a go loop"
   {:line-opts #{:endpoint2 :endpoint1 :line},
    :tri-opts {:extended false, :midpoints false, :ang-bisector false,
               :fill false, :altitudes false, :feet false, :perp-bisector false}}
-  
+
   (def tri-data
     (let [[p1 p2 p3] tri]
       (render/tri-data p1 p2 p3 tri-opts state/tri-style nil)))
@@ -138,6 +138,6 @@ in a go loop"
   :e2 [[-352.5533905932737 -853.5533905932737] [354.5533905932737 853.5533905932737]
        [-611.3724356957944 -1478.397839480233] [613.3724356957944 1478.397839480233]],
   :e3 [[853.5533905932737 354.5533905932737] [-853.5533905932737 -352.5533905932737]
-       [1478.397839480233 613.3724356957944] [-1478.397839480233 -611.3724356957944]]}}  
+       [1478.397839480233 613.3724356957944] [-1478.397839480233 -611.3724356957944]]}}
 
 )

@@ -1,6 +1,6 @@
 (ns triangulator.routes
   (:require [goog.events :as gevents]
-            [secretary.core :as secretary :include-macros true :refer [defroute]]
+            [secretary.core :as secretary :refer-macros [defroute]]
             [triangulator.state :as state])
   (:import [goog History]
            [goog.history EventType]))

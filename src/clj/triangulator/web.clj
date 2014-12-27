@@ -1,12 +1,10 @@
 (ns triangulator.web
-  (:require [cemerick.austin.repls :refer (browser-connected-repl-js)]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [net.cgrand.enlive-html :as enlive]
             [compojure.route :refer (resources)]
             [compojure.core :refer (GET PUT POST defroutes)]
             [compojure.handler :as handler]
             [ring.adapter.jetty :refer [run-jetty]]
-            ;;[ring.middleware.edn :refer [wrap-edn-params]]
             [com.stuartsierra.component :as component]
             [triangulator.db :as db]))
 
@@ -15,8 +13,7 @@
    that includes the client-side part of the REPL that talks to the REPL server."
   [file-name]
   (enlive/sniptest (slurp (io/resource (str file-name ".html")))
-                   [:body] (enlive/append
-                            (enlive/html [:script (browser-connected-repl-js)]))))
+                   ))
 
 (defn generate-response [data & [status]]
   {:status (or status 200)

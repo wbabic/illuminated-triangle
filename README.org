@@ -248,6 +248,8 @@
 ** Usage
    lein cljx once
    lein cljsbuild once dev
+
+   or
    lein do clean, cljsbuild clean, cljx once,cljsbuild once dev
    lein repl
 
@@ -255,3 +257,6 @@
    user=> (go)
 
    open url in browser
+
+   connect to repl from emacs
+   M-x cider-connect
