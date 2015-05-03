@@ -51,11 +51,10 @@
                          :source-map true
                          :source-map-timestamp true
                          :cache-analysis true}}
-             {:id "release"
+             {:id "demo"
               :source-paths ["src/cljs" "target/generated/src/cljs"]
               :compiler {
                          :output-to "demo/main.js"
+                         :main triangulator.components
                          :optimizations :advanced
-                         :pertty-print false
-                         :preamble ["react/react.min.js"]
-                         :externs ["react/externs/react.js"]}}]})
+                         :pertty-print false}}]})

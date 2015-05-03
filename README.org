@@ -250,8 +250,11 @@
    lein cljsbuild once dev
 
    or
-   lein do clean, cljsbuild clean, cljx once, cljsbuild once dev
+   lein do clean, cljx once, cljsbuild once dev
    lein repl
+
+   for the demo:
+   lein cljsbuild once demo
 
    ;; start server from clojure repl
    user=> (go)
