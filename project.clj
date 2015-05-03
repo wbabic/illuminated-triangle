@@ -8,19 +8,19 @@
 
   :dependencies [[org.clojure/clojure "1.6.0"]
 
-                 [org.clojure/clojurescript "0.0-2511"]
+                 [org.clojure/clojurescript "0.0-3165"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [om "0.8.0-beta5"]
-                 [secretary "1.2.1"]
+                 [org.omcljs/om "0.8.8"]
+                 [secretary "1.2.3"]
 
                  [ring "1.3.2"]
-                 [compojure "1.3.1"]
+                 [compojure "1.3.2"]
                  [enlive "1.1.5"]
                  [hiccup "1.0.5"]
                  [garden "1.2.5"]
 
                  [com.stuartsierra/component "0.2.2"]
-                 [com.datomic/datomic-free "0.9.5078"]
+                 [com.datomic/datomic-free "0.9.5130"]
                  [com.velisco/herbert "0.6.6"]]
 
   :profiles
@@ -28,8 +28,8 @@
    {:source-paths ["src/clj" "test/clj" "dev"]
     :dependencies [[org.clojure/tools.namespace "0.2.8"]
                    [org.clojure/java.classpath "0.2.2"]]
-    :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
-              [com.keminglabs/cljx "0.5.0"]]}}
+    :plugins [[lein-cljsbuild "1.0.5"]
+              [com.keminglabs/cljx "0.6.0"]]}}
 
   :cljx {:builds [{:source-paths ["src/cljx"]
                    :output-path "target/generated/src/clj"
@@ -45,8 +45,12 @@
               :compiler {
                          :output-to "resources/public/js/main.js"
                          :output-dir "resources/public/js/out"
+                         :main triangulator.components
+                         :asset-path "js/out"
                          :optimizations :none
-                         :source-map true}}
+                         :source-map true
+                         :source-map-timestamp true
+                         :cache-analysis true}}
              {:id "release"
               :source-paths ["src/cljs" "target/generated/src/cljs"]
               :compiler {
