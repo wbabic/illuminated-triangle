@@ -182,7 +182,7 @@ Assumes the geometry in triangle has already been built."
                (concat (draw-line-data A A1 line-options style)
                        (draw-line-data B B1 line-options style)
                        (draw-line-data C C1 line-options style))))
-            
+
             (contains? options :altitudes)
             (into
              (let [;; line options for altitudes
@@ -197,7 +197,7 @@ Assumes the geometry in triangle has already been built."
                   (dt/point D)
                   (dt/point E)
                   (dt/point F))
-            
+
             (contains? options :orthocenter)
             (conj (dt/style (:orthocenter tri-style))
                   (dt/point H))
@@ -215,7 +215,7 @@ Assumes the geometry in triangle has already been built."
                   (dt/line [A O])
                   (dt/line [B O])
                   (dt/line [C O]))
-            
+
             (contains? options :euler)
             (conj (dt/style (:euler tri-style))
                   (dt/line [O H]))
@@ -260,7 +260,7 @@ Assumes the geometry in triangle has already been built."
                      (dt/point m1)
                      (dt/point m2)
                      (dt/point m3)]))
-            
+
             ;; :orthocentric-radii
             (contains? options :nine-pt-radii)
             (into (let [nine-pt-center (:nine-pt-center triangle)]
@@ -268,7 +268,7 @@ Assumes the geometry in triangle has already been built."
                      (dt/line [nine-pt-center D])
                      (dt/line [nine-pt-center E])
                      (dt/line [nine-pt-center F])]))
-            
+
             (contains? options :ang-bisector)
             (into (let [ang-bi (:ang-bisector triangle)]
                     [(dt/style (:ang-bisector tri-style))
@@ -281,7 +281,7 @@ Assumes the geometry in triangle has already been built."
 
             (contains? options :incircle)
             (into (style-circle (:incircle tri-style) (:incircle triangle)))
-            
+
             (contains? options :excircle)
             (into (concat
                    (style-circle (get-in tri-style [:excircle 0])
@@ -316,7 +316,7 @@ a map of options to include"
 
                              (contains? selected-tri-opts :extended)
                              (conj :extended))
-        
+
         ;; build up any required geometric data into triangle
         triangle (tri/add-options triangle tri-options)
         triangle-data (expand triangle selected-tri-opts tri-style)]

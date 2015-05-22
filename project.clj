@@ -21,7 +21,9 @@
 
                  [com.stuartsierra/component "0.2.2"]
                  [com.datomic/datomic-free "0.9.5130"]
-                 [com.velisco/herbert "0.6.6"]]
+                 [com.velisco/herbert "0.6.6"]
+
+                 [net.mikera/core.matrix "0.33.2" :exclusions [org.clojure/clojure]]]
 
   :profiles
   {:dev

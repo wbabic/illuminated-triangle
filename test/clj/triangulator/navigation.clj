@@ -4,10 +4,6 @@
             [triangulator.state.navigation :as nav]
             [triangulator.state.triangles :as tri]))
 
-(comment
-  (run-tests)
-  )
-
 (deftest next-selection-test
   (let [sel state/initial-selection
         ui state/ui

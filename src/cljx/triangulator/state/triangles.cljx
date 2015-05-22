@@ -152,7 +152,7 @@
                :extended false
                :feet false
                :ang-bisector false}}
-   
+
    :centroid
    {:line-opts (conj line-options :midpoint)
     :tri-opts {:midpoints true

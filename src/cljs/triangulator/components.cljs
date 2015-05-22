@@ -53,7 +53,7 @@
     om/IRender
     (render [this]
       (let [{:keys [section entry item] :as current-selection} (:selection ui)
-            section-ids (get-in ui [:sections :ids])            
+            section-ids (get-in ui [:sections :ids])
             sections-data (:section-data ui)]
         (apply dom/div #js {:className "sections"}
                (map
@@ -86,7 +86,7 @@
                   next-selection (nav/next-selection command current-selection (:ui @app))]
               (routes/dispatch next-selection)
               (recur))))))
-    
+
     om/IRender
     (render [this]
       (dom/div #js {:className "nav-box"}
@@ -328,7 +328,7 @@
             (render/clear draw-chan)
             (render/draw-triangle [[p1x p1y] [p2x p2y] [p3x p3y]]
                                   draw-chan tri-opts tri-style item-props)))
-        
+
         ;; render dom
         (dom/div nil
                  (om/build section-detail app)
@@ -364,4 +364,3 @@
    state/app-state
    {:target (by-id "definition-list")
     :opts {:keys-chan keys-chan}}))
-

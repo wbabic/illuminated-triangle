@@ -131,7 +131,7 @@ item is nil"
         nil))))
 
 (defn next-selection
-  "return next selection for given command,  selection and ui"
+  "return next selection for given command, selection and ui"
   [command selection ui]
   (let [{:keys [section entry item]} selection
         section-ids (section-ids ui)
