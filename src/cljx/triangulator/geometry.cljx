@@ -120,4 +120,3 @@ l1 = [p1 p2] l2 = [p3 p4]"
         m1 (inverse [[a b] [d e]])
         res (mvmult m1 [c f])]
     res))
-

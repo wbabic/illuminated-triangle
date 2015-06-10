@@ -161,7 +161,7 @@
   (coords (multiply one zero))
   (identical? zero (multiply zero (make-rect [100 200])))
   (geom/equals (coords zero) (coords (multiply (make-rect [100 200]) zero)))
-  
+
   )
 
 
@@ -186,7 +186,7 @@
         pi (make-rect [0 0])
         i (t pi)]
     [pi i])
-  
+
   )
 
 (defn rotation
@@ -210,7 +210,7 @@ by given angle about given point"
   ;;=> false
   (identical? zero (make-polar (/ 1e11) geom/tau))
   ;;=> true
-  
+
   ((rotation [0 0] 0) (make-rect [1 0]))
   ;;=> #triangulator.complex.complex{:x 0.0, :y 0.0}
 
@@ -223,7 +223,6 @@ by given angle about given point"
     [(geom/equals [0 1] coords (/ 1e10))
      (geom/almost-equals 0  (first coords) (/ 1e16))
      (== 1 (second coords))])
-
 
   (let [point [(/ 2) (/ 2)]
         angle geom/pi
@@ -278,7 +277,7 @@ by given angle about given point"
         coords (coords res)]
     coords)
   ;;=> [-1 -1]
-  
+
   )
 
 
@@ -307,7 +306,7 @@ by given angle about given point"
   (let [ref (reflection (make-rect [0 0]) (make-rect [1 1]))]
     (mapv coords [(ref (make-rect [1 -1]))
                     (ref (make-rect [1 0]))]))
-  
+
   )
 
 
@@ -317,7 +316,7 @@ by given angle about given point"
 (defn inversion
   "inversion in center with power"
   [center power]
-  (fn [z] 
+  (fn [z]
     (let [center (make-rect center)
           cbar (conjugate center)
           zbar (conjugate (make-rect z))
@@ -336,7 +335,7 @@ by given angle about given point"
          pre-image [[1 -1] [1 (/ 2)] [1 0] [1 2] [2 2] [3 3] [0 0]]
          image (mapv f pre-image)]
      (zipmap pre-image image)))
-  
+
   )
 
 
@@ -369,7 +368,7 @@ by given angle about given point"
         f (comp coords r2 r1 make-rect)
         image (mapv f pre-image)]
     (zipmap pre-image image))
-  ;;=> 
+  ;;=>
 {[0 1] [2.2204460492503128E-16 0.9999999999999998],
  [1 0] [-0.9999999999999997 1.9999999999999998],
  [0 0] [3.445092848397666E-16 1.9999999999999998]}
@@ -388,5 +387,5 @@ by given angle about given point"
         image (mapv f pre-image)]
     (zipmap pre-image image))
   ;;=> {[1 1] [-1 -1], [1 0] [-1 0]}
-  
+
 )
