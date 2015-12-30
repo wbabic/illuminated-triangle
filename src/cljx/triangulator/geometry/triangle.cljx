@@ -96,7 +96,7 @@ for the given three points"
 
 (defn extract-incircle
   [t l1 l2]
-  (let [[A B C] t 
+  (let [[A B C] t
         i (geom/intersection l1 l2)
         d (altitude A B i)
         e (altitude B C i)
@@ -172,4 +172,3 @@ assuming the vertices and segments have been added"
                 (assoc :excircle
                   (excircles t (:ang-bisector tri))))]
     tri))
-

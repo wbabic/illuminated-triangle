@@ -48,8 +48,8 @@
               (recur new-state)))))))
 
 (defn handle-redraw
-  "redraw item 
-create a data sequence for item and send it to the draw channel"
+  "redraw item
+  create a data sequence for item and send it to the draw channel"
   [owner tri tri-data draw-chan ret-chan]
   (go
     (println "handle-redraw")

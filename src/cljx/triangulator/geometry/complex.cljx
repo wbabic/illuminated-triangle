@@ -338,9 +338,7 @@ by given angle about given point"
 
   )
 
-
 ;; composition of transform
-
 (comment
   ;; template
   (let [r1 ()
